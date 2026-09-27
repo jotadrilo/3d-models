@@ -1,29 +1,33 @@
-# Export the remote stand to STL from the command line.
+# Export the remote stands to STL from the command line.
 #
-#   make                         -> remote-stand.stl
-#   make preview                 -> remote-stand.png (quick render)
-#   make DEFS='-D front_remote_w=45 -D back_count=3'   -> override parameters
+#   make                         -> remote-stand.stl + remote-stand-v2.stl
+#   make v1 / make v2            -> just one of them
+#   make preview                 -> remote-stand.png + remote-stand-v2.png (quick render)
+#   make v2 DEFS='-D lattice_pitch=4 -D strand_w=1'    -> override parameters
 #   make OPENSCAD_FLAGS=--backend=Manifold             -> much faster on OpenSCAD >= 2025
 #                                                         (nightlies: --enable=manifold)
 
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SRC            := remote-stand.scad
+MODELS         := remote-stand remote-stand-v2
 
-.PHONY: all stl preview clean
+.PHONY: all stl v1 v2 preview clean
 
 all: stl
 
-stl: remote-stand.stl
+stl: $(MODELS:=.stl)
 
-remote-stand.stl: $(SRC)
+v1: remote-stand.stl
+v2: remote-stand-v2.stl
+
+%.stl: %.scad
 	$(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS) -o $@ $<
 
-preview: remote-stand.png
+preview: $(MODELS:=.png)
 
-remote-stand.png: $(SRC)
-	$(OPENSCAD) $(DEFS) --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380 -o $@ $<
+%.png: %.scad
+	$(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS) --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380 -o $@ $<
 
 clean:
-	rm -f remote-stand.stl remote-stand.png
+	rm -f $(MODELS:=.stl) $(MODELS:=.png)

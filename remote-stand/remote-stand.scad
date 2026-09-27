@@ -5,15 +5,15 @@
 // All dimensions in mm.
 
 /* [Front row (lower)] */
-front_count    = 3;
-front_remote_w = 40;   // widest remote in this row
-front_remote_t = 20;   // thickest remote in this row
+front_count    = 1;
+front_remote_w = 120;   // widest remote in this row
+front_remote_t = 30;   // thickest remote in this row
 front_wall_h   = 55;
 
 /* [Back row (upper)] */
 back_count    = 2;
 back_remote_w = 60;
-back_remote_t = 20;
+back_remote_t = 30;
 back_wall_h   = 95;
 back_floor_h  = 35;    // raised floor: back remotes sit this much higher
 
