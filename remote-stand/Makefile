@@ -1,33 +1,39 @@
-# Export the remote stands to STL from the command line.
-#
-#   make                         -> remote-stand.stl + remote-stand-v2.stl
-#   make v1 / make v2            -> just one of them
-#   make preview                 -> remote-stand.png + remote-stand-v2.png (quick render)
-#   make v2 DEFS='-D lattice_pitch=4 -D strand_w=1'    -> override parameters
-#   make OPENSCAD_FLAGS=--backend=Manifold             -> much faster on OpenSCAD >= 2025
-#                                                         (nightlies: --enable=manifold)
+# Remote stands (v1 and v2): export from the command line. Run `make help` for the targets.
+# Every target is phony, so it always regenerates its files.
 
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-MODELS         := remote-stand remote-stand-v2
+SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
+CAMERA         := --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380
 
-.PHONY: all stl v1 v2 preview clean
+.DEFAULT_GOAL := all
+.PHONY: all stl v1 v2 project report preview clean help
 
-all: stl
+all: stl ## Build everything (same as stl)
 
-stl: $(MODELS:=.stl)
+stl: v1 v2 ## Export both stands as STL
 
-v1: remote-stand.stl
-v2: remote-stand-v2.stl
+v1: ## Export remote-stand.stl
+	$(SCAD) -o remote-stand.stl remote-stand.scad
 
-%.stl: %.scad
-	$(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS) -o $@ $<
+v2: ## Export remote-stand-v2.stl
+	$(SCAD) -o remote-stand-v2.stl remote-stand-v2.scad
 
-preview: $(MODELS:=.png)
+project: ## Build remote-stand-p1s.3mf, the ready-to-print Bambu Studio project
+	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o remote-stand-p1s.3mf $(DEFS)
 
-%.png: %.scad
-	$(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS) --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380 -o $@ $<
+report: project ## Rebuild the project, slice it and print time and filament per plate
+	python3 ../tools/bambu3mf.py report remote-stand-p1s.3mf
 
-clean:
-	rm -f $(MODELS:=.stl) $(MODELS:=.png)
+preview: ## Render remote-stand.png and remote-stand-v2.png
+	$(SCAD) $(CAMERA) -o remote-stand.png remote-stand.scad
+	$(SCAD) $(CAMERA) -o remote-stand-v2.png remote-stand-v2.scad
+
+clean: ## Remove generated files
+	rm -f remote-stand.stl remote-stand-v2.stl remote-stand-p1s.3mf remote-stand.png remote-stand-v2.png
+
+help: ## Show this help
+	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@printf '\nExamples:\n  make v2 DEFS="-D lattice_pitch=4 -D strand_w=1"\n  make project\n  make report\n\n'

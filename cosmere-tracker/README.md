@@ -14,6 +14,7 @@ the ring by its ridged edge on top and the disc by the knob on the front.
 
 ```sh
 make project                                # -> cosmere-tracker-p1s.3mf (Bambu Studio, ready to print)
+make report                                 # rebuild it, slice it, print time and filament
 make                                        # -> frame.3mf front.3mf wheels.3mf stand.3mf
 make DEFS='-D show_investiture=false'       # only Health and Focus
 make DEFS='-D digit_h=6'                    # smaller (and narrower) tracker

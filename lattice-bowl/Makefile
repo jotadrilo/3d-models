@@ -1,29 +1,33 @@
-# Export the lattice bowl to STL from the command line.
-#
-#   make                         -> lattice_bowl.stl
-#   make preview                 -> lattice_bowl.png (quick render)
-#   make DEFS='-D top_diameter=200 -D rod_width=2.5'   -> override parameters
-#   make OPENSCAD_FLAGS=--backend=Manifold             -> much faster on OpenSCAD >= 2025
-#                                                         (nightlies: --enable=manifold)
+# Lattice bowl: export from the command line. Run `make help` for the targets.
+# Every target is phony, so it always regenerates its files.
 
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
 SRC            := lattice_bowl.scad
+SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 
-.PHONY: all stl preview clean
+.DEFAULT_GOAL := all
+.PHONY: all stl project report preview clean help
 
-all: stl
+all: stl ## Build everything (same as stl)
 
-stl: lattice_bowl.stl
+stl: ## Export lattice_bowl.stl
+	$(SCAD) -o lattice_bowl.stl $(SRC)
 
-lattice_bowl.stl: $(SRC)
-	$(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS) -o $@ $<
+project: ## Build lattice-bowl-p1s.3mf, the ready-to-print Bambu Studio project
+	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o lattice-bowl-p1s.3mf $(DEFS)
 
-preview: lattice_bowl.png
+report: project ## Rebuild the project, slice it and print time and filament per plate
+	python3 ../tools/bambu3mf.py report lattice-bowl-p1s.3mf
 
-lattice_bowl.png: $(SRC)
-	$(OPENSCAD) $(DEFS) --render --imgsize=1200,900 --camera=0,0,40,55,0,25,420 -o $@ $<
+preview: ## Render lattice_bowl.png
+	$(SCAD) --render --imgsize=1200,900 --camera=0,0,40,55,0,25,420 -o lattice_bowl.png $(SRC)
 
-clean:
-	rm -f lattice_bowl.stl lattice_bowl.png
+clean: ## Remove generated files
+	rm -f lattice_bowl.stl lattice-bowl-p1s.3mf lattice_bowl.png
+
+help: ## Show this help
+	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@printf '\nExamples:\n  make DEFS="-D top_diameter=200 -D rod_width=2.5"\n  make project\n  make report\n\n'
