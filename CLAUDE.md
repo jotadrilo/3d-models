@@ -36,7 +36,9 @@ to the 3MF (`key`).
      renders/<name>-<view>.webp   # studio renders, `make render` (§3.3), linked from the README
    ```
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
-   Add the project to the root `README.md` with one line. Shared code lives in `tools/`.
+   Add the project to the root `README.md` as one table row: its hero render as a 240 px
+   thumbnail linking to the folder, then the link and a one-line description. Shared code lives
+   in `tools/`.
 5. **Makefile**:
    - `OPENSCAD ?= openscad`, `OPENSCAD_FLAGS ?=` and `DEFS ?=` for overrides
      (`make DEFS='-D x=1'`), combined in `SCAD = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)`.
@@ -430,7 +432,7 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
       (§1.5).
 - [ ] `make render`: check the orientation in the hero and top views (§3.3) and commit `renders/`.
 - [ ] `README.md` (commands, parts table, printing, assembly, renders), `.gitignore`, preview PNG,
-      entry in the root README.
+      row with the hero thumbnail in the root README.
 - [ ] Everything written in English (§1).
 
 ## Main sources
