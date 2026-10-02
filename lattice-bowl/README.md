@@ -28,7 +28,7 @@ them is out of the safe range for support-free printing.
 bowl standing on its base on a Textured PEI plate: P1S 0.4 nozzle,
 *0.16mm Optimal* with Precise wall, Bambu PLA Basic in slot 1. The thinner
 layers show less stepping on the flared wall and hold the diamond edges
-better. About 4 h 30 min and 72 g with the default parameters (`make report`
+better. About 7 h and 81 g with the default parameters (`make report`
 prints the figures for your parameters). It needs Bambu Studio installed.
 
 ## Renders

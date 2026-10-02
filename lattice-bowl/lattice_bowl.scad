@@ -21,14 +21,14 @@
 // Approximate outer diameter at the top rim.
 top_diameter = 180;
 // Approximate outer diameter at the base (footprint on the bed).
-base_diameter = 90;
+base_diameter = 120;
 // Total bowl height.
 height = 85;
 // Wall profile curvature:
 //   1.0 -> straight conical wall
 //   >1  -> rounded bowl: flares quickly at the bottom, near vertical at the top
 //   <1  -> trumpet: flares more towards the rim (watch the overhangs!)
-curvature = 1.6;
+curvature = 2.6;
 // Wall thickness (measured perpendicular to the surface).
 wall_thickness = 2.4;
 // Solid floor thickness.
@@ -37,10 +37,10 @@ floor_thickness = 2.0;
 /* [Lattice] */
 
 // Width of the lattice rods (measured perpendicular to the rod).
-rod_width = 3.0;
+rod_width = 1.0;
 // Approximate side of each square opening (rotated 45°), measured at
 // mid-height. Also sets the spacing: pitch = opening + rod.
-opening_size = 11;
+opening_size = 4;
 // Vertical stretch of the openings (diamond height / width).
 //   1.0 = perfect square at 45°; >1 = taller diamonds with steeper edges,
 //   which are easier to print without supports.
