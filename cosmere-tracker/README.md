@@ -26,6 +26,77 @@ The default is about 200 × 59 × 8 mm (plus the knobs) with 7 mm digits;
 `digit_h` scales the wheels and the whole housing. The console prints the
 size.
 
+## Parameters
+
+All lengths in mm. Override any of them with `make DEFS='-D name=value'` (also
+`make project`, `make report` and `make render`). Lists and strings need
+quotes inside `DEFS`, for example
+`make DEFS="-D 'labels=[\"VIDA\",\"MANÁ\"]'"`.
+
+| Parameter | Default | What it does |
+|---|---|---|
+| **Stats** | | |
+| `show_investiture` | true | Third wheel; false leaves only the first two stats |
+| `labels` | `["SALUD", "CONCENTRACIÓN", "INVESTIDURA"]` | Text printed under each window, one per wheel |
+| **Colours** | | |
+| `body_color` | `#1b1b1b` | Housing, wheels and stand |
+| `digit_color` | `#f2f2f2` | Digits on the wheels |
+| `label_colors` | `["#e0b040", "#e0b040", "#e0b040"]` | One colour per label |
+| `rim_color` | `#f2f2f2` | Frame around each window |
+| **Digits** | | |
+| `digit_h` | 7 | Digit height; scales the wheels and the whole housing |
+| `font` | `Liberation Sans:style=Bold` | Font for digits and labels |
+| `label_h` | 5.5 | Label letter height (strokes must stay wider than a first-layer line) |
+| `ink_depth` | 0.6 | Inlay thickness (3 layers at 0.2 mm) |
+| `window_rim` | 1.2 | Width of the coloured frame around each window (0 = none) |
+| **Wheels** | | |
+| `wheel_t` | 3.2 | Ring and disc thickness |
+| `gap_z` | 0.3 | Play between a wheel face and a plate |
+| `wheel_gap` | 0.5 | Radial play between disc and ring |
+| `hub_r` | 5.5 | Radius of the disc knob that goes through the front plate |
+| `hub_play` | 0.25 | Radial play around the knob |
+| `knob_h` | 4 | How far the knob sticks out of the front plate |
+| `grip` | 5 | How far the ring sticks out of the top edge |
+| `ridges` | 60 | Number of ridges on the ring edge |
+| `ridge_r` | 0.6 | Ridge radius |
+| `ring_play` | 0.4 | Radial play between the ring ridges and the housing |
+| **Housing** | | |
+| `plate_t` | 2 | Front and back plate thickness |
+| `side_wall` | 6 | Wall at the left and right ends |
+| `bottom_wall` | 4 | Wall below the wheels |
+| `between` | 3 | Narrowest wall between two wheels |
+| `corner_r` | 4 | Corner radius of the housing |
+| `peg_d` | 3 | Alignment peg diameter |
+| `peg_h` | 1.5 | Alignment peg height |
+| `peg_play` | 0.1 | Clearance of the peg holes |
+| **Stand** | | |
+| `stand_depth` | 40 | Depth of the base |
+| `stand_h` | 7 | Height of the base |
+| `slot_depth` | 5 | How deep the tracker sits in the base |
+| `slot_play` | 0.3 | Clearance of the slot |
+| **Render** | | |
+| `part` | `assembly` | `assembly`, `frame`, `front`, `wheels`, `ring`, `disc` or `stand` |
+| `explode` | 0 | Spreads the assembly along Z (preview only) |
+
+## Variations
+
+Any set of two or three 00–99 counters that both sides of a table should read.
+Sizes from the console.
+
+| Use | Parameters | Result |
+|---|---|---|
+| Cosmere RPG, Radiant (default) | — | 200 × 59 × 8 mm, three stats |
+| Cosmere RPG, no Investiture | `-D show_investiture=false` | 137 × 59 × 8 mm, Health and Focus |
+| Compact | `-D digit_h=6` | 185 × 54 × 8 mm with 6 mm digits |
+| **Magic: The Gathering** life and poison | `-D show_investiture=false -D 'labels=["VIDA","VENENO"]' -D 'label_colors=["#c0392b","#27ae60"]'` | Life up to 99 (Commander's 40 fits). Four filaments: one AMS |
+| D&D / any RPG | `-D 'labels=["PV","PV TEMP","CA"]'` | Hit points, temporary HP and armour class |
+| Board game score keeper | `-D show_investiture=false -D 'labels=["EQUIPO A","EQUIPO B"]'` | Two team scores, readable from both sides |
+| One colour per stat | `-D 'label_colors=["#c0392b","#2e86c1","#e0b040"]'` | Red, blue and gold labels. That is five filaments, more than one AMS holds: keep it to two stats, or reuse the digit colour for one label |
+
+`bambu_project.py` places the parts at fixed positions sized for the default
+tracker: above `digit_h=7` with three stats the plate no longer fits, so use
+`make` and lay out the parts yourself.
+
 ## Printing (multi-colour, e.g. Bambu P1S + AMS)
 
 `make project` builds `cosmere-tracker-p1s.3mf`, a Bambu Studio project with
