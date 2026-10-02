@@ -30,7 +30,7 @@ recalculated). The console prints the fill-line height and total size.
 `make project` builds `detergent-scoop-p1s.3mf`, a Bambu Studio project with
 the scoop already upside down (rim and handle on the bed, collar on top) on a
 Textured PEI plate: P1S 0.4 nozzle, *0.20mm Standard* with gyroid infill,
-Bambu PLA Basic in slot 1. No supports needed. About 1 h and 49 g with the
+Bambu PLA Matte Ice Blue in slot 1. No supports needed. About 1 h and 51 g with the
 default parameters (`make report` prints the figures for your parameters). It
 needs Bambu Studio installed.
 

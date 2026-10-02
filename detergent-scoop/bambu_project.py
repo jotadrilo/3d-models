@@ -10,7 +10,7 @@ import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "tools"))
-from bambu3mf import PLA_BASIC, Filament, Project, load_scad  # noqa: E402
+from bambu3mf import PLA_MATTE, Filament, Project, load_scad  # noqa: E402
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     proj = Project(
         "Detergent scoop",
         process="0.20mm Standard @BBL X1C",
-        filaments=[Filament(PLA_BASIC, "#F2F2F2")],
+        filaments=[Filament(PLA_MATTE, "#A3D8E1")],  # Ice Blue
         # The 2 mm walls are solid anyway; gyroid only fills the handle and the collar.
         process_overrides={"sparse_infill_pattern": "gyroid"},
     )
