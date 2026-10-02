@@ -6,9 +6,12 @@ OPENSCAD_FLAGS ?=
 DEFS           ?=
 SRC            := detergent-scoop.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
+BLENDER        ?= blender
+RENDER_FLAGS   ?=
+RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview check clean help
+.PHONY: all stl project report preview render check clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -32,10 +35,14 @@ check: ## Print the cavity volume up to the fill line
 	     END { printf "Cavity volume up to the fill line: %.2f ml\n", V / 6000 }' cavity.stl
 	@rm -f cavity.stl
 
-clean: ## Remove generated files
-	rm -f detergent-scoop.stl detergent-scoop-p1s.3mf detergent-scoop.png cavity.stl
+render: project ## Render studio views into renders/ with Blender (from the project, cup up)
+	mkdir -p renders
+	$(RENDER) detergent-scoop-p1s.3mf renders/detergent-scoop --rotate 180,0,0 $(RENDER_FLAGS)
+
+clean: ## Remove exported files (the committed preview and renders are kept)
+	rm -f detergent-scoop.stl detergent-scoop-p1s.3mf cavity.stl
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-	@printf '\nExamples:\n  make DEFS="-D cap_d=38"\n  make DEFS="-D capacity_ml=150 -D inner_l=65"\n  make check\n  make report\n\n'
+	@printf '\nExamples:\n  make DEFS="-D cap_d=38"\n  make DEFS="-D capacity_ml=150 -D inner_l=65"\n  make check\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n\n'

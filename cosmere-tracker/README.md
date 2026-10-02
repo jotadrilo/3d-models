@@ -4,8 +4,7 @@ Health, Focus and Investiture tracker for the Cosmere RPG. Each stat counts
 00–99 and **reads the same from both sides of the table**: the player sees it
 from the front, everyone else from the back.
 
-![front](cosmere-tracker-front.png)
-![back](cosmere-tracker-back.png)
+![Cosmere tracker](renders/cosmere-tracker-hero.webp)
 
 Each wheel is an outer ring (tens) around an inner disc (units), with digits
 on both faces. The front window sits at 9 o'clock and the back one at
@@ -19,7 +18,8 @@ make                                        # -> frame.3mf front.3mf wheels.3mf 
 make DEFS='-D show_investiture=false'       # only Health and Focus
 make DEFS='-D digit_h=6'                    # smaller (and narrower) tracker
 make stl                                    # single-colour STLs instead
-make preview                                # -> cosmere-tracker-front.png / -back.png
+make preview                                # -> cosmere-tracker-front.png / -back.png (OpenSCAD)
+make render                                 # -> renders/*.webp, studio views with Blender
 ```
 
 The default is about 200 × 59 × 8 mm (plus the knobs) with 7 mm digits;
@@ -55,6 +55,26 @@ part its filament. The default uses three: body `#1b1b1b`, digits and rims
 
 No supports needed. The colour changes only happen in the first and last
 layers of each part, so purge waste is small.
+
+## Renders
+
+`make render` builds the project and renders studio views of the assembled tracker (OpenSCAD's `assembly`
+part, each colour in its filament) and of the print plate with Blender
+(`../tools/render_studio.py`), in the project's filaments and with layer lines
+at its layer height. 2400 x 1800 WebP, ready for MakerWorld's model images;
+add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
+The parts print flat, so on the assembly the layer lines run across the
+thickness (`--layer-axis y`).
+
+| | Hero | Front | Side | Top | Back |
+|---|---|---|---|---|---|
+| Assembly | ![](renders/cosmere-tracker-hero.webp) | ![](renders/cosmere-tracker-front.webp) | ![](renders/cosmere-tracker-side.webp) | ![](renders/cosmere-tracker-top.webp) | ![](renders/cosmere-tracker-back.webp) |
+
+| Plate, hero | Plate, top |
+|---|---|
+| ![](renders/cosmere-tracker-parts-hero.webp) | ![](renders/cosmere-tracker-parts-top.webp) |
+
+OpenSCAD previews (`make preview`): [front](cosmere-tracker-front.png) · [back](cosmere-tracker-back.png).
 
 ## Assembly
 

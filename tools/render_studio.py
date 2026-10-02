@@ -9,6 +9,13 @@ layer height. Writes <out_prefix>-<view>.webp for each view.
 
 Options:
     --plate N            plate to render, 1-based (default 1)
+    --model FILE         render this multi-colour OpenSCAD 3MF (lazy-union,
+                         colour-mode=model) instead of a plate, e.g. an assembly
+                         that is never printed as such; each colour gets the
+                         project filament of the same colour (else filament 1)
+    --layer-axis x|y|z   axis the layer lines run along, in the model's
+                         coordinates before --rotate (default z, the print Z;
+                         y for a --model of flat parts assembled upright)
     --objects A,B        only these objects of the plate (default: all of them)
     --rotate RX,RY,RZ    degrees about X, Y, Z (in that order) from the print
                          orientation to the display one, e.g. 180,0,0 for a part
@@ -71,6 +78,8 @@ def parse_args():
     ap.add_argument("out")
     ap.add_argument("--plate", type=int, default=1)
     ap.add_argument("--objects", default="")
+    ap.add_argument("--model", default="")
+    ap.add_argument("--layer-axis", choices="xyz", default="z")
     ap.add_argument("--rotate", default="0,0,0")
     ap.add_argument("--front", choices=FRONTS, default="-y")
     ap.add_argument("--views", default=",".join(VIEWS))
@@ -133,6 +142,33 @@ def load_project(path, plate_no, only):
     return parts, filaments, layer
 
 
+def load_model(path, filaments):
+    """Parts of an OpenSCAD colour 3MF, one per colour, as load_project returns them."""
+    root = ET.fromstring(zipfile.ZipFile(path).read("3D/3dmodel.model"))
+    materials = {g.get("id"): [b.get("displaycolor", "")[:7].upper() for b in g]
+                 for g in root.iter() if g.tag.endswith("basematerials")}
+    slots = {c.upper(): i for i, (c, _) in reversed(list(enumerate(filaments, 1)))}
+    by_colour = {}
+    for obj in root.iter(CORE + "object"):
+        mesh = obj.find(CORE + "mesh")
+        if mesh is None:
+            continue
+        verts = [(float(v.get("x")), float(v.get("y")), float(v.get("z"))) for v in mesh.find(CORE + "vertices")]
+        pid, pindex = obj.get("pid"), obj.get("pindex")
+        for t in mesh.find(CORE + "triangles"):
+            p = t.get("p1", pindex)
+            colour = materials[t.get("pid", pid)][int(p)] if p is not None else None
+            vs, ts = by_colour.setdefault(colour, ([], []))
+            ts.append(tuple(range(len(vs), len(vs) + 3)))
+            vs.extend(verts[int(t.get(k))] for k in ("v1", "v2", "v3"))
+    parts = []
+    for colour, (vs, ts) in by_colour.items():
+        index = {}
+        remap = [index.setdefault(v, len(index)) for v in vs]  # weld, for smooth shading
+        parts.append((colour or "model", slots.get(colour, 1), list(index), [tuple(remap[i] for i in t) for t in ts]))
+    return parts
+
+
 def _matrix(transform):
     """3MF 3x4 row-vector transform -> 4x4 Matrix."""
     t = [float(x) for x in (transform or "1 0 0 0 1 0 0 0 1 0 0 0").split()]
@@ -164,9 +200,9 @@ def luminance(rgb):
     return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
 
 
-def filament_material(colour, preset, layer):
+def filament_material(colour, preset, layer, axis):
     """Printed plastic: satin Principled BSDF, a touch of subsurface and layer lines
-    as a sine bump along the object's Z (the print Z, whatever the display rotation)."""
+    as a sine bump along the object's `axis` (the print Z, whatever the display rotation)."""
     rough, sss, coat = next(v for k, v in FINISHES.items() if k in preset)
     m = bpy.data.materials.new(f"{colour} {preset}")
     nt = m.node_tree
@@ -188,14 +224,14 @@ def filament_material(colour, preset, layer):
     bump.inputs["Strength"].default_value = LAYER_BUMP
     bump.inputs["Distance"].default_value = layer * 0.15
     nt.links.new(coord.outputs["Object"], sep.inputs[0])
-    nt.links.new(sep.outputs["Z"], mul.inputs[0])
+    nt.links.new(sep.outputs[axis.upper()], mul.inputs[0])
     nt.links.new(mul.outputs[0], sine.inputs[0])
     nt.links.new(sine.outputs[0], bump.inputs["Height"])
     nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
     return m
 
 
-def build_model(scene, parts, filaments, layer, rotate, front):
+def build_model(scene, parts, filaments, layer, axis, rotate, front):
     """One Blender object per part under a 'model' empty that holds the display
     rotation. Returns the part objects and the area-weighted part luminance."""
     model = bpy.data.objects.new("model", None)
@@ -205,7 +241,7 @@ def build_model(scene, parts, filaments, layer, rotate, front):
     for name, extruder, verts, tris in parts:
         colour, preset = filaments[extruder - 1]
         if extruder not in materials:
-            materials[extruder] = filament_material(colour, preset, layer)
+            materials[extruder] = filament_material(colour, preset, layer, axis)
         me = bpy.data.meshes.new(name)
         me.from_pydata(verts, [], tris)
         me.validate()
@@ -365,16 +401,18 @@ def main():
     args = parse_args()
     only = [o for o in args.objects.split(",") if o]
     parts, filaments, layer = load_project(args.project, args.plate, only)
+    if args.model:
+        parts = load_model(args.model, filaments)
 
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
-    objs, part_lum = build_model(scene, parts, filaments, layer, args.rotate, args.front)
+    objs, part_lum = build_model(scene, parts, filaments, layer, args.layer_axis, args.rotate, args.front)
     corners = [ob.matrix_world @ Vector(c) for ob in objs for c in ob.bound_box]
     dims = Vector([max(c[i] for c in corners) - min(c[i] for c in corners) for i in range(3)])
     rig = build_studio(scene, max(dims), dims.z, part_lum)
     cam = build_camera(scene, max(dims))
     setup_render(scene, args.samples, args.scale)
-    print(f"render: plate {args.plate}, {len(parts)} parts, {dims.x:.0f} x {dims.y:.0f} x {dims.z:.0f} mm, "
+    print(f"render: {args.model or f'plate {args.plate}'}, {len(parts)} parts, {dims.x:.0f} x {dims.y:.0f} x {dims.z:.0f} mm, "
           f"layer {layer} mm, luminance {part_lum:.3f}, exposure {scene.view_settings.exposure:+.2f}")
 
     for view in args.views.split(","):

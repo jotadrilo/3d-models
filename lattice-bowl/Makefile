@@ -6,9 +6,12 @@ OPENSCAD_FLAGS ?=
 DEFS           ?=
 SRC            := lattice_bowl.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
+BLENDER        ?= blender
+RENDER_FLAGS   ?=
+RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview clean help
+.PHONY: all stl project report preview render clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -24,10 +27,14 @@ report: project ## Rebuild the project, slice it and print time and filament per
 preview: ## Render lattice_bowl.png
 	$(SCAD) --render --imgsize=1200,900 --camera=0,0,40,55,0,25,420 -o lattice_bowl.png $(SRC)
 
-clean: ## Remove generated files
-	rm -f lattice_bowl.stl lattice-bowl-p1s.3mf lattice_bowl.png
+render: project ## Render studio views into renders/ with Blender (from the project)
+	mkdir -p renders
+	$(RENDER) lattice-bowl-p1s.3mf renders/lattice-bowl $(RENDER_FLAGS)
+
+clean: ## Remove exported files (the committed preview and renders are kept)
+	rm -f lattice_bowl.stl lattice-bowl-p1s.3mf
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-	@printf '\nExamples:\n  make DEFS="-D top_diameter=200 -D rod_width=2.5"\n  make project\n  make report\n\n'
+	@printf '\nExamples:\n  make DEFS="-D top_diameter=200 -D rod_width=2.5"\n  make project\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n\n'

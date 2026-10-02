@@ -28,25 +28,30 @@ to the 3MF (`key`).
    ```
    <project>/
      <project>.scad        # parametric model, Customizer parameters at the top
-     Makefile              # all / stl / 3mf / project / preview / clean (+ check where it applies)
+     Makefile              # all / stl / 3mf / project / report / preview / render / clean / help (+ check)
      bambu_project.py      # builds <project>-p1s.3mf with tools/bambu3mf.py (§3)
      README.md             # what it is, make commands, parts table, how to print, assembly
-     .gitignore            # *.3mf, *.stl (build outputs are not committed; preview PNGs are)
-     <project>*.png        # preview render(s) referenced from the README
+     .gitignore            # *.3mf, *.stl (build outputs are not committed; previews and renders are)
+     <project>*.png        # OpenSCAD preview(s), `make preview`
+     renders/<name>-<view>.webp   # studio renders, `make render` (§3.3), linked from the README
    ```
+   The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
    Add the project to the root `README.md` with one line. Shared code lives in `tools/`.
 5. **Makefile**:
    - `OPENSCAD ?= openscad`, `OPENSCAD_FLAGS ?=` and `DEFS ?=` for overrides
      (`make DEFS='-D x=1'`), combined in `SCAD = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)`.
    - **Every target is `.PHONY` and always regenerates its files**, even when they already exist
-     on disk. Targets are named by what they do (`stl`, `3mf`, `project`, `preview`, `check`),
+     on disk. Targets are named by what they do (`stl`, `3mf`, `project`, `preview`, `render`, `check`),
      not by the file they produce. No pattern rules (`%.stl`) and no `FORCE` prerequisites:
      hardcode the file names in the recipe, or loop over a variable
      (`for p in $(PARTS)` in `cosmere-tracker`).
    - **Every Makefile has a `help` target**. Each target line carries a `## description`
      comment, and `help` prints them in colour with awk, plus a usage line and examples. Copy it
      from an existing Makefile.
-   - `clean` removes exported files only, never the committed preview PNGs.
+   - `clean` removes exported files only, never the committed previews or `renders/`.
+   - `render` depends on `project` and calls Blender through
+     `BLENDER ?= blender`, `RENDER_FLAGS ?=` and
+     `RENDER = $(BLENDER) -b -P ../tools/render_studio.py --` (§3.3).
    - Select each part with `-D 'part="name"'`. Multi-colour exports use
      `--enable=lazy-union -O export-3mf/color-mode=model`.
 6. **Commits**: one commit per project or change, in the style
@@ -57,6 +62,7 @@ to the 3MF (`key`).
 |---|---|
 | OpenSCAD | 2026.09.23 (snapshot). **Manifold is the default backend**; `--backend=Manifold` forces it |
 | Bambu Studio | 02.08.02.61, `/Applications/BambuStudio.app/Contents/MacOS/BambuStudio` |
+| Blender | 5.2.2 LTS, `/Applications/Blender.app` (`blender` on the PATH); Cycles on Metal |
 | System presets | `/Applications/BambuStudio.app/Contents/Resources/profiles/BBL/{machine,process,filament}` |
 | Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28` |
 | Processes compatible with the P1S 0.4 | the `@BBL X1C` ones (0.08 Extra Fine/High Quality, 0.12 Fine/HQ, 0.16 Optimal/HQ, 0.20 Standard/Strength, 0.24 Draft, 0.28 Extra Draft) |
@@ -170,6 +176,42 @@ Examples: `cosmere-tracker` (multi-colour, 9 objects on one plate, explicit layo
 Bambu Studio usually **ignores the standard 3MF colours** exported by OpenSCAD: it splits the parts
 but does not assign filaments. That is why the script sets `extruder` explicitly. Using hex colours
 that match Bambu filaments makes automatic matching more likely to work.
+
+### 3.3 Previews and renders
+Every project has two kinds of images, both committed and both linked from its README:
+
+| | `make preview` | `make render` |
+|---|---|---|
+| What | OpenSCAD render, preview colours | Photoreal "as printed" studio shots (Blender Cycles) |
+| Source | the `.scad` | the Bambu project `<project>-p1s.3mf` |
+| Output | `<project>*.png` next to the `.scad` | `renders/<name>-<view>.webp` |
+| Use | quick look while designing | README hero image, MakerWorld model images |
+
+`tools/render_studio.py` reads the project 3MF, so the renders match what gets printed with no
+colour or layer height chosen by hand:
+- **Colour and finish** from the filament each part is assigned to (`filament_colour`; Matte, Silk,
+  PETG… from the preset name). Multi-colour parts keep one material per filament.
+- **Layer lines** as a sine bump with the project's `layer_height`, along the print Z.
+- **Exposure and backdrop** follow the filament brightness, so black and white parts keep their
+  detail.
+- **Views**: hero (3/4 front), front, side, top (front edge at the bottom) and back (3/4 back).
+  2400×1800 (4:3, what MakerWorld recommends), WebP at quality 90: about 30–600 KB a view, a third
+  less than JPEG. ~3 min per model at 256 samples on Metal.
+
+Options, all passed from the Makefile:
+- `--plate N` (default 1) and `--objects A,B`: what to render. One plate per alternative version
+  (`remote-stand`).
+- `--rotate RX,RY,RZ`: from the print orientation back to the display one (`detergent-scoop` prints
+  upside down: `180,0,0`). Layer lines stay with the print Z.
+- `--front -y|+y|-x|+x`: which side faces the viewer; the default `-y` is OpenSCAD's front.
+  Check the hero and top views of every new model.
+- `--model assembly.3mf --layer-axis y`: render an OpenSCAD colour export (lazy-union) instead of a
+  plate, with each colour mapped to the project filament of the same colour. Use it for assemblies
+  of flat-printed parts (`cosmere-tracker`), and render the plate too (`--views hero,top`).
+- `RENDER_FLAGS="--samples 32 --scale 0.25"` for a draft in seconds before the final render.
+
+MakerWorld needs **real photos** for its covers and for the ≥3 required "real photos" (front,
+side, top). The renders go in "Model images".
 
 ---
 
@@ -384,9 +426,11 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 - [ ] `bambu_project.py`: plates grouped per §3.1, orientation, filaments, Textured PEI bed, tower
       outside the excluded area, per-object settings.
 - [ ] `make report` slices every plate without errors. Note time and grams in the README.
-- [ ] `Makefile` with phony, always-regenerating targets, `project`, `report` and `help` (§1.5).
-- [ ] `README.md` (commands, parts table, printing, assembly), `.gitignore`, preview PNG, entry in
-      the root README.
+- [ ] `Makefile` with phony, always-regenerating targets, `project`, `report`, `render` and `help`
+      (§1.5).
+- [ ] `make render`: check the orientation in the hero and top views (§3.3) and commit `renders/`.
+- [ ] `README.md` (commands, parts table, printing, assembly, renders), `.gitignore`, preview PNG,
+      entry in the root README.
 - [ ] Everything written in English (§1).
 
 ## Main sources
