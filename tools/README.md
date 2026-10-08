@@ -53,7 +53,7 @@ Main pieces:
 | `proj.plate(name, prime_tower=(20, 30))` | New plate |
 | `plate.add(name, mesh, x, y, settings={...})` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides |
 | `proj.write(path)` | Checks the layout and writes the 3MF |
-| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF` | Filament preset names for the P1S 0.4 |
+| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC` | Filament preset names for the P1S 0.4 |
 
 Run as a script to slice every plate and print time and grams per plate and slot (the figures in
 each README):

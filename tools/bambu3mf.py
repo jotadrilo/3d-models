@@ -41,6 +41,7 @@ MARGIN = 3                         # minimum distance between objects and to the
 PLA_BASIC = "Bambu PLA Basic @BBL P1S 0.4 nozzle"
 PLA_MATTE = "Bambu PLA Matte @BBL P1S 0.4 nozzle"
 PETG_HF = "Bambu PETG HF @BBL P1S 0.4 nozzle"
+PETG_BASIC = "Bambu PETG Basic @BBL X1C"      # also the P1S 0.4 preset (no P1S-specific one)
 
 NS = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
       'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
