@@ -39,7 +39,7 @@ truss_window = true;   // open the triangle under the desk into a truss
 /* [Fit] */
 grip_play = 0.3;       // clearance between the C and the desk (per side)
 grip_squeeze = 0.6;    // how far the lip nub presses into the desk top
-bar_play = 0.15;       // clearance of the bar in its socket, per side (0.15-0.20: removable fit)
+bar_play = 0.05;       // clearance of the bar in its socket, per side (0.05: snug, tuned on a printed rail; 0.15-0.20 rattles in PETG)
 end_gap = 0.5;         // gap between each bar end and the socket bottom
 
 /* [Fit test] */

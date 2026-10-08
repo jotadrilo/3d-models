@@ -36,8 +36,9 @@ the rail also stays put when it is empty.
 - The bar sits in a blind socket with 4.2 mm of wall all round and 6 mm behind
   it. Its cross-section is a round top (where the hooks sit) on a keel, so it
   cannot turn in the socket and it prints lying down without supports. It
-  is a removable fit (`bar_play` 0.15 mm per side): the bar cannot come out
-  anyway, because it is trapped between the two brackets.
+  is a snug fit (`bar_play` 0.05 mm per side; 0.15 rattled on the first
+  print): the bar cannot come out anyway, because it is trapped between the
+  two brackets.
 - Everything prints **solid** (100 % infill): no sparse infill in the lip root
   or around the socket.
 
@@ -85,7 +86,7 @@ bracket and bar sizes.
 | **Fit** | | |
 | `grip_play` | 0.3 | Clearance between the C and the desk |
 | `grip_squeeze` | 0.6 | How far the lip nub presses into the desk top |
-| `bar_play` | 0.15 | Clearance of the bar in its socket, per side (0.15–0.20: removable fit) |
+| `bar_play` | 0.05 | Clearance of the bar in its socket, per side (0.05: snug; 0.15 left the bar loose in PETG) |
 | `end_gap` | 0.5 | Gap between each bar end and the socket bottom |
 | **Fit test** | | |
 | `test_h` | 6 | Height of `test_socket`; `test_bar` is twice as long |
@@ -111,7 +112,7 @@ with the same filament and settings:
 - **Plate 2 · Socket fit test** (19 min, 4 g): `test_socket` + `test_bar`.
   Push the short bar into the ring. It should go in by hand, hold without
   rattling and come out again. Too tight or too loose: change `bar_play` and
-  print the test again (`make project DEFS='-D bar_play=0.20'`). Holes in PETG
+  print the test again (`make project DEFS='-D bar_play=0.10'`). Holes in PETG
   print close to their size; in PLA they come out about 0.1 mm smaller, so
   add ~0.05 mm.
 - **Plate 3 · Clip fit test** (6 min, 3 g): `test_clip`. Push it onto the
@@ -127,7 +128,7 @@ supports. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Desk hanger rail | two brackets + bar | 3 h 06 min | 113 g |
+| 1 · Desk hanger rail | two brackets + bar | 3 h 06 min | 112 g |
 | 2 · Socket fit test | socket ring, short bar | 19 min | 4 g |
 | 3 · Clip fit test | clip slice | 6 min | 3 g |
 
