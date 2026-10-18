@@ -49,8 +49,8 @@ render: project ## Render the assembly and the print plate into renders/ with Bl
 	$(RENDER) cosmere-tracker-p1s.3mf renders/cosmere-tracker-parts --views hero,top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
-clean: ## Remove exported files (the committed previews and renders are kept)
-	rm -f cosmere-tracker-p1s.3mf assembly.3mf $(PARTS:=.3mf) $(PARTS:=.stl)
+clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+	rm -f assembly.3mf $(PARTS:=.3mf) $(PARTS:=.stl)
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [PARTS="frame front wheels stand"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'

@@ -15,7 +15,7 @@ make project                                   # -> remote-stand-p1s.3mf (Bambu 
 make report                                    # rebuild it, slice it, print time and filament per plate
 make                                           # -> remote-stand.stl + remote-stand-v2.stl
 make v2 DEFS='-D back_count=3 -D back_remote_w=45'
-make preview                                   # -> remote-stand.png + remote-stand-v2.png (OpenSCAD)
+make preview                                   # -> remote-stand.png + remote-stand-v2.png (OpenSCAD, quick look; not committed)
 make render                                    # -> renders/*.webp, studio views with Blender
 make help                                      # every target
 ```
@@ -107,4 +107,3 @@ model images; add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 | v1 | ![](renders/remote-stand-hero.webp) | ![](renders/remote-stand-front.webp) | ![](renders/remote-stand-side.webp) | ![](renders/remote-stand-top.webp) | ![](renders/remote-stand-back.webp) |
 | v2 | ![](renders/remote-stand-v2-hero.webp) | ![](renders/remote-stand-v2-front.webp) | ![](renders/remote-stand-v2-side.webp) | ![](renders/remote-stand-v2-top.webp) | ![](renders/remote-stand-v2-back.webp) |
 
-OpenSCAD previews (`make preview`): [v1](remote-stand.png) · [v2](remote-stand-v2.png).

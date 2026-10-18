@@ -13,7 +13,7 @@ make report                                    # rebuild it, slice it, print tim
 make                                           # -> one STL per part (rail and fit test)
 make stl PARTS="test_socket test_bar test_clip"  # fit test only
 make project DEFS='-D desk_t=18'               # another desk thickness
-make preview                                   # -> desk-hanger-rail.png + desk-hanger-rail-side.png (OpenSCAD)
+make preview                                   # -> desk-hanger-rail.png (quick look, not committed) + desk-hanger-rail-side.png (OpenSCAD)
 make render                                    # -> renders/*.webp, studio views with Blender
 make help                                      # every target
 ```
@@ -154,4 +154,3 @@ with layer lines at the project's layer height. 2400 x 1800 WebP; add
 
 Print plate: ![](renders/desk-hanger-rail-parts-hero.webp) · Socket fit test: ![](renders/desk-hanger-rail-fit-test-hero.webp) · Clip fit test: ![](renders/desk-hanger-rail-clip-test-hero.webp)
 
-OpenSCAD previews (`make preview`): [assembly on a desk](desk-hanger-rail.png) · [bracket profile](desk-hanger-rail-side.png).

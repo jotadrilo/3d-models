@@ -1,2 +1,4 @@
-*.3mf
 *.stl
+assembly.3mf
+*.png
+!desk-hanger-rail-side.png

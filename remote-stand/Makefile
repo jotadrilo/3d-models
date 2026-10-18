@@ -38,8 +38,8 @@ render: project ## Render studio views of both stands into renders/ with Blender
 	$(RENDER) remote-stand-p1s.3mf renders/remote-stand --plate 1 $(RENDER_FLAGS)
 	$(RENDER) remote-stand-p1s.3mf renders/remote-stand-v2 --plate 2 $(RENDER_FLAGS)
 
-clean: ## Remove exported files (the committed previews and renders are kept)
-	rm -f remote-stand.stl remote-stand-v2.stl remote-stand-p1s.3mf
+clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+	rm -f remote-stand.stl remote-stand-v2.stl
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'

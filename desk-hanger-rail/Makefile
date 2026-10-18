@@ -42,8 +42,8 @@ render: project ## Render the assembly, the print plate and the fit tests into r
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-clip-test --plate 3 --views hero $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
-clean: ## Remove exported files (the committed previews and renders are kept)
-	rm -f desk-hanger-rail-p1s.3mf assembly.3mf $(PARTS:=.stl)
+clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+	rm -f assembly.3mf $(PARTS:=.stl)
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [PARTS="bracket_left bracket_right bar ..."] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'

@@ -31,8 +31,10 @@ to the 3MF (`key`).
      Makefile              # all / stl / 3mf / project / report / preview / render / clean / help (+ check)
      bambu_project.py      # builds <project>-p1s.3mf with tools/bambu3mf.py (§3)
      README.md             # what it is, make commands, parts table, how to print, assembly
-     .gitignore            # *.3mf, *.stl (build outputs are not committed; previews and renders are)
-     <project>*.png        # OpenSCAD preview(s), `make preview`
+     .gitignore            # *.stl, assembly.3mf, *.png (exports and previews are not committed; the Bambu projects and renders are)
+     <project>-*.3mf       # the Bambu Studio project(s), `make project`, committed
+     <project>*.png        # OpenSCAD preview(s), `make preview`: not committed, except one that explains
+                           # what a render cannot (a section or a profile), un-ignored with `!name.png`
      renders/<name>-<view>.webp   # studio renders, `make render` (§3.3), linked from the README
    ```
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
@@ -50,7 +52,8 @@ to the 3MF (`key`).
    - **Every Makefile has a `help` target**. Each target line carries a `## description`
      comment, and `help` prints them in colour with awk, plus a usage line and examples. Copy it
      from an existing Makefile.
-   - `clean` removes exported files only, never the committed previews or `renders/`.
+   - `clean` removes exported files only, never the committed Bambu projects (`*.3mf` from
+     `make project`) or `renders/`.
    - `render` depends on `project` and calls Blender through
      `BLENDER ?= blender`, `RENDER_FLAGS ?=` and
      `RENDER = $(BLENDER) -b -P ../tools/render_studio.py --` (§3.3).
@@ -181,14 +184,16 @@ but does not assign filaments. That is why the script sets `extruder` explicitly
 that match Bambu filaments makes automatic matching more likely to work.
 
 ### 3.3 Previews and renders
-Every project has two kinds of images, both committed and both linked from its README:
+Every project has two kinds of images. The renders are committed and linked from its README; the
+previews are a quick look while designing and stay out of git, except one that shows what a render
+cannot (a section through hidden parts, a profile) and is used in the README:
 
 | | `make preview` | `make render` |
 |---|---|---|
 | What | OpenSCAD render, preview colours | Photoreal "as printed" studio shots (Blender Cycles) |
 | Source | the `.scad` | the Bambu project `<project>-p1s.3mf` |
 | Output | `<project>*.png` next to the `.scad` | `renders/<name>-<view>.webp` |
-| Use | quick look while designing | README hero image, MakerWorld model images |
+| Use | quick look while designing (sections, profiles) | README hero image, MakerWorld model images |
 
 `tools/render_studio.py` reads the project 3MF, so the renders match what gets printed with no
 colour or layer height chosen by hand:
@@ -433,8 +438,8 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 - [ ] `Makefile` with phony, always-regenerating targets, `project`, `report`, `render` and `help`
       (§1.5).
 - [ ] `make render`: check the orientation in the hero and top views (§3.3) and commit `renders/`.
-- [ ] `README.md` (commands, parts table, printing, assembly, renders), `.gitignore`, preview PNG,
-      row with the hero thumbnail in the root README.
+- [ ] `README.md` (commands, parts table, printing, assembly, renders), `.gitignore`, the committed
+      Bambu project(s), row with the hero thumbnail in the root README.
 - [ ] Everything written in English (§1).
 
 ## Main sources

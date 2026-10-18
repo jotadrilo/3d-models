@@ -32,7 +32,7 @@ render: project ## Render studio views into renders/ with Blender (from the proj
 	$(RENDER) lattice-bowl-p1s.3mf renders/lattice-bowl $(RENDER_FLAGS)
 
 clean: ## Remove exported files (the committed preview and renders are kept)
-	rm -f lattice_bowl.stl lattice-bowl-p1s.3mf
+	rm -f lattice_bowl.stl
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'

@@ -11,7 +11,7 @@ make report                                    # rebuild it, slice it, print tim
 make                                           # -> lattice_bowl.stl
 make DEFS='-D top_diameter=200 -D rod_width=2.5'
 make OPENSCAD_FLAGS=--backend=Manifold         # OpenSCAD >= 2025, much faster
-make preview                                   # -> lattice_bowl.png (OpenSCAD)
+make preview                                   # -> lattice_bowl.png (OpenSCAD, quick look; not committed)
 make render                                    # -> renders/*.webp, studio views with Blender
 # or directly:
 openscad -o lattice_bowl.stl lattice_bowl.scad
@@ -88,4 +88,3 @@ add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 |---|---|---|---|---|---|
 |  | ![](renders/lattice-bowl-hero.webp) | ![](renders/lattice-bowl-front.webp) | ![](renders/lattice-bowl-side.webp) | ![](renders/lattice-bowl-top.webp) | ![](renders/lattice-bowl-back.webp) |
 
-OpenSCAD preview (`make preview`): [lattice_bowl.png](lattice_bowl.png).

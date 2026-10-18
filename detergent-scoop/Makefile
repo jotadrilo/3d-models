@@ -40,7 +40,7 @@ render: project ## Render studio views into renders/ with Blender (from the proj
 	$(RENDER) detergent-scoop-p1s.3mf renders/detergent-scoop --rotate 180,0,0 $(RENDER_FLAGS)
 
 clean: ## Remove exported files (the committed preview and renders are kept)
-	rm -f detergent-scoop.stl detergent-scoop-p1s.3mf cavity.stl
+	rm -f detergent-scoop.stl cavity.stl
 
 help: ## Show this help
 	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'

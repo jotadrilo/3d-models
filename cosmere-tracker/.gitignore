@@ -1,2 +1,7 @@
-*.3mf
 *.stl
+assembly.3mf
+frame.3mf
+front.3mf
+wheels.3mf
+stand.3mf
+*.png
