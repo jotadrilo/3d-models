@@ -22,10 +22,14 @@ per-object settings. This module does that work:
   Each colour becomes one part of the Bambu object, assigned to the filament of the same colour (or
   the one given in `colour_map`).
 - **Applies the print orientation** (`rotate=(rx, ry, rz)`) and rests the part on z = 0.
-- **Lays out the plates** of the P1S: refuses objects that leave the bed, overlap each other or
-  touch the excluded front-left corner (`0..18 × 0..28`), and places plates on Bambu's grid so
-  multi-plate projects open and slice correctly.
-- **Fills in the full settings** by running the Bambu Studio CLI with the system presets, then sets
+- **Lays out the plates**: refuses objects that leave the bed, overlap each other or touch the
+  printer's keep-clear areas (on the P1S the excluded front-left corner `0..18 × 0..28` and the
+  front strip `y < 12` where the start G-code draws its load line; on the X2D the left strip the
+  right nozzle cannot reach), and places plates on Bambu's grid so multi-plate projects open and
+  slice correctly.
+- **Fills in the full settings** by running the Bambu Studio CLI with the system presets (merging
+  each machine's `template` presets, which hold its real start, end and filament-change G-code;
+  without them the CLI falls back to a generic start that heats the nozzle to 205 °C), then sets
   the Textured PEI plate, filament colours, the flush matrix (from the colours' luminance) and the
   prime tower position per plate.
 - **Writes per-object settings** (walls, ironing…) to `Metadata/model_settings.config`.

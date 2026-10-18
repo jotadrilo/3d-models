@@ -66,7 +66,7 @@ to the 3MF (`key`).
 | Bambu Studio | 02.08.02.61, `/Applications/BambuStudio.app/Contents/MacOS/BambuStudio` |
 | Blender | 5.2.2 LTS, `/Applications/Blender.app` (`blender` on the PATH); Cycles on Metal |
 | System presets | `/Applications/BambuStudio.app/Contents/Resources/profiles/BBL/{machine,process,filament}` |
-| Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28` |
+| Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28`; the start G-code draws its nozzle load line along the front edge (`y 1..11`), so parts keep clear of `y < 12` |
 | Other printer | `Bambu Lab X2D 0.4 nozzle` (`printer=X2D` in `bambu3mf.py`): bed 256×256, height 261, two nozzles; layouts keep clear the 20.5 mm left strip the right nozzle cannot reach ("Left nozzle only area"); its own `@BBL X2D` presets |
 | Processes compatible with the P1S 0.4 | the `@BBL X1C` ones (0.08 Extra Fine/High Quality, 0.12 Fine/HQ, 0.16 Optimal/HQ, 0.20 Standard/Strength, 0.24 Draft, 0.28 Extra Draft) |
 | Filaments | `Bambu PLA Basic @BBL P1S 0.4 nozzle`, `… PLA Matte …`, `… PLA Silk+ …`, `… PETG HF …`, `Bambu PETG Basic @BBL X1C` (the P1S uses the X1C preset), `… ABS …`, `Bambu TPU 95A HF @BBL P1S` |

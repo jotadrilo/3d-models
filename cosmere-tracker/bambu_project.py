@@ -17,9 +17,9 @@ SCAD = os.path.join(HERE, "cosmere-tracker.scad")
 
 # (object name, OpenSCAD part, bed centre x, y); the plate is 256 x 256.
 LAYOUT = [
-    ("Tens ring 1", "ring", 90, 36),
-    ("Tens ring 2", "ring", 154, 36),
-    ("Tens ring 3", "ring", 218, 36),
+    ("Tens ring 1", "ring", 90, 42),
+    ("Tens ring 2", "ring", 154, 42),
+    ("Tens ring 3", "ring", 218, 42),
     ("Front plate", "front", 104, 102),
     ("Units disc 1", "disc", 230, 102),
     ("Back frame", "frame", 104, 166),

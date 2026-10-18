@@ -47,7 +47,7 @@ PETG_BASIC = "Bambu PETG Basic @BBL X1C"      # also the P1S 0.4 preset (no P1S-
 class Printer:
     machine: str                   # Bambu Studio machine preset
     tag: str                       # short name, used in file names: <project>-<tag>.3mf
-    excluded: tuple = None         # bed area kept clear (x0, y0, x1, y1), if any
+    keep_clear: tuple = ()         # bed areas kept clear, ((x0, y0, x1, y1), ...)
     height: float = 250
 
     def preset(self, kind, base):
@@ -61,10 +61,13 @@ class Printer:
         return min(hits, key=len)
 
 
-P1S = Printer("Bambu Lab P1S 0.4 nozzle", "p1s", excluded=EXCLUDED, height=250)
+# The P1S start G-code draws its nozzle load line along the front edge
+# (y 1..11, x 18..240), so parts keep off that strip as well as the corner.
+LOAD_LINE = (0, 0, BED_W, 12)
+P1S = Printer("Bambu Lab P1S 0.4 nozzle", "p1s", keep_clear=(EXCLUDED, LOAD_LINE), height=250)
 # Two nozzles; the right one cannot reach x < 20.5 ("Left nozzle only area"), so
 # layouts keep that strip clear and either nozzle can print any plate.
-X2D = Printer("Bambu Lab X2D 0.4 nozzle", "x2d", excluded=(0, 0, 20.5, BED_D), height=261)
+X2D = Printer("Bambu Lab X2D 0.4 nozzle", "x2d", keep_clear=((0, 0, 20.5, BED_D),), height=261)
 PRINTERS = {p.tag: p for p in (P1S, X2D)}
 PRINTER = P1S.machine
 
@@ -223,7 +226,7 @@ class Project:
         sys.exit(f"{self.title}: no filament for colour {colour}; add it to filaments or colour_map")
 
     def check_layout(self):
-        """Every object inside the bed, clear of the excluded corner and of each other,
+        """Every object inside the bed, clear of the printer's keep-clear areas and of each other,
         and no plate or object name Bambu Studio refuses on opening."""
         for plate in self.plates:
             for name in [plate.name] + [o.name for o in plate.objects]:
@@ -237,8 +240,7 @@ class Project:
                     sys.exit(f"{plate.name}: '{o.name}' does not fit on the bed {tuple(round(b, 1) for b in box)}")
                 if hi[2] > self.printer.height:
                     sys.exit(f"{plate.name}: '{o.name}' is taller than {self.printer.height} mm")
-                excluded = [("excluded area", self.printer.excluded)] if self.printer.excluded else []
-                for other, b in boxes + excluded:
+                for other, b in boxes + [("a keep-clear area", k) for k in self.printer.keep_clear]:
                     if box[0] < b[2] and b[0] < box[2] and box[1] < b[3] and b[1] < box[3]:
                         sys.exit(f"{plate.name}: '{o.name}' overlaps {other}")
                 boxes.append((o.name, box))
@@ -415,6 +417,14 @@ def _flatten(kind, name, extra=None):
         return cfg
 
     cfg = resolve(name)
+    # Bambu machines keep their real G-code (start with the purge, temperatures
+    # and calibration, end, filament change, layer change, timelapse) in
+    # separate "<machine> template <key>" presets that the GUI merges in;
+    # without them the CLI falls back to the generic fdm_machine_common G-code.
+    if kind == "machine":
+        for tname, t in presets.items():
+            if tname.startswith(name + " template "):
+                cfg.update({k: v for k, v in t.items() if k not in ("name", "instantiation", "inherits")})
     cfg.update(inherits="", name=name, **(extra or {}))
     return cfg
 
