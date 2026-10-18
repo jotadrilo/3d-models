@@ -54,13 +54,14 @@ VIEWS = {                         # direction from the model to the camera; the 
     "top": None,                  # straight down, front edge at the bottom
     "back": (-0.7, -1.0, 0.5),    # 3/4 back
 }
-FINISHES = {                      # by the filament preset name: roughness, subsurface weight, coat
-    "Matte": (0.62, 0.04, 0.0),
-    "Silk": (0.22, 0.02, 0.35),
-    "PETG": (0.25, 0.10, 0.15),
-    "ABS": (0.38, 0.04, 0.0),
-    "TPU": (0.55, 0.10, 0.0),
-    "": (0.42, 0.08, 0.0),        # PLA Basic and anything else
+FINISHES = {                      # by the filament preset name, first match: roughness, subsurface weight, coat, transmission
+    "Translucent": (0.18, 0.0, 0.2, 0.92),   # PETG / PLA Translucent: clear, like glass with a slight haze
+    "Matte": (0.62, 0.04, 0.0, 0.0),
+    "Silk": (0.22, 0.02, 0.35, 0.0),
+    "PETG": (0.25, 0.10, 0.15, 0.0),
+    "ABS": (0.38, 0.04, 0.0, 0.0),
+    "TPU": (0.55, 0.10, 0.0, 0.0),
+    "": (0.42, 0.08, 0.0, 0.0),   # PLA Basic and anything else
 }
 LAYER_BUMP = 0.6                  # strength of the layer-line bump
 MID_GREY = 0.18                   # linear luminance the exposure is balanced around
@@ -203,7 +204,7 @@ def luminance(rgb):
 def filament_material(colour, preset, layer, axis):
     """Printed plastic: satin Principled BSDF, a touch of subsurface and layer lines
     as a sine bump along the object's `axis` (the print Z, whatever the display rotation)."""
-    rough, sss, coat = next(v for k, v in FINISHES.items() if k in preset)
+    rough, sss, coat, transmission = next(v for k, v in FINISHES.items() if k in preset)
     m = bpy.data.materials.new(f"{colour} {preset}")
     nt = m.node_tree
     bsdf = nt.nodes["Principled BSDF"]
@@ -213,6 +214,8 @@ def filament_material(colour, preset, layer, axis):
     bsdf.inputs["Subsurface Radius"].default_value = (1.0, 0.6, 0.3)
     bsdf.inputs["Subsurface Scale"].default_value = 0.6
     bsdf.inputs["Coat Weight"].default_value = coat
+    bsdf.inputs["Transmission Weight"].default_value = transmission
+    bsdf.inputs["IOR"].default_value = 1.57          # PETG
     coord = nt.nodes.new("ShaderNodeTexCoord")
     sep = nt.nodes.new("ShaderNodeSeparateXYZ")
     mul = nt.nodes.new("ShaderNodeMath")

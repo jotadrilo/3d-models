@@ -52,7 +52,8 @@ Main pieces:
 | `Project(title, process, filaments, process_overrides, colour_map)` | Process preset name, `Filament(preset, "#RRGGBB")` list (slot order) |
 | `proj.plate(name, prime_tower=(20, 30))` | New plate |
 | `plate.add(name, mesh, x, y, settings={...})` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides |
-| `proj.write(path)` | Checks the layout and writes the 3MF |
+| `proj.write(path)` | Checks the layout and names and writes the 3MF |
+| `Project(..., printer=X2D)`, `PRINTERS` | Target printer: `P1S` (default) or `X2D`. `printer.preset(kind, base)` finds the system preset made for it, e.g. `X2D.preset("filament", "Bambu PLA Matte")` |
 | `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC` | Filament preset names for the P1S 0.4 |
 
 Run as a script to slice every plate and print time and grams per plate and slot (the figures in
@@ -69,7 +70,7 @@ Environment overrides: `OPENSCAD`, `BAMBU_STUDIO`, `BAMBU_PROFILES`.
 Reads the project 3MF, so the renders show exactly what gets printed, with no colour or layer
 height picked by hand:
 
-- each part in the **colour and finish** of its filament (Matte, Silk, PETG… from the preset name);
+- each part in the **colour and finish** of its filament (Matte, Silk, PETG, Translucent… from the preset name; Translucent renders clear);
 - **layer lines** at the project's layer height, along the print Z;
 - **exposure and backdrop** that follow the filament brightness, so black and white parts keep
   their detail;

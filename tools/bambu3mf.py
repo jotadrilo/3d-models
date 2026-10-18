@@ -31,9 +31,8 @@ OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 BAMBU = os.environ.get("BAMBU_STUDIO", "/Applications/BambuStudio.app/Contents/MacOS/BambuStudio")
 PROFILES = os.environ.get("BAMBU_PROFILES", "/Applications/BambuStudio.app/Contents/Resources/profiles/BBL")
 
-PRINTER = "Bambu Lab P1S 0.4 nozzle"
 BED = "Textured PEI Plate"
-BED_W, BED_D = 256, 256
+BED_W, BED_D = 256, 256            # P1S and X2D alike
 EXCLUDED = (0, 0, 18, 28)          # front-left corner kept clear on the P1S (x0, y0, x1, y1)
 PLATE_GAP = 0.2                    # Bambu lays plates out on a grid, 20 % apart
 MARGIN = 3                         # minimum distance between objects and to the bed edge
@@ -42,6 +41,32 @@ PLA_BASIC = "Bambu PLA Basic @BBL P1S 0.4 nozzle"
 PLA_MATTE = "Bambu PLA Matte @BBL P1S 0.4 nozzle"
 PETG_HF = "Bambu PETG HF @BBL P1S 0.4 nozzle"
 PETG_BASIC = "Bambu PETG Basic @BBL X1C"      # also the P1S 0.4 preset (no P1S-specific one)
+
+
+@dataclass(frozen=True)
+class Printer:
+    machine: str                   # Bambu Studio machine preset
+    tag: str                       # short name, used in file names: <project>-<tag>.3mf
+    excluded: tuple = None         # bed area kept clear (x0, y0, x1, y1), if any
+    height: float = 250
+
+    def preset(self, kind, base):
+        """System preset `base @BBL ...` (e.g. "Bambu PLA Matte", "0.16mm High
+        Quality") made for this machine. The P1S has few of its own and
+        uses the X1C ones; this finds whichever the profiles list it in."""
+        hits = sorted(n for n, j in _presets(kind).items()
+                      if n.startswith(base + " @") and self.machine in j.get("compatible_printers", []))
+        if not hits:
+            sys.exit(f"No {kind} preset '{base} @...' for {self.machine}")
+        return min(hits, key=len)
+
+
+P1S = Printer("Bambu Lab P1S 0.4 nozzle", "p1s", excluded=EXCLUDED, height=250)
+# Two nozzles; the right one cannot reach x < 20.5 ("Left nozzle only area"), so
+# layouts keep that strip clear and either nozzle can print any plate.
+X2D = Printer("Bambu Lab X2D 0.4 nozzle", "x2d", excluded=(0, 0, 20.5, BED_D), height=261)
+PRINTERS = {p.tag: p for p in (P1S, X2D)}
+PRINTER = P1S.machine
 
 NS = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
       'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
@@ -173,7 +198,7 @@ class Plate:
 
 class Project:
     def __init__(self, title, process, filaments, process_overrides=None, colour_map=None,
-                 printer=PRINTER, bed=BED):
+                 printer=P1S, bed=BED):
         self.title, self.process, self.filaments = title, process, filaments
         self.process_overrides = process_overrides or {}
         self.colour_map = {k.upper(): v for k, v in (colour_map or {}).items()}
@@ -198,17 +223,22 @@ class Project:
         sys.exit(f"{self.title}: no filament for colour {colour}; add it to filaments or colour_map")
 
     def check_layout(self):
-        """Every object inside the bed, clear of the excluded corner and of each other."""
+        """Every object inside the bed, clear of the excluded corner and of each other,
+        and no plate or object name Bambu Studio refuses on opening."""
         for plate in self.plates:
+            for name in [plate.name] + [o.name for o in plate.objects]:
+                if any(c in name for c in '<>:/\\|?*"'):
+                    sys.exit(f"'{name}': Bambu Studio does not allow any of <>:/\\|?*\" in names")
             boxes = []
             for o in plate.objects:
                 lo, hi = o.mesh.bbox()
                 box = (o.x + lo[0], o.y + lo[1], o.x + hi[0], o.y + hi[1])
                 if box[0] < MARGIN or box[1] < MARGIN or box[2] > BED_W - MARGIN or box[3] > BED_D - MARGIN:
                     sys.exit(f"{plate.name}: '{o.name}' does not fit on the bed {tuple(round(b, 1) for b in box)}")
-                if hi[2] > 250:
-                    sys.exit(f"{plate.name}: '{o.name}' is taller than 250 mm")
-                for other, b in boxes + [("excluded area", EXCLUDED)]:
+                if hi[2] > self.printer.height:
+                    sys.exit(f"{plate.name}: '{o.name}' is taller than {self.printer.height} mm")
+                excluded = [("excluded area", self.printer.excluded)] if self.printer.excluded else []
+                for other, b in boxes + excluded:
                     if box[0] < b[2] and b[0] < box[2] and box[1] < b[3] and b[1] < box[3]:
                         sys.exit(f"{plate.name}: '{o.name}' overlaps {other}")
                 boxes.append((o.name, box))
@@ -298,7 +328,7 @@ class Project:
     def _settings(self, tmp):
         """Full project settings as Bambu Studio writes them, from its CLI on a dummy model."""
         machine, process = os.path.join(tmp, "machine.json"), os.path.join(tmp, "process.json")
-        json.dump(_flatten("machine", self.printer), open(machine, "w"))
+        json.dump(_flatten("machine", self.printer.machine), open(machine, "w"))
         json.dump(_flatten("process", self.process, self.process_overrides), open(process, "w"))
         fils = []
         for i, f in enumerate(self.filaments):
@@ -321,11 +351,23 @@ class Project:
         app = re.search(r'name="Application">([^<]*)<', z.read("3D/3dmodel.model").decode())
         colours = [f.colour.upper() for f in self.filaments]
         n = len(self.plates)
+        # One N x N purge matrix per nozzle, back to back, and one multiplier per
+        # nozzle: a dual-nozzle machine left with one matrix purges 0 on the other.
+        nozzle_count = max(1, len(cfg.get("nozzle_diameter") or []))
+        matrix = [str(flush(a, b)) for a in colours for b in colours]
         cfg.update(self.process_overrides)
+        for key in ("flush_multiplier", "flush_multiplier_fast"):
+            if isinstance(cfg.get(key), list) and cfg[key]:
+                cfg[key] = (cfg[key] * nozzle_count)[:nozzle_count]
         cfg.update(curr_bed_type=self.bed, filament_colour=colours, filament_map=["1"] * len(colours),
-                   flush_volumes_matrix=[str(flush(a, b)) for a in colours for b in colours],
+                   flush_volumes_matrix=matrix * nozzle_count,
                    wipe_tower_x=[str(p.prime_tower[0]) for p in self.plates],
                    wipe_tower_y=[str(p.prime_tower[1]) for p in self.plates])
+        # Dual-nozzle machines (X2D) refuse to slice without the nozzles mounted on
+        # each extruder, which the GUI syncs from the printer: one of its type each.
+        nozzles = cfg.get("nozzle_volume_type") or []
+        if len(nozzles) > 1 and not any(cfg.get("extruder_nozzle_stats") or []):
+            cfg["extruder_nozzle_stats"] = [f"{t}#1" for t in nozzles]
         if n > 1 and isinstance(cfg.get("wipe_tower_rotation_angle"), list):
             cfg["wipe_tower_rotation_angle"] = cfg["wipe_tower_rotation_angle"][:1] * n
         return cfg, app.group(1) if app else "BambuStudio"
@@ -345,14 +387,24 @@ def _plate_columns(n):
     return int(round(v) + 1 if v > round(v) else round(v))
 
 
+_PRESETS = {}
+
+
+def _presets(kind):
+    """Every system preset of `kind` (machine, process, filament) by name."""
+    if kind not in _PRESETS:
+        _PRESETS[kind] = {}
+        for f in os.listdir(os.path.join(PROFILES, kind)):
+            if f.endswith(".json"):
+                j = json.load(open(os.path.join(PROFILES, kind, f)))
+                if "name" in j:
+                    _PRESETS[kind][j["name"]] = j
+    return _PRESETS[kind]
+
+
 def _flatten(kind, name, extra=None):
     """A system preset with its `inherits` chain resolved, as the CLI needs it."""
-    presets = {}
-    for f in os.listdir(os.path.join(PROFILES, kind)):
-        if f.endswith(".json"):
-            j = json.load(open(os.path.join(PROFILES, kind, f)))
-            if "name" in j:
-                presets[j["name"]] = j
+    presets = _presets(kind)
     if name not in presets:
         sys.exit(f"Unknown {kind} preset: {name}")
 
@@ -392,7 +444,9 @@ def report(path):
     total_s = total_g = 0.0
     for plate in info.iter("plate"):
         meta = {m.get("key"): m.get("value") for m in plate.findall("metadata")}
-        secs, grams = float(meta.get("prediction", 0)), float(meta.get("weight", 0))
+        # The CLI leaves "weight" empty on plates that do not use filament 1.
+        secs = float(meta.get("prediction", 0))
+        grams = float(meta.get("weight") or sum(float(f.get("used_g", 0)) for f in plate.iter("filament")))
         total_s, total_g = total_s + secs, total_g + grams
         fils = ", ".join(f"slot {f.get('id')} {f.get('color')} {float(f.get('used_g', 0)):.1f} g"
                          for f in plate.iter("filament"))
