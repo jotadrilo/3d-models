@@ -98,7 +98,7 @@ parameters v1 takes about 4 h 20 min and 156 g, v2 about 5 h 35 min and
 ## Renders
 
 `make render` builds the project and renders studio views of each stand with
-Blender (`../tools/render_studio.py`), in the filament colour and with layer
+Blender (`../../tools/render_studio.py`), in the filament colour and with layer
 lines at the project's layer height. 2400 x 1800 WebP, ready for MakerWorld's
 model images; add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 

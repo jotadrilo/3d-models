@@ -144,7 +144,7 @@ and let the plate cool before removing the parts.
 ## Renders
 
 `make render` builds the project and renders the assembled rail, the print
-plate and the fit tests with Blender (`../tools/render_studio.py`), in the filament colour and
+plate and the fit tests with Blender (`../../tools/render_studio.py`), in the filament colour and
 with layer lines at the project's layer height. 2400 x 1800 WebP; add
 `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 

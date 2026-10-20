@@ -38,7 +38,7 @@ per-object settings. This module does that work:
 A project's `bambu_project.py` is then a short description:
 
 ```python
-sys.path.insert(0, os.path.join(HERE, "..", "tools"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PLA_MATTE, Filament, Project, load_scad
 
 proj = Project("Detergent scoop", process="0.20mm Standard @BBL X1C",
@@ -105,8 +105,8 @@ from a tested keyhole or fit instead of a copy. Load the files with `use` (not `
 the project folder:
 
 ```openscad
-use <../tools/scad/basics.scad>
-use <../tools/scad/mounts.scad>
+use <../../tools/scad/basics.scad>
+use <../../tools/scad/mounts.scad>
 ```
 
 `use` gives the modules and functions without the library's variables, so every size is an

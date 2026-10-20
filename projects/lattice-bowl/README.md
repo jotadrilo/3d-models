@@ -80,7 +80,7 @@ prints the figures for your parameters). It needs Bambu Studio installed.
 ## Renders
 
 `make render` builds the project and renders studio views of the bowl with Blender
-(`../tools/render_studio.py`), in the project's filaments and with layer lines
+(`../../tools/render_studio.py`), in the project's filaments and with layer lines
 at its layer height. 2400 x 1800 WebP, ready for MakerWorld's model images;
 add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 

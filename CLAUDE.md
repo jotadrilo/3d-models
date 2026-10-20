@@ -24,9 +24,12 @@ to the 3MF (`key`).
 3. **Every project ships with a Bambu Studio project** (`<project>-p1s.3mf`) built by
    `make project`. It must be ready to print: parts oriented, laid out on plates, filaments
    assigned per part and colour, process preset chosen, per-object settings applied. See §3.
-4. **Project folder layout**:
+4. **Repository layout: projects in `projects/`, shared components and scripts in `tools/`.**
+   Every model is a folder `projects/<project>/`; nothing project-specific goes in `tools/`, and
+   no functional component is designed only inside a project (§4.6).
+   **Project folder layout**:
    ```
-   <project>/
+   projects/<project>/
      <project>.scad        # parametric model, Customizer parameters at the top
      Makefile              # all / stl / 3mf / project / report / preview / render / clean / help (+ check)
      bambu_project.py      # builds <project>-p1s.3mf with tools/bambu3mf.py (§3)
@@ -40,7 +43,8 @@ to the 3MF (`key`).
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
    Add the project to the root `README.md` as one table row: its hero render as a 240 px
    thumbnail linking to the folder, then the link and a one-line description. Shared code lives
-   in `tools/`; shared OpenSCAD modules in `tools/scad/` (§4.6).
+   in `tools/`; shared OpenSCAD components in `tools/scad/` (§4.6). From a project folder, both
+   are at `../../tools/`.
 5. **Makefile**:
    - `OPENSCAD ?= openscad`, `OPENSCAD_FLAGS ?=` and `DEFS ?=` for overrides
      (`make DEFS='-D x=1'`), combined in `SCAD = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)`.
@@ -56,7 +60,7 @@ to the 3MF (`key`).
      `make project`) or `renders/`.
    - `render` depends on `project` and calls Blender through
      `BLENDER ?= blender`, `RENDER_FLAGS ?=` and
-     `RENDER = $(BLENDER) -b -P ../tools/render_studio.py --` (§3.3).
+     `RENDER = $(BLENDER) -b -P ../../tools/render_studio.py --` (§3.3).
    - Select each part with `-D 'part="name"'`. Multi-colour exports use
      `--enable=lazy-union -O export-3mf/color-mode=model`.
 6. **Commits**: one commit per project or change, in the style
@@ -175,7 +179,7 @@ Every project's `bambu_project.py` is a short description built on the shared mo
   Bed type, filament colours, flush matrix and prime tower position (per plate) are set on top.
 - Plates are placed on Bambu's plate grid, so multi-plate projects open and slice correctly
   (`remote-stand` has two).
-- `make report` (`python3 tools/bambu3mf.py report <project>-p1s.3mf`) slices every plate with the
+- `make report` (`python3 ../../tools/bambu3mf.py report <project>-p1s.3mf`) slices every plate with the
   CLI and prints time and grams per plate and slot. Use it for the figures in the README.
 
 Examples: `cosmere-tracker` (multi-colour, 9 objects on one plate, explicit layout),
@@ -332,17 +336,46 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 - Preview from the CLI:
   `openscad --render --imgsize=1400,900 --colorscheme=Tomorrow --camera=… -o x.png x.scad`.
 
-### 4.6 Shared library (`tools/scad/`)
-- **Before designing a mount, joint or hole, look in `tools/scad/`** (index in
+### 4.6 Functional components (`tools/scad/`)
+Functional components (mounts and anchors, joints, holes and fasteners, springs, hinges,
+latches, snap-fits…) are designed once, in `tools/scad/`, and used by the projects. A project
+designs its own shape, never its own component.
+
+- **Before designing one, look in `tools/scad/`** (index in
   [tools/README.md](tools/README.md#scad-the-openscad-library)): keyholes and suction-cup buttons,
   stand-off pegs, countersunk screws, diamond keys, tongues, lead-in sockets, polyholes,
   teardrops, chamfered prisms and the house style for wall pieces.
-- Load with `use <../tools/scad/<file>.scad>`. Modules take sizes as arguments; pass the
+- **A component that is not there yet** (a spring, a new anchor, a hinge, a latch…) goes through
+  three steps before the project uses it:
+  1. **Research** how it works when printed: the geometry that works, the material, the
+     orientation for its load (§2.3), clearances, fatigue and creep, and what fails first.
+     Prefer tests (CNC Kitchen, papers, data sheets) to forum advice, and say which is which.
+  2. **Record it in this file**: a short subsection under §4.7 with the rules, the numbers and
+     the sources, so the next project starts from them.
+  3. **Design it in `tools/scad/`** as parametric modules (sizes as arguments, defaults from the
+     research), add a sample to `catalog.scad` (cut with `cut = true` if its inside matters), add
+     it to the tools README, and run `make render` and `make report` there. If the fit matters,
+     the sample doubles as its fit test.
+- Load with `use <../../tools/scad/<file>.scad>`. Modules take sizes as arguments; pass the
   project's Customizer parameters, and wrap them under another name if the project needs a
   shorthand (a project module with the library's name hides the library one).
-- A new mount or joint that another project could use goes into the library: arguments instead
-  of globals, an entry in `catalog.scad` and in the tools README, and an STL check (same volume
-  and triangle count) of every project that uses it.
+- When a component changes, every project using it must export the same geometry as before
+  (same volume and triangle count per part), or get the change on purpose and its project rebuilt.
+
+### 4.7 Component notes
+Research behind each component in `tools/scad/`, one entry per component.
+
+- **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
+  `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
+  head, which pulls the piece against the button flange. The button self-taps onto an M4 stud
+  through a Ø3.4 pilot hole. Print the pad flat (the slot in XY) and the button standing; the
+  loads are small and stay in compression or shear (soap-caddy README, "Strength and orientation").
+- **Stand-off peg** (`mounts.scad`): a pin pressed into a hole (+0.1 mm in PETG) that rests on
+  the wall in compression. It stops a piece hung on two side-by-side mounts from nodding forward.
+  It is loaded along its axis, so it can print standing.
+- **Diamond key and tongue** (`joints.scad`): a square key turned 45° prints on
+  its side with no overhang past 45°. Socket play 0.15 per side is a slip fit and 0.05 a press
+  fit in PLA.
 
 ---
 
@@ -475,7 +508,7 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 ---
 
 ## 10. New project checklist
-- [ ] Mounts, joints and holes from `tools/scad/` where one fits (§4.6).
+- [ ] Functional components from `tools/scad/`; a new one researched, recorded (§4.7) and added there first (§4.6).
 - [ ] Parametric `.scad`: Customizer sections, `part` selector, `echo` of the size, clearances as
       parameters.
 - [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README.

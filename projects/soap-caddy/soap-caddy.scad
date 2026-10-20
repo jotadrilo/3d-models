@@ -167,9 +167,9 @@ if (top_above_counter + bottle_h > cabinet_h)
 
 // ---------------------------------------------------------------- helpers
 
-use <../tools/scad/basics.scad>
-use <../tools/scad/style.scad>
-use <../tools/scad/mounts.scad>
+use <../../tools/scad/basics.scad>
+use <../../tools/scad/style.scad>
+use <../../tools/scad/mounts.scad>
 
 
 // The house style (tools/scad/style.scad) with this project's sizes.

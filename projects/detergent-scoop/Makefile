@@ -8,7 +8,7 @@ SRC            := detergent-scoop.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
-RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
+RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
 .PHONY: all stl project report preview render check clean help
@@ -22,7 +22,7 @@ project: ## Build detergent-scoop-p1s.3mf, the ready-to-print Bambu Studio proje
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o detergent-scoop-p1s.3mf $(DEFS)
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../tools/bambu3mf.py report detergent-scoop-p1s.3mf
+	python3 ../../tools/bambu3mf.py report detergent-scoop-p1s.3mf
 
 preview: ## Render detergent-scoop.png
 	$(SCAD) --render --imgsize=1200,900 --camera=30,0,30,55,0,30,300 -o detergent-scoop.png $(SRC)

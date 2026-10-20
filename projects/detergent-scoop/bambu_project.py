@@ -9,7 +9,7 @@ the bed) so the cup needs no supports.
 import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "tools"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PLA_MATTE, Filament, Project, load_scad  # noqa: E402
 
 

@@ -9,7 +9,7 @@ SRC            := cosmere-tracker.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
-RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
+RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 VIEW           := --render --imgsize=1400,700 --projection=o --colorscheme=Tomorrow
 
 # lazy-union keeps every colour as its own object in the 3MF.
@@ -36,7 +36,7 @@ project: ## Build cosmere-tracker-p1s.3mf, the ready-to-print Bambu Studio proje
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o cosmere-tracker-p1s.3mf $(DEFS)
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../tools/bambu3mf.py report cosmere-tracker-p1s.3mf
+	python3 ../../tools/bambu3mf.py report cosmere-tracker-p1s.3mf
 
 preview: ## Render cosmere-tracker-front.png and cosmere-tracker-back.png
 	$(SCAD) $(VIEW) --camera=0,-400,32,0,0,32 -o cosmere-tracker-front.png $(SRC)

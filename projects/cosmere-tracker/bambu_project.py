@@ -10,7 +10,7 @@ filament changes in total.
 import argparse, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "tools"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PLA_BASIC, Filament, Project, load_scad  # noqa: E402
 
 SCAD = os.path.join(HERE, "cosmere-tracker.scad")

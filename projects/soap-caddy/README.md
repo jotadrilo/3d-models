@@ -65,7 +65,7 @@ There is room under the box to lift the tray piece off on its own.
   (`corner_r`), close rounded slots in the walls and rounded floor windows
   round a round collar. 4-line walls keep it under 90 g. The style, the
   keyholes, the buttons and the pegs come from the shared library
-  ([`tools/scad/`](../tools/scad/)), for the next kitchen pieces.
+  ([`tools/scad/`](../../tools/scad/)), for the next kitchen pieces.
 
 ## Installing
 
@@ -187,7 +187,7 @@ and let the plate cool before removing the parts.
 ## Renders
 
 `make render` builds the project and renders the caddy and the print plate
-with Blender (`../tools/render_studio.py`), in the filament colour and with
+with Blender (`../../tools/render_studio.py`), in the filament colour and with
 layer lines at the project's layer height. 2400 × 1800 WebP; add
 `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 

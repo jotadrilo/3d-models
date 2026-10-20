@@ -14,7 +14,7 @@ Plate 2: a keyhole fit test, one pad and one button.
 import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "tools"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PETG_BASIC, Filament, Project, load_scad  # noqa: E402
 
 SCAD = os.path.join(HERE, "soap-caddy.scad")

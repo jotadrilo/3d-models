@@ -16,7 +16,7 @@ Plate 3: a thin slice of the C, to try the grip on the desk.
 import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "tools"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PETG_BASIC, Filament, Project, load_scad  # noqa: E402
 
 SCAD = os.path.join(HERE, "desk-hanger-rail.scad")

@@ -7,7 +7,7 @@ DEFS           ?=
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
-RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
+RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 CAMERA         := --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380
 
 .DEFAULT_GOAL := all
@@ -27,7 +27,7 @@ project: ## Build remote-stand-p1s.3mf, the ready-to-print Bambu Studio project
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o remote-stand-p1s.3mf $(DEFS)
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../tools/bambu3mf.py report remote-stand-p1s.3mf
+	python3 ../../tools/bambu3mf.py report remote-stand-p1s.3mf
 
 preview: ## Render remote-stand.png and remote-stand-v2.png
 	$(SCAD) $(CAMERA) -o remote-stand.png remote-stand.scad

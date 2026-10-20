@@ -131,7 +131,7 @@ layers of each part, so purge waste is small.
 
 `make render` builds the project and renders studio views of the assembled tracker (OpenSCAD's `assembly`
 part, each colour in its filament) and of the print plate with Blender
-(`../tools/render_studio.py`), in the project's filaments and with layer lines
+(`../../tools/render_studio.py`), in the project's filaments and with layer lines
 at its layer height. 2400 x 1800 WebP, ready for MakerWorld's model images;
 add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 The parts print flat, so on the assembly the layer lines run across the

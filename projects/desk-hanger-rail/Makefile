@@ -9,7 +9,7 @@ SRC            := desk-hanger-rail.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
-RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
+RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 VIEW           := --render --imgsize=1400,900 --colorscheme=Tomorrow
 
 .DEFAULT_GOAL := all
@@ -27,7 +27,7 @@ project: ## Build desk-hanger-rail-p1s.3mf, the ready-to-print Bambu Studio proj
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o desk-hanger-rail-p1s.3mf $(DEFS)
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../tools/bambu3mf.py report desk-hanger-rail-p1s.3mf
+	python3 ../../tools/bambu3mf.py report desk-hanger-rail-p1s.3mf
 
 preview: ## Render desk-hanger-rail.png (assembly on a slice of desk) and desk-hanger-rail-side.png (bracket profile)
 	$(SCAD) $(VIEW) --camera=100,40,-15,62,0,215,560 -o desk-hanger-rail.png $(SRC)

@@ -8,7 +8,7 @@ SRC            := lattice_bowl.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
-RENDER         = $(BLENDER) -b -P ../tools/render_studio.py --
+RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
 .PHONY: all stl project report preview render clean help
@@ -22,7 +22,7 @@ project: ## Build lattice-bowl-p1s.3mf, the ready-to-print Bambu Studio project
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o lattice-bowl-p1s.3mf $(DEFS)
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../tools/bambu3mf.py report lattice-bowl-p1s.3mf
+	python3 ../../tools/bambu3mf.py report lattice-bowl-p1s.3mf
 
 preview: ## Render lattice_bowl.png
 	$(SCAD) --render --imgsize=1200,900 --camera=0,0,40,55,0,25,420 -o lattice_bowl.png $(SRC)
