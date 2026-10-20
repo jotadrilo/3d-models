@@ -118,7 +118,7 @@ module with the same name as a library one hides it: wrap library calls under a 
 |---|---|---|
 | [`basics.scad`](scad/basics.scad) | FDM shapes | `box(a, b)`, `polyhole(d, h)` (vertical holes true to size), `teardrop(d, h, flat)` (horizontal holes without support), `chamfered_cylinder(d, h, c)`, `chamfered_prism(h, c) 2D` (layer-stepped 45° chamfers), `spaced(lo, hi, w, gap)` |
 | [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink) and its male `keyhole_button` (screws onto a suction cup's M4 stud, or any stud); `standoff_peg` (stops a piece nodding forward) and its `standoff_peg_hole`; `countersunk_screw` (cutter for a `wood_screw`); size functions `keyhole_*` |
-| [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth) |
+| [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth), `sprung_handle` / `sprung_handle_socket` (a U snapped onto a part by its diamond pins) and `sprung_handle_strain` |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)` |
 | [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`: stand-ins for assemblies, renders and clearance checks |
 | [`catalog.scad`](scad/catalog.scad) | Samples and demos | `part=`: every component and its mate, printable, in print orientation. `demo=`: each one in use, for the renders |
@@ -138,12 +138,13 @@ and the wall (white).
 | **Diamond key**: The key out of a part's side, seated in its socket | ![](scad/renders/diamond-section-front.webp) |
 | **Tongue and groove**: Press fit along an edge | ![](scad/renders/tongue-section-front.webp) |
 | **Lead-in plug and socket**: Chamfered tip and mouth find each other; the plug stops short of the bottom | ![](scad/renders/lead_in-section-front.webp) |
+| **Sprung handle**: the arms sprung over the part, the diamond pins seated in their sockets (cut level with the pins, from above) | ![](scad/renders/handle-section-top.webp) |
 
 Sample plate: ![](scad/renders/catalog-hero.webp)
 
 Where each piece comes from and was printed: keyholes, buttons, pegs and the house style in
 `soap-caddy`, the lead-in socket and stepped
-chamfers in `desk-hanger-rail`. Clearances are defaults, not promises: keep the project's fit test
+chamfers in `desk-hanger-rail`, the sprung handle in `cutlery-drainer`. Clearances are defaults, not promises: keep the project's fit test
 (`test_keyhole`, `test_socket`, `test_anchor_*`) and print it before the real part.
 
 When a new project invents a mount or joint another project could use, move it here, make its

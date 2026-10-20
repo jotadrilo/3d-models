@@ -28,6 +28,8 @@ SAMPLES = {
     "keyhole_pad": ("Keyhole pad", 110, 110),
     "keyhole_button": ("Keyhole button", 140, 110),
     "standoff_peg": ("Standoff peg", 165, 110),
+    "handle_block": ("Handle block", 200, 110),
+    "handle": ("Handle", 200, 65),
 }
 
 def main():

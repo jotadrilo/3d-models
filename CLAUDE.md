@@ -385,7 +385,23 @@ Research behind each component in `tools/scad/`, one entry per component.
 - **Stand-off peg** (`mounts.scad`): a pin pressed into a hole (+0.1 mm in PETG) that rests on
   the wall in compression. It stops a piece hung on two side-by-side mounts from nodding forward.
   It is loaded along its axis, so it can print standing.
-- **Diamond key and tongue** (`joints.scad`): a square key turned 45° prints on
+- **Sprung handle** (`joints.scad`, from cutlery-drainer): a U whose arms are sprung apart by
+  hand so diamond pins at their ends snap into sockets on both sides of a part. Once seated it
+  cannot turn, and a pull up or forward cannot unseat it: the pins only leave if the arms are
+  spread again. Rules, from Bayer's snap-fit guide, Hubs, Fictiv and the Bambu PETG data sheet
+  (vendor guidance; the strain formula is beam theory):
+  - **Strain to put it on** `ε = 3·s·δ / (a·(2a + 3L))` (s section depth in the plane of the U,
+    δ spread per side, a arm length, L bar length; `sprung_handle_strain`). Keep it ≤1 % in
+    PETG for a handle taken on and off often, ≤2 % for a one-off, ≤0.5 % in PLA. A long bar
+    spreads easily; deepen the section only for stiffness.
+  - **No preload once seated**: the arms' free spacing is the part's width plus clearance. PETG
+    creeps under constant load, and hot water (≈60 °C, Tg 68 °C) sets a preloaded shape.
+  - Pins 3–5 mm long, lead-in chamfer on the tip and the socket mouth, clearance 0.15–0.3 mm
+    per side. Diamond pins stop rotation and print without support both lying flat (in the
+    handle) and with their axis horizontal (in the part).
+  - Print the U flat, so it flexes and carries the load along XY. Inside corner radius ≥ the
+    section; nothing on the outer face of the bar, which is at peak strain along its length.
+ a square key turned 45° prints on
   its side with no overhang past 45°. Socket play 0.15 per side is a slip fit and 0.05 a press
   fit in PLA.
 

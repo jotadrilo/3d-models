@@ -17,8 +17,8 @@ use <mounts.scad>
 use <joints.scad>
 use <hardware.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, house_box]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in]
+part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, house_box]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle]
 assembled = false;
 section = false;
 
@@ -40,6 +40,8 @@ flange_t = keyhole_button_flange_t(pad_t, shank_d, head_d);
 peg_d = 6; peg_len = pad_t + cup_h + flange_t; boss_t = pad_t;
 key_s = 3;   // diamond key side
 plug_d = 8;  // lead-in plug
+hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
+h_play = 0.4; h_reach = 14;
 
 // ---------------------------------------------------------------- printable samples
 
@@ -97,6 +99,12 @@ module lead_in_male_sample() {
     chamfered_prism(3) square(18, center = true);
     translate([0, 0, 3 - eps]) lead_in_plug(9) circle(d = plug_d);
 }
+module handle_block_sample()    // a block with a socket on each side, on its side as the frame prints
+    difference() {
+        translate([-hb_w / 2, -hb_d / 2, 0]) cube([hb_w, hb_d, hb_h]);
+        for (m = [0, 1]) mirror([m, 0, 0]) translate([hb_w / 2, 0, hb_h / 2]) sprung_handle_socket(6, 7);
+    }
+module handle_sample() sprung_handle(hb_w + 2 * h_play, h_reach, 8, 6, 5);
 module house_box_sample() {   // the house style: a small box with a keyhole in its back
     w = 60; d = 45; h = 40; t = 1.68;
     difference() {
@@ -127,6 +135,8 @@ module sample(p) {
     else if (p == "tongue_male") tongue_male_sample();
     else if (p == "lead_in_female") lead_in_female_sample();
     else if (p == "lead_in_male") lead_in_male_sample();
+    else if (p == "handle_block") handle_block_sample();
+    else if (p == "handle") handle_sample();
     else if (p == "house_box") house_box_sample();
 }
 
@@ -147,12 +157,13 @@ X = assembled ? 0 : 1;   // explode factor
 
 // The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
 // +x), "y" keeps y >= 0 (look from -y, the front).
-function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : "x";
+function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" ? "z" : "x";
 module cut(name) {
     if (!section) children();
     else intersection() {
         children();
         if (cut_plane(name) == "x") translate([-1000, -1000, -1000]) cube([1000, 2000, 2000]);
+        else if (cut_plane(name) == "z") translate([-1000, -1000, hb_h / 2 - 2000]) cube([2000, 2000, 2000]);
         else translate([-1000, 0, -1000]) cube([2000, 1000, 2000]);
     }
 }
@@ -228,6 +239,11 @@ module demo_part(name, role) {
         if (role == "piece") lead_in_female_sample();
         if (role == "mate") translate([0, 0, 17 + 22 * X]) rotate([180, 0, 0]) lead_in_male_sample();
         if (role == "arrow") arrow([14, 0, 32], [14, 0, 16]);
+    }
+    else if (name == "handle") {
+        // the handle's arms sprung over the block, its pins seated in the sockets
+        if (role == "piece") handle_block_sample();
+        if (role == "mate") translate([0, -(8 + h_reach + hb_d / 2), hb_h / 2 - 4]) sprung_handle(hb_w + 2 * h_play, h_reach + hb_d / 2, 8, 6, 5);
     }
 }
 
