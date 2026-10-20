@@ -28,10 +28,12 @@ project: ## Build desk-hanger-rail-p1s.3mf, the ready-to-print Bambu Studio proj
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report desk-hanger-rail-p1s.3mf
 
-render: project ## Render the assembly, the print plate and the fit tests into renders/ with Blender, in the project's filament
+render: project ## Render the assembly, a section of its left end (bar in socket, desk), the print plate and the fit tests into renders/ with Blender, in the project's filament
 	mkdir -p renders
 	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'show_desk=false' -o assembly.3mf $(SRC)
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail --model assembly.3mf --layer-axis x $(RENDER_FLAGS)
+	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'section=true' -o assembly.3mf $(SRC)
+	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-section --model assembly.3mf --layer-axis x --views front $(RENDER_FLAGS)
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-parts --views hero,top $(RENDER_FLAGS)
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-fit-test --plate 2 --views hero $(RENDER_FLAGS)
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-clip-test --plate 3 --views hero $(RENDER_FLAGS)

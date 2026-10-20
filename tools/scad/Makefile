@@ -6,7 +6,7 @@ OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
 SAMPLES        ?= keyhole_pad keyhole_button standoff_peg peg_block screw_plate holes diamond_female diamond_male tongue_female tongue_male lead_in_female lead_in_male house_box
-DEMOS          ?= keyhole standoff_peg screw holes diamond tongue lead_in house
+DEMOS          ?= keyhole standoff_peg screw holes diamond tongue lead_in
 SRC            := catalog.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
@@ -30,13 +30,10 @@ project: ## Build catalog-p1s.3mf, every sample on one plate, ready to print
 report: project ## Rebuild the project, slice it and print time and filament
 	python3 ../bambu3mf.py report catalog-p1s.3mf
 
-render: project ## Render each demo in DEMOS exploded (with its mate, hardware and arrows) and assembled in section, and the plate, into renders/
+render: project ## Render each demo in DEMOS assembled and in section (with its mate and hardware), and the plate, into renders/
 	mkdir -p renders
 	@set -e; for d in $(DEMOS); do \
 		echo "render $$d"; \
-		$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "demo=\"$$d\"" -o demo.3mf $(SRC); \
-		case $$d in keyhole|standoff_peg|screw|tongue) front=+x;; *) front=-y;; esac; \
-		$(RENDER) catalog-p1s.3mf renders/$$d --model demo.3mf --views hero --front=$$front $(RENDER_FLAGS); \
 		$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "demo=\"$$d\"" -D assembled=true -D section=true -o demo.3mf $(SRC); \
 		case $$d in holes|diamond|lead_in) cut=-y;; *) cut=+x;; esac; \
 		$(RENDER) catalog-p1s.3mf renders/$$d-section --model demo.3mf --views front --front=$$cut $(RENDER_FLAGS); \

@@ -64,6 +64,7 @@ FINISHES = {                      # by the filament preset name, first match: ro
     "": (0.42, 0.08, 0.0, 0.0),   # PLA Basic and anything else
 }
 LAYER_BUMP = 0.6                  # strength of the layer-line bump
+OPENSCAD_DEFAULT_COLOURS = {"#F9D72C", "#9DCB51"}   # what OpenSCAD gives uncoloured faces
 MID_GREY = 0.18                   # linear luminance the exposure is balanced around
 BACKDROP_DARK_PART = 0.62         # backdrop albedo behind dark parts
 BACKDROP_LIGHT_PART = 0.30        # backdrop albedo behind light parts
@@ -172,7 +173,7 @@ def load_model(path, filaments):
         index = {}
         remap = [index.setdefault(v, len(index)) for v in vs]  # weld, for smooth shading
         rgb = colour[:7] if colour else None
-        if rgb is None:
+        if rgb is None or rgb in OPENSCAD_DEFAULT_COLOURS:   # uncoloured geometry is the model
             slot = 1
         elif rgb in slots:
             slot = slots[rgb]

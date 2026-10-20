@@ -21,6 +21,8 @@ make help                                      # every target
 
 ![Bracket profile](renders/desk-hanger-rail-side.webp)
 
+![Left end cut through the bar axis: the bar (orange here) in the bracket's blind socket](renders/desk-hanger-rail-section-front.webp)
+
 The weight on the bar levers each bracket around the desk edge: the tip of the
 top lip presses down on the desk top and the underside arm presses up
 against the desk near the edge. The more you hang, the harder it grips. A

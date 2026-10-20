@@ -12,7 +12,8 @@
 
 /* [Part] */
 part = "assembly"; // [assembly, bracket_left, bracket_right, bar, test_socket, test_bar, test_clip]
-show_desk = true;  // draw a slice of the desk in the assembly (preview only)
+show_desk = true;  // draw a slice of the desk in the assembly
+section = false;   // cut the assembly's left end through the bar axis, for the section render
 
 /* [Desk] */
 desk_t = 25;           // desk top thickness [10:0.5:60]
@@ -185,11 +186,24 @@ else if (part == "test_socket") test_socket();
 else if (part == "test_bar") test_bar();
 else if (part == "test_clip") test_clip();
 else {
-    place(0) bracket_left();
-    place(width) mirror([0, 0, 1]) bracket_left();
-    translate([bracket_w - socket_depth + end_gap, bar_inset, -hook_clearance - bar_h]) bar();
+    cut() place(0) bracket_left();
+    cut() place(width) mirror([0, 0, 1]) bracket_left();
+    mate() cut() translate([bracket_w - socket_depth + end_gap, bar_inset, -hook_clearance - bar_h]) bar();
     if (show_desk)
-        color("BurlyWood", 0.5) translate([-40, 0, 0]) cube([width + 80, 120, desk_t]);
+        color("BurlyWood", section ? 1 : 0.5) cut() translate([-40, 0, 0]) cube([width + 80, 120, desk_t]);
+}
+
+// In the section the bar is orange, to tell it from the bracket.
+module mate() if (section) color("#FF6A13") children(); else children();
+
+// Section: the left end only, cut on the vertical plane through the bar axis
+// (the part behind it, y >= bar_inset, stays), to show the bar in its socket.
+module cut() {
+    if (!section) children();
+    else intersection() {
+        children();
+        translate([-50, bar_inset, -500]) cube([bracket_w + 90, 1000, 1000]);
+    }
 }
 
 echo(str("Bracket: ", web_t + bar_inset + boss_half, " x ", gap_top + max(lip_t, lip_root_t) + hook_clearance + bar_h + socket_wall,

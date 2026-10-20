@@ -29,7 +29,7 @@ make help                                      # every target
 
 ## How it hangs
 
-![Section through the middle, on the wall](renders/soap-caddy-section-front.webp)
+![Section through the upper keyholes, on the wall](renders/soap-caddy-section-front.webp)
 
 Four suction cups (Ø 50 mm with an M4 × 10 stud, e.g. DIYexpert on Amazon)
 stick to the wall: the upper pair one above the other, `cup_pitch` (55 mm)
@@ -44,6 +44,8 @@ The upper pair, one above the other, takes the bottle's turning moment. The
 lower pair, side by side, only stops the tray swinging sideways; two printed
 **pegs**, pressed into bosses under the tray floor, rest on the wall and
 stop it nodding forward when you press on the sponge.
+
+![Section through a lower keyhole: button, peg on the wall, tray](renders/soap-caddy-section-lower-front.webp)
 
 To clean, lift the upper piece 12 mm and pull it off, then the lower one.
 There is room under the box to lift the tray piece off on its own.
@@ -186,8 +188,8 @@ and let the plate cool before removing the parts.
 ## Renders
 
 `make render` builds the project and renders the caddy, a section through
-its middle on the wall (`-D section=true`: the bottle, sponge, cups and
-counter are cut with it) and the print plate with Blender
+its middle on the wall (`-D section="upper"`, and `"lower"` through a lower keyhole: the bottle,
+sponge, cups and counter are cut with it) and the print plate with Blender
 (`../../tools/render_studio.py`), in the filament colour and with
 layer lines at the project's layer height. 2400 × 1800 WebP; add
 `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.

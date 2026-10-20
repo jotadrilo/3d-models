@@ -18,7 +18,7 @@ use <joints.scad>
 use <hardware.scad>
 
 part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, house_box]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, house]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in]
 assembled = false;
 section = false;
 
@@ -81,7 +81,7 @@ module diamond_male_sample()     // a bar lying down, the key out of its end, co
 module tongue_female_sample()    // groove along the top
     difference() {
         chamfered_prism(10) square([40, 14], center = true);
-        translate([-25, 0, 10]) rotate([90, 0, 90]) linear_extrude(50) groove_profile();
+        translate([-25, 0, 10]) rotate([90, 0, 90]) linear_extrude(50) mirror([0, 1]) groove_profile();   // down into the block
     }
 module tongue_male_sample()      // tongue along the top
     union() {
@@ -228,13 +228,6 @@ module demo_part(name, role) {
         if (role == "piece") lead_in_female_sample();
         if (role == "mate") translate([0, 0, 17 + 22 * X]) rotate([180, 0, 0]) lead_in_male_sample();
         if (role == "arrow") arrow([14, 0, 32], [14, 0, 16]);
-    }
-    else if (name == "house") {
-        // the house-style box hung on its keyhole over a cup's button
-        if (role == "wall") wall(-50, 50, -40, 50);
-        if (role == "hw") translate([0, 0, 24]) rotate([90, 0, 0]) suction_cup(h = cup_h);
-        if (role == "mate") translate([0, -cup_h, 24]) rotate([90, 0, 0]) keyhole_button(pad_t, shank_d, head_d);
-        if (role == "piece") translate([0, -cup_h - flange_t, 0]) house_box_sample();
     }
 }
 

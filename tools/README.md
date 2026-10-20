@@ -125,21 +125,19 @@ module with the same name as a library one hides it: wrap library calls under a 
 
 `tools/scad/` follows the project layout: `make project` (`catalog-p1s.3mf`, every sample and
 its mate on one plate, 1 h 38 min and 48 g of grey PLA Basic: print it to check the fits on a new
-printer or filament) and `make render`, which renders each `demo` twice: exploded, with the component (grey), its
-printed mate (orange), the hardware it takes (dark grey), the wall (white) and red arrows for how
-it goes together; and assembled, cut through the plane that shows the joint seated
-(`assembled=true section=true`).
+printer or filament) and `make render`, which renders each `demo` assembled and cut through the plane that shows the
+joint seated: the component (grey), its printed mate (orange), the hardware it takes (dark grey)
+and the wall (white).
 
-| Component | Exploded | Assembled, in section |
-|---|---|---|
-| **Keyhole on a suction cup**: The button screws onto the cup's stud; the keyhole goes over its head and drops 12 mm. Seated, the cone head pulls the pad against the flange | ![](scad/renders/keyhole-hero.webp) | ![](scad/renders/keyhole-section-front.webp) |
-| **Stand-off peg**: Pressed into the piece, its tip rests on the wall | ![](scad/renders/standoff_peg-hero.webp) | ![](scad/renders/standoff_peg-section-front.webp) |
-| **Countersunk screw**: The 90° head sinks flush in the plate; the screw bites into the wall through a pilot hole | ![](scad/renders/screw-hero.webp) | ![](scad/renders/screw-section-front.webp) |
-| **Holes**: Bolts in a teardrop and a flat teardrop (no support), a pin in a polyhole, a screw in a countersink | ![](scad/renders/holes-hero.webp) | ![](scad/renders/holes-section-front.webp) |
-| **Diamond key**: The key out of a part's side, seated in its socket | ![](scad/renders/diamond-hero.webp) | ![](scad/renders/diamond-section-front.webp) |
-| **Tongue and groove**: Press fit along an edge: the section shows the tongue in its groove | ![](scad/renders/tongue-hero.webp) | ![](scad/renders/tongue-section-front.webp) |
-| **Lead-in plug and socket**: Chamfered tip and mouth find each other; the plug stops short of the bottom | ![](scad/renders/lead_in-hero.webp) | ![](scad/renders/lead_in-section-front.webp) |
-| **House style**: Rounded front, straight back, slots; hung on a cup through its keyhole | ![](scad/renders/house-hero.webp) | ![](scad/renders/house-section-front.webp) |
+| Component | Assembled, in section |
+|---|---|
+| **Keyhole on a suction cup**: The button screws onto the cup's stud; the keyhole drops over it and its cone head pulls the pad against the flange | ![](scad/renders/keyhole-section-front.webp) |
+| **Stand-off peg**: Pressed into the piece, its tip rests on the wall | ![](scad/renders/standoff_peg-section-front.webp) |
+| **Countersunk screw**: The 90° head sinks flush in the plate; the screw bites into the wall through a pilot hole | ![](scad/renders/screw-section-front.webp) |
+| **Holes**: Bolts in a teardrop and a flat teardrop (no support), a pin in a polyhole, a screw in a countersink | ![](scad/renders/holes-section-front.webp) |
+| **Diamond key**: The key out of a part's side, seated in its socket | ![](scad/renders/diamond-section-front.webp) |
+| **Tongue and groove**: Press fit along an edge | ![](scad/renders/tongue-section-front.webp) |
+| **Lead-in plug and socket**: Chamfered tip and mouth find each other; the plug stops short of the bottom | ![](scad/renders/lead_in-section-front.webp) |
 
 Sample plate: ![](scad/renders/catalog-hero.webp)
 
