@@ -100,14 +100,12 @@ eps = 0.01;
 chamfer = 0.6;                    // bottom-edge chamfer on the bed
 piece_colour = "#1A1A1A";
 
-shank_r = shank_d / 2 + keyhole_play;          // keyhole slot radius
-entry_r = head_d / 2 + keyhole_play;           // keyhole entry radius
-head_cone = (head_d - shank_d) / 2;            // 45° cone under the head
-shank_len = pad_t - head_cone + shank_play;    // flange face to cone start
-flange_t = max(3, stud_len + 1 - (shank_len + head_cone + head_cyl));
-button_h = flange_t + shank_len + head_cone + head_cyl;
-pad_lo = drop + entry_r + 4;                   // pad below a keyhole's rest point
-pad_hi = shank_r + 4;                          // pad above it
+// Keyhole and button sizes, from tools/scad/mounts.scad
+shank_r = keyhole_shank_r(shank_d, keyhole_play);        // keyhole slot radius
+entry_r = keyhole_entry_r(head_d, keyhole_play);         // keyhole entry radius
+flange_t = keyhole_button_flange_t(pad_t, shank_d, head_d, shank_play, head_cyl, stud_len);
+button_h = keyhole_button_h(pad_t, shank_d, head_d, shank_play, head_cyl, stud_len);
+pad_hi = keyhole_pad_hi(shank_d, keyhole_play);          // pad above a keyhole's rest point
 head_front = pad_t + shank_play + head_cyl;    // how far the heads reach in front of y = 0
 
 wall_gap = cup_h + flange_t;                   // wall to the back face of the pieces
@@ -169,45 +167,16 @@ if (top_above_counter + bottle_h > cabinet_h)
 
 // ---------------------------------------------------------------- helpers
 
-// Box from corner a to corner b (any order).
-module box(a, b) {
-    translate([min(a[0], b[0]), min(a[1], b[1]), min(a[2], b[2])])
-        cube([abs(b[0] - a[0]), abs(b[1] - a[1]), abs(b[2] - a[2])]);
-}
+use <../tools/scad/basics.scad>
+use <../tools/scad/style.scad>
+use <../tools/scad/mounts.scad>
 
-// Centres of the vertical slots that fit between lo and hi (1D).
-function slot_xs(lo, hi) =
-    let(n = floor((hi - lo + slot_rib) / (slot_w + slot_rib)),
-        used = n * slot_w + (n - 1) * slot_rib,
-        start = lo + (hi - lo - used) / 2 + slot_w / 2)
-    n < 1 ? [] : [for (i = [0:n - 1]) start + i * (slot_w + slot_rib)];
 
-// The house shape, in plan: a w x d footprint with its back edge on y = 0
-// (straight, against the wall) and the front corners rounded by corner_r.
-module plan(w, d) {
-    r = min(corner_r, w / 2, d);
-    hull() {
-        translate([-w / 2, -d + r]) square([w, d - r]);
-        for (s = [-1, 1]) translate([s * (w / 2 - r), -d + r]) circle(r = r);
-    }
-}
-
-// Its wall, t thick: straight back, sides rounding into the front.
-module shell(w, d, t) {
-    difference() {
-        plan(w, d);
-        offset(r = -t) plan(w, d);
-    }
-}
-
-// Rounded vertical slot (stadium) from z0 to z1, through a wall whose normal
-// is y (axis = "y") or x (axis = "x").
-module slot(x, y, z0, z1, axis) {
-    r = slot_w / 2;
-    hull() for (z = [z0 + r, z1 - r])
-        translate([x, y, z]) rotate(axis == "y" ? [90, 0, 0] : [0, 90, 0])
-            cylinder(r = r, h = 20, center = true);
-}
+// The house style (tools/scad/style.scad) with this project's sizes.
+module plan(w, d) house_plan(w, d, corner_r);
+module shell(w, d, t) house_shell(w, d, t, corner_r);
+function slot_xs(lo, hi) = slot_positions(lo, hi, slot_w, slot_rib);
+module slot(x, y, z0, z1, axis) wall_slot(x, y, z0, z1, axis, slot_w);
 
 // Slots through a back plate, between z0 and z1, clear of the keyhole pads
 // at pad_xs (pad centres).
@@ -226,43 +195,15 @@ module side_slots(hx, d, z0, z1) {
             slot(s * hx, -y, z0, z1, "x");
 }
 
-// Pad around a keyhole whose rest point (button axis, piece hanging) is at z.
-module keyhole_pad(z, x = 0) {
-    box([x - pad_w / 2, 0, z - pad_lo], [x + pad_w / 2, -pad_t, z + pad_hi]);
-}
-
-// Keyhole through the pad: the entry lets the head through, the slot above
-// it takes the shank, and a 45° countersink at the front takes the cone.
-module keyhole_cut(z, x = 0) {
-    translate([x, 0, 0]) rotate([90, 0, 0]) translate([0, 0, -eps]) {
-        translate([0, z - drop, 0]) cylinder(r = entry_r, h = pad_t + 2 * eps);
-        hull() for (zz = [z - drop, z]) translate([0, zz, 0]) cylinder(r = shank_r, h = pad_t + 2 * eps);
-        hull() for (zz = [z - drop, z])
-            translate([0, zz, pad_t - head_cone + eps])
-                cylinder(r1 = shank_r, r2 = shank_r + head_cone + eps, h = head_cone + eps);
-    }
-}
+// Keyholes (tools/scad/mounts.scad), their rest point at (x, 0, z).
+module pad_at(z, x = 0) translate([x, 0, z]) keyhole_pad(pad_t, pad_w, drop, shank_d, head_d, keyhole_play);
+module keyhole_at(z, x = 0) translate([x, 0, z]) keyhole_cut(pad_t, drop, shank_d, head_d, keyhole_play);
 
 // ---------------------------------------------------------------- parts
 
 // Button, in print orientation: flange on the bed, head on top. The cup's
 // M4 stud screws into the blind hole from the flange side.
-module button() {
-    difference() {
-        union() {
-            hull() {
-                translate([0, 0, chamfer]) cylinder(d = flange_d, h = flange_t - chamfer);
-                cylinder(d = flange_d - 2 * chamfer, h = eps);
-            }
-            cylinder(d = shank_d, h = flange_t + shank_len + eps);
-            translate([0, 0, flange_t + shank_len])
-                cylinder(d1 = shank_d, d2 = head_d, h = head_cone);
-            translate([0, 0, flange_t + shank_len + head_cone - eps])
-                cylinder(d = head_d, h = head_cyl + eps);
-        }
-        translate([0, 0, -eps]) cylinder(d = stud_hole, h = stud_len + 0.3 + eps, $fn = 24);
-    }
-}
+module button() keyhole_button(pad_t, shank_d, head_d, flange_d, shank_play, head_cyl, stud_len, stud_hole, 3, chamfer);
 
 // Upper piece: open-front box, its floor at z = 0.
 module upper() {
@@ -279,7 +220,7 @@ module upper() {
             translate([0, y_bc, 0]) cylinder(d = collar_d, h = collar_t);
             // walls: straight back, sides that round into the front returns
             linear_extrude(frame_h) shell(up_w, up_d, wall_t);
-            for (k = ks) keyhole_pad(k);
+            for (k = ks) pad_at(k);
         }
         // open front between the returns, rounded at the top corners of the opening
         translate([0, -up_d - 1, 0]) rotate([-90, 0, 0])
@@ -298,7 +239,7 @@ module upper() {
             translate([0, y_bc]) circle(d = collar_d + 8);
             translate([-up_w / 2, -back_t - 4]) square([up_w, back_t + 4]);
         }
-        for (k = ks) keyhole_cut(k);
+        for (k = ks) keyhole_at(k);
         back_slots([0], inner_w / 2, floor_t + slot_margin, frame_h - slot_margin);
         side_slots(hx, up_d, floor_t + slot_margin, frame_h - slot_margin);
     }
@@ -315,7 +256,7 @@ module lower() {
         union() {
             // back plate and keyhole pads
             box([-hx, 0, 0], [hx, -back_t, lower_top]);
-            for (s = [-1, 1]) keyhole_pad(lo_cup_z, s * lo_cup_x);
+            for (s = [-1, 1]) pad_at(lo_cup_z, s * lo_cup_x);
             // bosses for the pegs, under the tray floor
             for (s = [-1, 1]) box([s * peg_x - peg_collar / 2 - 1, 0, 0], [s * peg_x + peg_collar / 2 + 1, -pad_t, z_fb - tray_tv + eps]);
             // tray floor, sloping down to the front edge, with rounded front corners
@@ -337,7 +278,7 @@ module lower() {
             box([-ix - eps, -cradle_end, z_s - slat_h], [ix + eps, -cradle_end + slat_w, z_s]);
             box([-ix - eps, -cradle_end / 2 - slat_w / 2, z_s - slat_h], [ix + eps, -cradle_end / 2 + slat_w / 2, z_s - slat_h + 2.5]);
         }
-        for (s = [-1, 1]) keyhole_cut(lo_cup_z, s * lo_cup_x);
+        for (s = [-1, 1]) keyhole_at(lo_cup_z, s * lo_cup_x);
         for (s = [-1, 1]) translate([s * peg_x, eps, peg_z]) rotate([90, 0, 0])
             cylinder(d = peg_d + peg_fit, h = pad_t + 2 * eps, $fn = 32);
     }
@@ -345,21 +286,13 @@ module lower() {
 
 // Peg, in print orientation: collar on the bed. It presses into its boss from
 // the front of the lower piece, and its rounded tip rests on the wall.
-module peg() {
-    hull() {
-        translate([0, 0, chamfer]) cylinder(d = peg_collar, h = peg_collar_t - chamfer);
-        cylinder(d = peg_collar - 2 * chamfer, h = eps);
-    }
-    cylinder(d = peg_d, h = peg_collar_t + peg_len - peg_d / 4);
-    translate([0, 0, peg_collar_t + peg_len - peg_d / 4])
-        cylinder(d1 = peg_d, d2 = peg_d / 2, h = peg_d / 4);
-}
+module peg() standoff_peg(peg_d, peg_len, peg_collar, peg_collar_t, chamfer);
 
 // Fit test: a flat pad with one keyhole, for a button.
 module test_keyhole() {
     difference() {
-        translate([0, pad_t, 0]) keyhole_pad(0);
-        translate([0, pad_t, 0]) keyhole_cut(0);
+        translate([0, pad_t, 0]) pad_at(0);
+        translate([0, pad_t, 0]) keyhole_at(0);
     }
 }
 

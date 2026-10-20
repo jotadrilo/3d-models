@@ -8,6 +8,7 @@ in Bambu Studio (plates, filaments, orientation, settings) and photographed by h
 |---|---|---|
 | [`bambu3mf.py`](bambu3mf.py) | `make project`, `make report` | Builds the ready-to-print Bambu Studio project `<project>-p1s.3mf` from the OpenSCAD model, and slices it to report time and grams |
 | [`render_studio.py`](render_studio.py) | `make render` | Photoreal "as printed" studio renders of that project in Blender Cycles |
+| [`scad/`](scad/) | the `.scad` models | OpenSCAD library of the mounts, joints, FDM shapes and house style the projects share |
 
 Requirements: Python 3, OpenSCAD, Bambu Studio and Blender (versions and paths in
 [CLAUDE.md](../CLAUDE.md#local-environment-verified)).
@@ -96,3 +97,36 @@ blender -b -P tools/render_studio.py -- <project>-p1s.3mf renders/<name> [option
 
 The Makefiles call it through `make render`, passing extra options with `RENDER_FLAGS`.
 See [CLAUDE.md §3](../CLAUDE.md#3-the-bambu-studio-project-make-project) for the full conventions.
+
+## `scad/`: the OpenSCAD library
+
+Mounts, joints and FDM building blocks that more than one project needs, so a new project starts
+from a tested keyhole or fit instead of a copy. Load the files with `use` (not `include`), from
+the project folder:
+
+```openscad
+use <../tools/scad/basics.scad>
+use <../tools/scad/mounts.scad>
+```
+
+`use` gives the modules and functions without the library's variables, so every size is an
+argument with a sensible default, and the project passes its own Customizer parameters. A project
+module with the same name as a library one hides it: wrap library calls under a different name
+(`soap-caddy` wraps `keyhole_cut` as `keyhole_at(z, x)`).
+
+| File | What | Pieces |
+|---|---|---|
+| [`basics.scad`](scad/basics.scad) | FDM shapes | `box(a, b)`, `polyhole(d, h)` (vertical holes true to size), `teardrop(d, h, flat)` (horizontal holes without support), `chamfered_cylinder(d, h, c)`, `chamfered_prism(h, c) 2D` (layer-stepped 45° chamfers), `spaced(lo, hi, w, gap)` |
+| [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink), `keyhole_button` (screws onto a suction cup's M4 stud, or any stud), `standoff_peg` (stops a piece nodding forward), `countersunk_screw` (cutter); size functions `keyhole_*` |
+| [`joints.scad`](scad/joints.scad) | Part to part | `diamond_key(s, z0, z1)` (key and socket that print on their side), `tongue_profile(t, h, play, c)`, `lead_in_socket(depth, c) 2D` |
+| [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)` |
+| [`catalog.scad`](scad/catalog.scad) | Check | Renders one of everything; run it after changing the library |
+
+Where each piece comes from and was printed: keyholes, buttons, pegs and the house style in
+`soap-caddy`, the lead-in socket and stepped
+chamfers in `desk-hanger-rail`. Clearances are defaults, not promises: keep the project's fit test
+(`test_keyhole`, `test_socket`, `test_anchor_*`) and print it before the real part.
+
+When a new project invents a mount or joint another project could use, move it here, make its
+sizes arguments, add it to `catalog.scad`, and check that the projects using it export the same
+geometry as before (same volume and triangle count per part).

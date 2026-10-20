@@ -40,7 +40,7 @@ to the 3MF (`key`).
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
    Add the project to the root `README.md` as one table row: its hero render as a 240 px
    thumbnail linking to the folder, then the link and a one-line description. Shared code lives
-   in `tools/`.
+   in `tools/`; shared OpenSCAD modules in `tools/scad/` (§4.6).
 5. **Makefile**:
    - `OPENSCAD ?= openscad`, `OPENSCAD_FLAGS ?=` and `DEFS ?=` for overrides
      (`make DEFS='-D x=1'`), combined in `SCAD = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)`.
@@ -294,6 +294,18 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 - Preview from the CLI:
   `openscad --render --imgsize=1400,900 --colorscheme=Tomorrow --camera=… -o x.png x.scad`.
 
+### 4.6 Shared library (`tools/scad/`)
+- **Before designing a mount, joint or hole, look in `tools/scad/`** (index in
+  [tools/README.md](tools/README.md#scad-the-openscad-library)): keyholes and suction-cup buttons,
+  stand-off pegs, countersunk screws, diamond keys, tongues, lead-in sockets, polyholes,
+  teardrops, chamfered prisms and the house style for wall pieces.
+- Load with `use <../tools/scad/<file>.scad>`. Modules take sizes as arguments; pass the
+  project's Customizer parameters, and wrap them under another name if the project needs a
+  shorthand (a project module with the library's name hides the library one).
+- A new mount or joint that another project could use goes into the library: arguments instead
+  of globals, an entry in `catalog.scad` and in the tools README, and an STL check (same volume
+  and triangle count) of every project that uses it.
+
 ---
 
 ## 5. Fine finishes and variable resolution
@@ -425,6 +437,7 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 ---
 
 ## 10. New project checklist
+- [ ] Mounts, joints and holes from `tools/scad/` where one fits (§4.6).
 - [ ] Parametric `.scad`: Customizer sections, `part` selector, `echo` of the size, clearances as
       parameters.
 - [ ] Designed to print without supports: overhangs ≤45°, chamfered base, teardrops and sacrificial

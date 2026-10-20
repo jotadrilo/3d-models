@@ -63,8 +63,9 @@ There is room under the box to lift the tray piece off on its own.
   at full height out to the front edge and hide the slope inside.
 - Style: a straight back against the wall, front corners rounded in plan
   (`corner_r`), close rounded slots in the walls and rounded floor windows
-  round a round collar. 4-line walls keep it under 90 g. The same `plan()`,
-  `shell()` and `slot()` modules are meant for the next kitchen pieces.
+  round a round collar. 4-line walls keep it under 90 g. The style, the
+  keyholes, the buttons and the pegs come from the shared library
+  ([`tools/scad/`](../tools/scad/)), for the next kitchen pieces.
 
 ## Installing
 
