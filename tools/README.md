@@ -120,7 +120,17 @@ module with the same name as a library one hides it: wrap library calls under a 
 | [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink), `keyhole_button` (screws onto a suction cup's M4 stud, or any stud), `standoff_peg` (stops a piece nodding forward), `countersunk_screw` (cutter); size functions `keyhole_*` |
 | [`joints.scad`](scad/joints.scad) | Part to part | `diamond_key(s, z0, z1)` (key and socket that print on their side), `tongue_profile(t, h, play, c)`, `lead_in_socket(depth, c) 2D` |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)` |
-| [`catalog.scad`](scad/catalog.scad) | Check | Renders one of everything; run it after changing the library |
+| [`catalog.scad`](scad/catalog.scad) | Check | One sample of everything, in print orientation; `cut = true` cuts a quarter off the ones whose inside matters |
+
+`tools/scad/` follows the project layout: `make preview`, `make project` (`catalog-p1s.3mf`, every
+sample on one plate, 1 h 22 min and 40 g of grey PLA Basic: print it to check the fits on a new
+printer or filament) and `make render`.
+
+| Keyhole pad | Keyhole button | Stand-off peg | House box |
+|---|---|---|---|
+| ![](scad/renders/keyhole_pad-hero.webp) | ![](scad/renders/keyhole_button-hero.webp) | ![](scad/renders/standoff_peg-hero.webp) | ![](scad/renders/house_box-hero.webp) |
+| **Holes**: teardrop, flat teardrop, polyhole, countersunk screw | **Sockets**: diamond, groove, lead-in | **Keys**: diamond key, tongue | **Plate** |
+| ![](scad/renders/holes-hero.webp) | ![](scad/renders/sockets-hero.webp) | ![](scad/renders/keys-hero.webp) | ![](scad/renders/catalog-hero.webp) |
 
 Where each piece comes from and was printed: keyholes, buttons, pegs and the house style in
 `soap-caddy`, the lead-in socket and stepped
