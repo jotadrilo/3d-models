@@ -56,11 +56,14 @@ There is room under the box to lift the tray piece off on its own.
 - The cap tip hangs `tip_gap` (15 mm) over the sponge. The push-pull cap
   comes out ~5 mm when open, so it still clears the sponge.
 - The sponge sits on level slats, between the side walls and with nothing
-  at the front, so it slides in and out freely. Water drips through onto a tray sloping 6° forward. Its front edge reaches
-  10 mm past the edge of the sink (`sink_dist` + `drip_over` from the wall).
+  at the front, so it slides in and out freely. Water drips through onto a
+  tray sloping 6° forward. Its front edge reaches 10 mm past the edge of the
+  sink (`sink_dist` + `drip_over` from the wall).
+- Seen from the side the tray piece is a plain rectangle: the side walls run
+  at full height out to the front edge and hide the slope inside.
 - Style: a straight back against the wall, front corners rounded in plan
   (`corner_r`), close rounded slots in the walls and rounded floor windows
-  round a round collar. 4-line walls keep it under 80 g. The same `plan()`,
+  round a round collar. 4-line walls keep it under 90 g. The same `plan()`,
   `shell()` and `slot()` modules are meant for the next kitchen pieces.
 
 ## Installing
@@ -131,7 +134,7 @@ cups do not fit their pieces.
 | `tray_slope` | 6 | Tray slope, degrees |
 | `tray_t`, `side_t` | 1.26, 1.68 | Tray floor and side walls |
 | `slat_w`, `slat_h`, `slat_pitch` | 2.1, 5, 9 | Slats |
-| `sponge_rim`, `rim_h` | 12, 6 | Side walls above the slats; along the spill lip |
+| `sponge_rim` | 12 | Side walls above the slats (they run at that height out to the front) |
 | `peg_d`, `peg_fit`, `peg_inset` | 6, 0.1, 10 | Pegs; extra on their holes (press fit); axis in from each side |
 | **Style** | | |
 | `corner_r` | 14 | Front corners, rounded in plan (the back stays straight) |
@@ -156,7 +159,7 @@ upright walls. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 53 min | 77 g |
+| 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 57 min | 85 g |
 | 2 · Keyhole fit test | keyhole pad, button | 19 min | 3 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,

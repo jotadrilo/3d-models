@@ -84,7 +84,6 @@ slat_h = 5;          // slat height [3:0.5:12]
 slat_pitch = 9;      // slat spacing [5:0.5:15]
 slat_clear = 3;      // gap between the slats and the tray floor, at the back [2:0.5:10]
 sponge_rim = 12;     // side walls rise this much above the slats [0:1:40]
-rim_h = 6;           // side walls along the spill lip, above the tray floor [2:1:20]
 peg_d = 6;           // pegs that rest the bottom of the lower piece on the wall [4:0.5:10]
 peg_fit = 0.1;       // added to the peg holes, which print ~0.2 small: a press fit [-0.1:0.05:0.4]
 peg_inset = 10;      // peg axis, in from each side of the lower piece [6:1:30]
@@ -325,17 +324,11 @@ module lower() {
                     polygon([[0, z_fb], [-reach, tray_tv], [-reach, 0], [0, z_fb - tray_tv]]);
                 translate([0, 0, -1]) linear_extrude(z_fb + 2) plan(lo_w, reach);
             }
-            // side walls: high round the sponge, a low rim along the spill lip
-            // that rounds into the front corners; the front stays open
+            // side walls: a plain rectangle seen from the side, full height out
+            // to the front edge, rounding into the front corners; the front stays open
             difference() {
-                intersection() {
-                    linear_extrude(lower_top) shell(lo_w, reach, side_t);
-                    rotate([90, 0, 90]) translate([0, 0, -hx - 1]) linear_extrude(lo_w + 2)
-                        polygon([[0, z_fb - tray_tv], [0, z_s + sponge_rim],
-                                 [-cradle_end, z_s + sponge_rim], [-cradle_end, tray_top(-cradle_end) + rim_h],
-                                 [-reach, tray_tv + rim_h], [-reach, 0]]);
-                }
-                box([-(hx - corner_r), -reach - 1, -1], [hx - corner_r, -reach + side_t + 1, lower_top]);
+                linear_extrude(lower_top) shell(lo_w, reach, side_t);
+                box([-(hx - corner_r), -reach - 1, -1], [hx - corner_r, -reach + side_t + 1, lower_top + 1]);
             }
             // slats, flush at the front so the sponge slides in and out freely
             for (x = slat_xs)
