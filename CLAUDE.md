@@ -110,13 +110,51 @@ density. Above 40 % there is almost nothing to gain.
 - Top skin **≥0.8–1.0 mm** (`top_shell_thickness`) to avoid pillowing. Parts thinner than two
   skins plus a little infill end up solid anyway.
 
-### 2.3 Strength and orientation
-- **Z is the weak direction.** Layer adhesion gives 55 % of the XY strength in PLA, 46 % in PETG
-  and 29 % in ASA. Orient parts so tensile and bending loads run in XY. Hooks and snap-fits must
-  never have their length along Z.
-- Printing hotter improves layer adhesion: PLA ≈230 °C and PETG ≈245 °C for maximum strength.
-  Use the low end of the range for looks.
-- Annealing PLA is only worth it for heat resistance: Z strength does not change and the part warps.
+### 2.3 Strength and orientation (orient by load)
+**Z (across the layers) is the weak direction, and every functional part is oriented for its main
+load before anything else.** Design with the figures from real parts, not the data sheets: Bambu's
+coupons give Z ≈ 80–90 % of XY for PLA and PETG, but CNC Kitchen's hooks printed upright held
+**55 % (PLA), 46 % (PETG) and 29 % (ASA)** of the same hook printed flat. Derate anything loaded
+across the layers to **50 % (PLA), 40 % (PETG), 25–30 % (ABS/ASA and any CF grade)**, and expect
+about half the elongation, so it breaks suddenly. Carbon fibre adds nothing in Z (the fibres lie in
+the layer), and wet nylon loses about 45 % more.
+
+| Load | Orient so that… | Notes |
+|---|---|---|
+| Tension (straps, links) | the load axis lies in XY | |
+| Bending, cantilevers (hooks, brackets, shelf arms, clips) | the beam and its bending plane lie in XY: hooks and brackets **on their side**, outline on the bed | The root carries the peak stress: no layer line across it. On edge is stiffer than flat |
+| Wall-mounted arm with hanging weight | the plane from wall to load lies in XY (on its side) | Flat on its back puts every layer across the root, unless the arm is a short, thick plate with tiny loads (check the numbers) |
+| Torsion (shafts, knobs) | a long part's axis lies in XY; a short, fat one can stand | More walls help more than orientation |
+| Compression (feet, spacers, stand-offs) | any orientation | Angled loads turn into shear along the layers |
+| Snap-fit | arm and deflection in XY | In Z, halve the allowed strain. Root fillet ≥0.5 × thickness, tapered arm, PETG/ABS |
+| Living hinge | 2–3 flat layers, lines across the hinge axis | PETG or PP, 0.4–0.8 mm; a modifier makes the lines run across it |
+| Pins, pegs, dowels in shear | lying in XY, with a flat on the bed | An upright pin snaps at a layer. If it must stand: ≥6 mm Ø, or a metal pin through it |
+| Press fits, bolt holes in bearing, heat-set inserts | the hole's axis vertical | Hoop and bearing stress stay in XY. ≥2 × Ø of material to the edge, ≥4 walls. A horizontal hole splits along a layer |
+| Screw pulled along its axis | the boss lying so the pull is in XY, or an insert | A vertical boss pulled up tears out between layers |
+| Keyholes, hanging slots | the slot's lip loaded in XY where possible | The lip ≥2 mm; ribs behind it if the head pulls along Z |
+| Impact | the blow crossing the lines, in XY | PETG/ABS over PLA, more walls, no sharp inner corners |
+
+Inside the layer (§2.2: walls beat infill):
+- Walls along the stress: 4–6 walls on functional parts. Lines along the load are far stronger
+  than lines across it (Ahn 2002), so use concentric modifiers on rings, straps and hinges.
+- Line width ≈0.5–0.6 mm (≈150 % of the nozzle) gives the best layer bonding. Layer height
+  ≤0.2 mm; at 0.3 mm upright hooks held about half.
+- Printing hotter bonds the layers: **PLA ≈230 °C, PETG ≈245 °C** for strength; the low end of
+  the range for looks.
+- Seams start cracks: keep them off the tension face and the root of a cantilever.
+- Fillet every loaded root (≥0.5 × thickness) on vertical and top edges; bottom edges stay
+  chamfered (§4.1).
+- Annealing PLA adds nothing in Z and warps the part up to 10 %. Change material instead.
+
+When the strong orientation fights printability:
+1. Chamfer the overhang (45°) or add a sacrificial flat so the part can lie in the strong way.
+2. **Split the part** and join it (pins, dovetails, screws, §4.6) so each piece prints strong.
+3. Tilt it 30–45°: the cross-layer coupon went from 31 to 40 MPa. Below 30° it gains little.
+4. If the load still crosses layers: derate (above), add ribs or gussets in XY, thicken the
+  root, or run a screw or metal pin across the layers.
+
+Every functional project's README says, per loaded part, which load it carries, how the part is
+oriented for it, and the margin when the load crosses the layers.
 
 ---
 
@@ -440,6 +478,7 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 - [ ] Mounts, joints and holes from `tools/scad/` where one fits (§4.6).
 - [ ] Parametric `.scad`: Customizer sections, `part` selector, `echo` of the size, clearances as
       parameters.
+- [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README.
 - [ ] Designed to print without supports: overhangs ≤45°, chamfered base, teardrops and sacrificial
       layers where needed.
 - [ ] Walls in multiples of 0.42 mm; heights and inlays in multiples of 0.2 mm.
@@ -459,6 +498,6 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
 Bambu Lab Wiki (wiki.bambulab.com: plates, multi-color printing, reduce wasting during filament
 change, prime tower, adaptive layer height, ironing, seam, wall generator, support, sequent print,
 calibration), BambuStudio source code (`PrintConfig.cpp`, `bbs_3mf.cpp`, BBL presets), the local
-Bambu Studio 02.08.02.61 install, CNC Kitchen (walls vs infill, temperature, annealing, inserts),
+Bambu Studio 02.08.02.61 install, CNC Kitchen (walls vs infill, PLA vs PETG vs ASA hooks, 45° orientation, extrusion width, layer height, temperature, annealing, inserts), Bambu filament TDS (XY vs Z), Ahn et al. 2002 (raster direction),
 Prusa Knowledge Base, OrcaSlicer wiki (infill patterns), Hubs (FDM design, snap-fits), OpenSCAD
 manual.

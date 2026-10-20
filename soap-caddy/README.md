@@ -141,6 +141,24 @@ cups do not fit their pieces.
 | `corner_r` | 14 | Front corners, rounded in plan (the back stays straight) |
 | `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded vertical slots in the walls |
 
+## Strength and orientation
+
+Each loaded part is checked against its load, derating PETG to 40 % across
+the layers (CLAUDE.md §2.3). Loads: a full 600 ml bottle (≈6.5 N) and a hand
+pressing the sponge (≈30 N).
+
+| Part | Load | Printed | Across the layers? | Margin |
+|---|---|---|---|---|
+| `upper` | bottle on the floor, hung from the back wall; its pitch pulls the top button head out with ≈6 N (bottle 52 mm from the wall, cups 55 mm apart) | standing on its floor | yes: walls in tension along Z | > 100× (≈0.05 MPa in the walls) |
+| `lower` slats | the hand on the sponge: ≈4.3 N per slat (7 slats), simply supported over ≈38 mm (back plate, middle tie) | on its back, slats along Z | yes: they bend across the layers | ≈4× (≈4.7 MPa against ≈19). Raise `slat_h` if needed: the stress drops with its square |
+| `lower` tray | dripping water | on its back | yes | no real load |
+| `button` | shear on the shank and pull on the head, ≤6 N | standing on its flange | yes | > 50× (≈0.2 MPa on a 7 mm shank) |
+| `peg` | pushes on the wall along its axis | standing on its collar | no: compression | — |
+
+Lying on its side would put the slats in XY, but the side wall would
+then be a 108 × 40 mm roof in the air. With a 4× margin, the back is the
+better trade.
+
 ## Keyhole fit test
 
 **Plate 2** (19 min, 3 g): one keyhole pad and one button. Push the button
