@@ -30,13 +30,16 @@ project: ## Build catalog-p1s.3mf, every sample on one plate, ready to print
 report: project ## Rebuild the project, slice it and print time and filament
 	python3 ../bambu3mf.py report catalog-p1s.3mf
 
-render: project ## Render each demo in DEMOS (the component in use, with its mate and hardware; side-on where it is exploded towards the viewer) and the plate into renders/
+render: project ## Render each demo in DEMOS exploded (with its mate, hardware and arrows) and assembled in section, and the plate, into renders/
 	mkdir -p renders
 	@set -e; for d in $(DEMOS); do \
 		echo "render $$d"; \
 		$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "demo=\"$$d\"" -o demo.3mf $(SRC); \
 		case $$d in keyhole|standoff_peg|screw|tongue) front=+x;; *) front=-y;; esac; \
 		$(RENDER) catalog-p1s.3mf renders/$$d --model demo.3mf --views hero --front=$$front $(RENDER_FLAGS); \
+		$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "demo=\"$$d\"" -D assembled=true -D section=true -o demo.3mf $(SRC); \
+		case $$d in holes|diamond|lead_in) cut=-y;; *) cut=+x;; esac; \
+		$(RENDER) catalog-p1s.3mf renders/$$d-section --model demo.3mf --views front --front=$$cut $(RENDER_FLAGS); \
 	done
 	$(RENDER) catalog-p1s.3mf renders/catalog --views hero,top $(RENDER_FLAGS)
 	rm -f demo.3mf

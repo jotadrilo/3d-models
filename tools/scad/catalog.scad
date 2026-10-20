@@ -7,6 +7,9 @@
 //   piece (grey), its printed mate (orange), the bought hardware it takes
 //   (dark grey), the wall it hangs on (white) and red arrows for how it goes
 //   together, slightly exploded.
+// assembled = true: the demo put together, no arrows. With section = true it
+//   is cut through the plane that shows the joint (cut_plane), for the
+//   section renders: every anchor and insert is shown seated, in section.
 
 use <basics.scad>
 use <style.scad>
@@ -16,6 +19,8 @@ use <hardware.scad>
 
 part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, house_box]
 demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, house]
+assembled = false;
+section = false;
 
 $fa = 1; $fs = 0.4;
 eps = 0.01;
@@ -90,7 +95,7 @@ module lead_in_female_sample()
     }
 module lead_in_male_sample() {
     chamfered_prism(3) square(18, center = true);
-    translate([0, 0, 3 - eps]) lead_in_plug(14) circle(d = plug_d);
+    translate([0, 0, 3 - eps]) lead_in_plug(9) circle(d = plug_d);
 }
 module house_box_sample() {   // the house style: a small box with a keyhole in its back
     w = 60; d = 45; h = 40; t = 1.68;
@@ -136,19 +141,33 @@ module arrow(p, q, d = 2) {
     translate(b) rotate([0, acos(v[2] / l), atan2(v[1], v[0])]) cylinder(d1 = 2.4 * d, d2 = 0, h = hl);
 }
 
-module wall(x0, x1, z0, z1) box([x0, 0, z0], [x1, 3, z1]);
+module wall(x0, x1, z0, z1, t = 3) box([x0, 0, z0], [x1, t, z1]);
+
+X = assembled ? 0 : 1;   // explode factor
+
+// The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
+// +x), "y" keeps y >= 0 (look from -y, the front).
+function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : "x";
+module cut(name) {
+    if (!section) children();
+    else intersection() {
+        children();
+        if (cut_plane(name) == "x") translate([-1000, -1000, -1000]) cube([1000, 2000, 2000]);
+        else translate([-1000, 0, -1000]) cube([2000, 1000, 2000]);
+    }
+}
 
 // One role of a demo: "piece", "mate", "hw", "wall" or "arrow".
 module demo_part(name, role) {
     if (name == "keyhole") {
         // cup on the wall, the button screwed onto its stud; the piece's
         // keyhole goes over the button head (1) and drops (2)
-        yb = -cup_h - 14;                      // button flange face, exploded off the hub
-        yp = yb - flange_t - 24;               // piece back face, exploded off the flange
-        if (role == "wall") wall(-40, 40, -45, 45);
+        yb = -cup_h - 14 * X;                  // button flange face, exploded off the hub
+        yp = yb - flange_t - 24 * X;           // piece back face, exploded off the flange
+        if (role == "wall") if (assembled) wall(-30, 30, -30, 30); else wall(-40, 40, -45, 45);
         if (role == "hw") rotate([90, 0, 0]) suction_cup(h = cup_h);
         if (role == "mate") translate([0, yb, 0]) rotate([90, 0, 0]) keyhole_button(pad_t, shank_d, head_d);
-        if (role == "piece") translate([0, yp, drop]) difference() {
+        if (role == "piece") translate([0, yp, drop * X]) difference() {
             keyhole_pad(pad_t, pad_w, drop, shank_d, head_d);
             keyhole_cut(pad_t, drop, shank_d, head_d);
         }
@@ -166,25 +185,29 @@ module demo_part(name, role) {
             box([-20, -18, 0], [20, 18, boss_t]);
             translate([0, 0, boss_t]) standoff_peg_hole(peg_d, boss_t + 1);
         }
-        if (role == "mate") translate([0, yf - boss_t - 18, 0]) rotate([-90, 0, 0]) standoff_peg(peg_d, peg_len);
+        if (role == "mate") translate([0, yf - boss_t - 1.6 - 16 * X, 0]) rotate([-90, 0, 0]) standoff_peg(peg_d, peg_len);
         if (role == "arrow") arrow([12, yf - boss_t - 18, 0], [12, yf - boss_t - 4, 0]);
     }
     else if (name == "screw") {
-        if (role == "wall") wall(-30, 30, -30, 30);
+        // the screw bites into a thick wall (a plug, or timber), through its pilot hole
+        if (role == "wall") difference() {
+            wall(-30, 30, -30, 30, 32);
+            translate([0, -1, 0]) rotate([-90, 0, 0]) cylinder(d = 3, h = 27);
+        }
         if (role == "piece") rotate([90, 0, 0]) difference() {
             chamfered_prism(5) square([30, 30], center = true);
             translate([0, 0, 5]) countersunk_screw(4, 8, 10, extra = 1);
         }
-        if (role == "hw") translate([0, -5 - 18, 0]) rotate([90, 0, 0]) wood_screw(4, 8, 30);
+        if (role == "hw") translate([0, -5 - 18 * X, 0]) rotate([90, 0, 0]) wood_screw(4, 8, 30);
         if (role == "arrow") arrow([12, -5 - 22, 0], [12, -8, 0]);
     }
     else if (name == "holes") {
         if (role == "piece") holes_sample();
         if (role == "hw") {
-            translate([-18, -55, 10]) rotate([-90, 0, 0]) rod(8, 25);   // bolts about to go into the teardrops
-            translate([-4, -55, 10]) rotate([-90, 0, 0]) rod(8, 25);
-            translate([8, 0, 26]) rod(3, 16);                           // pin above the polyhole
-            translate([19, 0, 34]) wood_screw(3.5, 7, 16);              // screw above the countersink
+            translate([-18, -12 - 43 * X, 10]) rotate([-90, 0, 0]) rod(8, 25);   // bolts into the teardrops
+            translate([-4, -12 - 43 * X, 10]) rotate([-90, 0, 0]) rod(8, 25);
+            translate([8, 0, 8 + 18 * X]) rod(3, 16);                  // pin into the polyhole
+            translate([19, 0, 20 + 14 * X]) wood_screw(3.5, 7, 16);     // screw into the countersink
         }
         if (role == "arrow") {
             for (x = [-18, -4]) arrow([x, -26, 18], [x, -12, 18]);
@@ -193,17 +216,17 @@ module demo_part(name, role) {
     }
     else if (name == "diamond") {
         if (role == "piece") diamond_female_sample();
-        if (role == "mate") translate([0, 0, 12 + 10 + 6]) rotate([0, 90, 0]) diamond_male_sample();
+        if (role == "mate") translate([-5, 0, 12 + 16 * X]) rotate([0, 90, 0]) diamond_male_sample();
         if (role == "arrow") arrow([12, 0, 30], [12, 0, 16]);
     }
     else if (name == "tongue") {
         if (role == "piece") tongue_female_sample();
-        if (role == "mate") translate([0, 0, 10 + 18]) rotate([180, 0, 0]) tongue_male_sample();
+        if (role == "mate") translate([0, 0, 16 + 12 * X]) rotate([180, 0, 0]) tongue_male_sample();
         if (role == "arrow") arrow([0, -12, 24], [0, -12, 12]);
     }
     else if (name == "lead_in") {
         if (role == "piece") lead_in_female_sample();
-        if (role == "mate") translate([0, 0, 14 + 8 + 17]) rotate([180, 0, 0]) lead_in_male_sample();
+        if (role == "mate") translate([0, 0, 17 + 22 * X]) rotate([180, 0, 0]) lead_in_male_sample();
         if (role == "arrow") arrow([14, 0, 32], [14, 0, 16]);
     }
     else if (name == "house") {
@@ -220,11 +243,11 @@ names = ["keyhole_pad", "keyhole_button", "standoff_peg", "peg_block", "screw_pl
          "lead_in_male", "house_box"];
 
 if (demo != "none") {
-    color(PIECE) demo_part(demo, "piece");
-    color(MATE) demo_part(demo, "mate");
-    color(HW) demo_part(demo, "hw");
-    color(WALL) demo_part(demo, "wall");
-    color(ARROW) demo_part(demo, "arrow");
+    color(PIECE) cut(demo) demo_part(demo, "piece");
+    color(MATE) cut(demo) demo_part(demo, "mate");
+    color(HW) cut(demo) demo_part(demo, "hw");
+    color(WALL) cut(demo) demo_part(demo, "wall");
+    if (!assembled) color(ARROW) demo_part(demo, "arrow");
 }
 else if (part == "all") color(PIECE) for (i = [0 : len(names) - 1]) translate([(i % 5) * 70, -floor(i / 5) * 60, 0]) sample(names[i]);
 else color(PIECE) sample(part);

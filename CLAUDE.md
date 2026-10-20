@@ -240,6 +240,9 @@ What used to need a flat OpenSCAD picture is a Blender render of an OpenSCAD col
   left out of the exposure.
 - **How it goes together**: exploded, with the mate and the hardware and red arrows
   (`tools/scad/catalog.scad`, `demo=`).
+- **Anchors and inserts** (keyholes, sockets, grooves, pegs, screws): always also a section of
+  the parts **assembled**, cut through the side or sides where they engage. From outside, a key in
+  its socket is just two blocks.
 - **Profiles**: the `side` or `front` view, or `--front` set so the profile faces the camera.
 
 `tools/render_studio.py` reads the project 3MF, so the renders match what gets printed with no
@@ -360,8 +363,9 @@ designs its own shape, never its own component.
      the sources, so the next project starts from them.
   3. **Design it in `tools/scad/`** as parametric modules (sizes as arguments, defaults from the
      research), and its mate: every socket gets its key, every hole its pin or screw. Add both as
-     printable samples to `catalog.scad`, plus a `demo` that shows it in use (mate, hardware, wall,
-     arrows, slightly exploded) for the render, add
+     printable samples to `catalog.scad`, plus a `demo` for the renders: exploded (mate, hardware, wall,
+     arrows) and, for every anchor or insert, **assembled and cut** through the plane that shows
+     it seated (outside it is just a block on a block), add
      it to the tools README, and run `make render` and `make report` there. If the fit matters,
      the sample doubles as its fit test.
 - Load with `use <../../tools/scad/<file>.scad>`. Modules take sizes as arguments; pass the
