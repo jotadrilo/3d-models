@@ -1,0 +1,4 @@
+*.stl
+assembly.3mf
+*.png
+!soap-caddy-side.png

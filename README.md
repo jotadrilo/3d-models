@@ -2,6 +2,7 @@
 
 | | Project |
 |---|---|
+| <a href="soap-caddy/"><img src="soap-caddy/renders/soap-caddy-hero.webp" width="240" alt="Soap caddy"></a> | [soap-caddy](soap-caddy/) — wall-mounted holder on suction cups for an upside-down dish soap bottle over a sponge cradle that drains into the sink (OpenSCAD) |
 | <a href="desk-hanger-rail/"><img src="desk-hanger-rail/renders/desk-hanger-rail-hero.webp" width="240" alt="Desk hanger rail"></a> | [desk-hanger-rail](desk-hanger-rail/) — clip-on rail under the desk edge for coat hangers, two C brackets and a bar (OpenSCAD) |
 | <a href="lattice-bowl/"><img src="lattice-bowl/renders/lattice-bowl-hero.webp" width="240" alt="Lattice bowl"></a> | [lattice-bowl](lattice-bowl/) — parametric lattice bowl (OpenSCAD) |
 | <a href="detergent-scoop/"><img src="detergent-scoop/renders/detergent-scoop-hero.webp" width="240" alt="Detergent scoop"></a> | [detergent-scoop](detergent-scoop/) — measuring scoop with an exact, parametric capacity that sits on the bottle cap (OpenSCAD) |
