@@ -11,7 +11,7 @@ RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview render clean help
+.PHONY: all stl project report render clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -24,14 +24,11 @@ project: ## Build lattice-bowl-p1s.3mf, the ready-to-print Bambu Studio project
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report lattice-bowl-p1s.3mf
 
-preview: ## Render lattice_bowl.png
-	$(SCAD) --render --imgsize=1200,900 --camera=0,0,40,55,0,25,420 -o lattice_bowl.png $(SRC)
-
 render: project ## Render studio views into renders/ with Blender (from the project)
 	mkdir -p renders
 	$(RENDER) lattice-bowl-p1s.3mf renders/lattice-bowl $(RENDER_FLAGS)
 
-clean: ## Remove exported files (the committed preview and renders are kept)
+clean: ## Remove exported files (the committed Bambu project and renders are kept)
 	rm -f lattice_bowl.stl
 
 help: ## Show this help

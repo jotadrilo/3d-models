@@ -10,10 +10,9 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
-VIEW           := --render --imgsize=1400,900 --colorscheme=Tomorrow
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview render clean help
+.PHONY: all stl project report render clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -29,10 +28,6 @@ project: ## Build desk-hanger-rail-p1s.3mf, the ready-to-print Bambu Studio proj
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report desk-hanger-rail-p1s.3mf
 
-preview: ## Render desk-hanger-rail.png (assembly on a slice of desk) and desk-hanger-rail-side.png (bracket profile)
-	$(SCAD) $(VIEW) --camera=100,40,-15,62,0,215,560 -o desk-hanger-rail.png $(SRC)
-	$(SCAD) $(VIEW) --projection=o --viewall --autocenter --camera=0,0,0,0,0,0,300 -D 'part="bracket_left"' -o desk-hanger-rail-side.png $(SRC)
-
 render: project ## Render the assembly, the print plate and the fit tests into renders/ with Blender, in the project's filament
 	mkdir -p renders
 	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'show_desk=false' -o assembly.3mf $(SRC)
@@ -42,7 +37,7 @@ render: project ## Render the assembly, the print plate and the fit tests into r
 	$(RENDER) desk-hanger-rail-p1s.3mf renders/desk-hanger-rail-clip-test --plate 3 --views hero $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
-clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+clean: ## Remove exported files (the committed Bambu projects and renders are kept)
 	rm -f assembly.3mf $(PARTS:=.stl)
 
 help: ## Show this help

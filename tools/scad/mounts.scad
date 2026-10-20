@@ -96,3 +96,7 @@ module countersunk_screw(d = 4, head_d = 8, len = 20, head_play = 0.2, extra = 5
     translate([0, 0, -(hd - d) / 2]) cylinder(d1 = d, d2 = hd, h = (hd - d) / 2 + 0.01);
     cylinder(d = hd, h = extra);
 }
+
+// Female side of standoff_peg: its press-fit hole, `depth` deep from z = 0
+// down. fit ~0.1 over d is a press fit in PETG (vertical holes print small).
+module standoff_peg_hole(d = 6, depth = 5, fit = 0.1) translate([0, 0, -depth]) polyhole(d + fit, depth + 0.01);

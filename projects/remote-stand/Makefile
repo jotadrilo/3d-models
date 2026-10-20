@@ -8,10 +8,9 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
-CAMERA         := --render --imgsize=1200,900 --camera=70,27,40,60,0,25,380
 
 .DEFAULT_GOAL := all
-.PHONY: all stl v1 v2 project report preview render clean help
+.PHONY: all stl v1 v2 project report render clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -29,16 +28,12 @@ project: ## Build remote-stand-p1s.3mf, the ready-to-print Bambu Studio project
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report remote-stand-p1s.3mf
 
-preview: ## Render remote-stand.png and remote-stand-v2.png
-	$(SCAD) $(CAMERA) -o remote-stand.png remote-stand.scad
-	$(SCAD) $(CAMERA) -o remote-stand-v2.png remote-stand-v2.scad
-
 render: project ## Render studio views of both stands into renders/ with Blender (from the project)
 	mkdir -p renders
 	$(RENDER) remote-stand-p1s.3mf renders/remote-stand --plate 1 $(RENDER_FLAGS)
 	$(RENDER) remote-stand-p1s.3mf renders/remote-stand-v2 --plate 2 $(RENDER_FLAGS)
 
-clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+clean: ## Remove exported files (the committed Bambu projects and renders are kept)
 	rm -f remote-stand.stl remote-stand-v2.stl
 
 help: ## Show this help

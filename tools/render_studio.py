@@ -144,9 +144,14 @@ def load_project(path, plate_no, only):
 
 
 def load_model(path, filaments):
-    """Parts of an OpenSCAD colour 3MF, one per colour, as load_project returns them."""
+    """Parts of an OpenSCAD colour 3MF, one per colour, as load_project returns them.
+
+    A colour that matches a project filament renders as that filament. Any other
+    colour is context (a wall, a bottle, bought hardware): it is appended to
+    `filaments` as a "Context" material of its own colour, with no layer lines,
+    clear if the OpenSCAD colour has alpha < 1, and left out of the exposure."""
     root = ET.fromstring(zipfile.ZipFile(path).read("3D/3dmodel.model"))
-    materials = {g.get("id"): [b.get("displaycolor", "")[:7].upper() for b in g]
+    materials = {g.get("id"): [b.get("displaycolor", "").upper() for b in g]
                  for g in root.iter() if g.tag.endswith("basematerials")}
     slots = {c.upper(): i for i, (c, _) in reversed(list(enumerate(filaments, 1)))}
     by_colour = {}
@@ -166,7 +171,16 @@ def load_model(path, filaments):
     for colour, (vs, ts) in by_colour.items():
         index = {}
         remap = [index.setdefault(v, len(index)) for v in vs]  # weld, for smooth shading
-        parts.append((colour or "model", slots.get(colour, 1), list(index), [tuple(remap[i] for i in t) for t in ts]))
+        rgb = colour[:7] if colour else None
+        if rgb is None:
+            slot = 1
+        elif rgb in slots:
+            slot = slots[rgb]
+        else:
+            clear = len(colour) == 9 and colour[7:] != "FF"
+            filaments.append((rgb, "Context Translucent" if clear else "Context Matte"))
+            slot = slots[rgb] = len(filaments)
+        parts.append((rgb or "model", slot, list(index), [tuple(remap[i] for i in t) for t in ts]))
     return parts
 
 
@@ -224,7 +238,7 @@ def filament_material(colour, preset, layer, axis):
     sine = nt.nodes.new("ShaderNodeMath")
     sine.operation = "SINE"
     bump = nt.nodes.new("ShaderNodeBump")
-    bump.inputs["Strength"].default_value = LAYER_BUMP
+    bump.inputs["Strength"].default_value = 0 if "Context" in preset else LAYER_BUMP
     bump.inputs["Distance"].default_value = layer * 0.15
     nt.links.new(coord.outputs["Object"], sep.inputs[0])
     nt.links.new(sep.outputs[axis.upper()], mul.inputs[0])
@@ -253,9 +267,10 @@ def build_model(scene, parts, filaments, layer, axis, rotate, front):
         scene.collection.objects.link(ob)
         ob.parent = model
         objs.append(ob)
-        a = sum(p.area for p in me.polygons)
-        area_lum += a * luminance(linear(colour))
-        area_sum += a
+        if "Context" not in preset:           # the exposure follows the printed parts only
+            a = sum(p.area for p in me.polygons)
+            area_lum += a * luminance(linear(colour))
+            area_sum += a
     for ob in objs:
         bpy.ops.object.select_all(action="DESELECT")
         ob.select_set(True)

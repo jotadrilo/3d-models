@@ -23,14 +23,13 @@ make project                                   # -> soap-caddy-p1s.3mf (Bambu St
 make report                                    # rebuild it, slice it, print time and filament per plate
 make                                           # -> one STL per part
 make project DEFS='-D bottle_w=80 -D bottle_d=54 -D neck_d=32'   # your bottle
-make preview                                   # -> soap-caddy.png (quick look, not committed) + soap-caddy-side.png (OpenSCAD)
 make render                                    # -> renders/*.webp, studio views with Blender
 make help                                      # every target
 ```
 
 ## How it hangs
 
-![Profile](soap-caddy-side.png)
+![Section through the middle, on the wall](renders/soap-caddy-section-front.webp)
 
 Four suction cups (Ø 50 mm with an M4 × 10 stud, e.g. DIYexpert on Amazon)
 stick to the wall: the upper pair one above the other, `cup_pitch` (55 mm)
@@ -186,8 +185,10 @@ and let the plate cool before removing the parts.
 
 ## Renders
 
-`make render` builds the project and renders the caddy and the print plate
-with Blender (`../../tools/render_studio.py`), in the filament colour and with
+`make render` builds the project and renders the caddy, a section through
+its middle on the wall (`-D section=true`: the bottle, sponge, cups and
+counter are cut with it) and the print plate with Blender
+(`../../tools/render_studio.py`), in the filament colour and with
 layer lines at the project's layer height. 2400 × 1800 WebP; add
 `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 

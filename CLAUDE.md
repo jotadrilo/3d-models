@@ -31,13 +31,11 @@ to the 3MF (`key`).
    ```
    projects/<project>/
      <project>.scad        # parametric model, Customizer parameters at the top
-     Makefile              # all / stl / 3mf / project / report / preview / render / clean / help (+ check)
+     Makefile              # all / stl / 3mf / project / report / render / clean / help (+ check)
      bambu_project.py      # builds <project>-p1s.3mf with tools/bambu3mf.py (§3)
      README.md             # what it is, make commands, parts table, how to print, assembly
-     .gitignore            # *.stl, assembly.3mf, *.png (exports and previews are not committed; the Bambu projects and renders are)
+     .gitignore            # *.stl, assembly.3mf (exports are not committed; the Bambu projects and renders are)
      <project>-*.3mf       # the Bambu Studio project(s), `make project`, committed
-     <project>*.png        # OpenSCAD preview(s), `make preview`: not committed, except one that explains
-                           # what a render cannot (a section or a profile), un-ignored with `!name.png`
      renders/<name>-<view>.webp   # studio renders, `make render` (§3.3), linked from the README
    ```
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
@@ -49,7 +47,7 @@ to the 3MF (`key`).
    - `OPENSCAD ?= openscad`, `OPENSCAD_FLAGS ?=` and `DEFS ?=` for overrides
      (`make DEFS='-D x=1'`), combined in `SCAD = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)`.
    - **Every target is `.PHONY` and always regenerates its files**, even when they already exist
-     on disk. Targets are named by what they do (`stl`, `3mf`, `project`, `preview`, `render`, `check`),
+     on disk. Targets are named by what they do (`stl`, `3mf`, `project`, `render`, `check`),
      not by the file they produce. No pattern rules (`%.stl`) and no `FORCE` prerequisites:
      hardcode the file names in the recipe, or loop over a variable
      (`for p in $(PARTS)` in `cosmere-tracker`).
@@ -225,17 +223,24 @@ Bambu Studio usually **ignores the standard 3MF colours** exported by OpenSCAD: 
 but does not assign filaments. That is why the script sets `extruder` explicitly. Using hex colours
 that match Bambu filaments makes automatic matching more likely to work.
 
-### 3.3 Previews and renders
-Every project has two kinds of images. The renders are committed and linked from its README; the
-previews are a quick look while designing and stay out of git, except one that shows what a render
-cannot (a section through hidden parts, a profile) and is used in the README:
+### 3.3 Renders (Blender only)
+**Every image of a model is a Blender render from `make render`** (`renders/<name>-<view>.webp`,
+committed and linked from the README). No OpenSCAD renders (`openscad -o x.png`): not in the
+repo, not in a README, not as a sketch to show the user. They look poor; while designing, render a
+draft instead (`RENDER_FLAGS="--samples 16 --scale 0.3"`, seconds).
 
-| | `make preview` | `make render` |
-|---|---|---|
-| What | OpenSCAD render, preview colours | Photoreal "as printed" studio shots (Blender Cycles) |
-| Source | the `.scad` | the Bambu project `<project>-p1s.3mf` |
-| Output | `<project>*.png` next to the `.scad` | `renders/<name>-<view>.webp` |
-| Use | quick look while designing (sections, profiles) | README hero image, MakerWorld model images |
+What used to need a flat OpenSCAD picture is a Blender render of an OpenSCAD colour export
+(`--model`):
+- **Sections**: a `section` (or `cut`) parameter in the `.scad` that intersects every top-level
+  object with a half-space, rendered looking at the cut face (`soap-caddy`: `--front=+x --views
+  front`). A quarter cut keeps the outline and shows the inside (`tools/scad` samples).
+- **In context**: the piece with what it holds or hangs on (bottle, wall, suction cups) as
+  `color()`ed top-level objects. Colours that match a project filament render as that filament;
+  any other colour renders as plain context with no layer lines, clear if its alpha is < 1, and
+  left out of the exposure.
+- **How it goes together**: exploded, with the mate and the hardware and red arrows
+  (`tools/scad/catalog.scad`, `demo=`).
+- **Profiles**: the `side` or `front` view, or `--front` set so the profile faces the camera.
 
 `tools/render_studio.py` reads the project 3MF, so the renders match what gets printed with no
 colour or layer height chosen by hand:
@@ -254,11 +259,13 @@ Options, all passed from the Makefile:
   (`remote-stand`).
 - `--rotate RX,RY,RZ`: from the print orientation back to the display one (`detergent-scoop` prints
   upside down: `180,0,0`). Layer lines stay with the print Z.
-- `--front -y|+y|-x|+x`: which side faces the viewer; the default `-y` is OpenSCAD's front.
-  Check the hero and top views of every new model.
+- `--front=-y|+y|-x|+x`: which side faces the viewer; the default `-y` is OpenSCAD's front. Write
+  it with `=` (`--front=+x`), since `-x` alone reads as an option. Check the hero and top views
+  of every new model.
 - `--model assembly.3mf --layer-axis y`: render an OpenSCAD colour export (lazy-union) instead of a
-  plate, with each colour mapped to the project filament of the same colour. Use it for assemblies
-  of flat-printed parts (`cosmere-tracker`), and render the plate too (`--views hero,top`).
+  plate, with each colour mapped to the project filament of the same colour (other colours are
+  context, above). Use it for assemblies of flat-printed parts (`cosmere-tracker`), sections and
+  scenes in context, and render the plate too (`--views hero,top`).
 - `RENDER_FLAGS="--samples 32 --scale 0.25"` for a draft in seconds before the final render.
 
 MakerWorld needs **real photos** for its covers and for the ≥3 required "real photos" (front,
@@ -333,8 +340,7 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
   `detergent-scoop`).
 - BOSL2 is useful for threads, `teardrop`, `cuboid(rounding=…)`, hinges and dovetails. If you use it,
   document the dependency in the README.
-- Preview from the CLI:
-  `openscad --render --imgsize=1400,900 --colorscheme=Tomorrow --camera=… -o x.png x.scad`.
+- Images come from Blender only (§3.3), never `openscad -o x.png`.
 
 ### 4.6 Functional components (`tools/scad/`)
 Functional components (mounts and anchors, joints, holes and fasteners, springs, hinges,
@@ -353,7 +359,9 @@ designs its own shape, never its own component.
   2. **Record it in this file**: a short subsection under §4.7 with the rules, the numbers and
      the sources, so the next project starts from them.
   3. **Design it in `tools/scad/`** as parametric modules (sizes as arguments, defaults from the
-     research), add a sample to `catalog.scad` (cut with `cut = true` if its inside matters), add
+     research), and its mate: every socket gets its key, every hole its pin or screw. Add both as
+     printable samples to `catalog.scad`, plus a `demo` that shows it in use (mate, hardware, wall,
+     arrows, slightly exploded) for the render, add
      it to the tools README, and run `make render` and `make report` there. If the fit matters,
      the sample doubles as its fit test.
 - Load with `use <../../tools/scad/<file>.scad>`. Modules take sizes as arguments; pass the

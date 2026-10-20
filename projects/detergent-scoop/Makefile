@@ -11,7 +11,7 @@ RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview render check clean help
+.PHONY: all stl project report render check clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -23,9 +23,6 @@ project: ## Build detergent-scoop-p1s.3mf, the ready-to-print Bambu Studio proje
 
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report detergent-scoop-p1s.3mf
-
-preview: ## Render detergent-scoop.png
-	$(SCAD) --render --imgsize=1200,900 --camera=30,0,30,55,0,30,300 -o detergent-scoop.png $(SRC)
 
 check: ## Print the cavity volume up to the fill line
 	$(SCAD) -D 'part="cavity"' --export-format=asciistl -o cavity.stl $(SRC)
@@ -39,7 +36,7 @@ render: project ## Render studio views into renders/ with Blender (from the proj
 	mkdir -p renders
 	$(RENDER) detergent-scoop-p1s.3mf renders/detergent-scoop --rotate 180,0,0 $(RENDER_FLAGS)
 
-clean: ## Remove exported files (the committed preview and renders are kept)
+clean: ## Remove exported files (the committed Bambu project and renders are kept)
 	rm -f detergent-scoop.stl cavity.stl
 
 help: ## Show this help

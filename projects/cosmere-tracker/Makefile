@@ -10,13 +10,12 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
-VIEW           := --render --imgsize=1400,700 --projection=o --colorscheme=Tomorrow
 
 # lazy-union keeps every colour as its own object in the 3MF.
 LAZY := --enable=lazy-union -O export-3mf/color-mode=model
 
 .DEFAULT_GOAL := all
-.PHONY: all 3mf stl project report preview render clean help
+.PHONY: all 3mf stl project report render clean help
 
 all: 3mf ## Build everything (same as 3mf)
 
@@ -38,10 +37,6 @@ project: ## Build cosmere-tracker-p1s.3mf, the ready-to-print Bambu Studio proje
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report cosmere-tracker-p1s.3mf
 
-preview: ## Render cosmere-tracker-front.png and cosmere-tracker-back.png
-	$(SCAD) $(VIEW) --camera=0,-400,32,0,0,32 -o cosmere-tracker-front.png $(SRC)
-	$(SCAD) $(VIEW) --camera=0,400,32,0,0,32 -o cosmere-tracker-back.png $(SRC)
-
 render: project ## Render the assembly and the print plate into renders/ with Blender, in the project's filaments
 	mkdir -p renders
 	$(SCAD) $(LAZY) -D 'part="assembly"' -o assembly.3mf $(SRC)
@@ -49,7 +44,7 @@ render: project ## Render the assembly and the print plate into renders/ with Bl
 	$(RENDER) cosmere-tracker-p1s.3mf renders/cosmere-tracker-parts --views hero,top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
-clean: ## Remove exported files (the committed Bambu projects, previews and renders are kept)
+clean: ## Remove exported files (the committed Bambu projects and renders are kept)
 	rm -f assembly.3mf $(PARTS:=.3mf) $(PARTS:=.stl)
 
 help: ## Show this help

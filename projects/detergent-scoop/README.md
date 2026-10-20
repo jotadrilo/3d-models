@@ -16,7 +16,6 @@ make DEFS='-D cap_d=38'                        # fit it to your bottle cap
 make DEFS='-D capacity_ml=150 -D inner_l=65'
 make check                                     # prints the real cavity volume
 make OPENSCAD_FLAGS=--backend=Manifold         # OpenSCAD >= 2025, much faster
-make preview                                   # -> detergent-scoop.png (OpenSCAD, quick look; not committed)
 make render                                    # -> renders/*.webp, studio views with Blender
 ```
 

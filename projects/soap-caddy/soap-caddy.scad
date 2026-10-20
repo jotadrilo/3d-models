@@ -26,6 +26,7 @@
 /* [Part] */
 part = "assembly";   // [assembly, upper, lower, button, peg, test_keyhole]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
+section = false;     // cut the assembly down its middle (x > 0 removed), for the section render
 
 /* [Bottle] */
 bottle_w = 82;       // bottle width, along the wall [50:0.5:120]
@@ -298,9 +299,15 @@ module test_keyhole() {
 
 // ---------------------------------------------------------------- items (preview)
 
+// Keep x <= 0 of the children when section is on.
+module cut() {
+    if (section) intersection() { children(); translate([-1000, -1000, -1000]) cube([1000, 2000, 2000]); }
+    else children();
+}
+
 module items() {
     // bottle, upside down
-    color("#3C9A3C", 0.55) translate([0, y_bc, z_seat]) {
+    color("#3C9A3C", 0.55) cut() translate([0, y_bc, z_seat]) {
         translate([0, 0, -seat_to_tip]) cylinder(d = neck_d - 6, h = seat_to_tip + 3);
         translate([0, 0, collar_t])
             linear_extrude(bottle_h - seat_to_tip - collar_t)
@@ -308,20 +315,21 @@ module items() {
     }
     // sponge: yellow foam on a green scourer
     translate([0, y_in - sponge_play - sponge_d / 2 - 0.5, z_s]) {
-        color("#2E6B30") translate([-sponge_w / 2, -sponge_d / 2, 0]) cube([sponge_w, sponge_d, 8]);
-        color("#F2D43A") translate([-sponge_w / 2, -sponge_d / 2, 8]) cube([sponge_w, sponge_d, sponge_h - 8]);
+        color("#2E6B30") cut() translate([-sponge_w / 2, -sponge_d / 2, 0]) cube([sponge_w, sponge_d, 8]);
+        color("#F2D43A") cut() translate([-sponge_w / 2, -sponge_d / 2, 8]) cube([sponge_w, sponge_d, sponge_h - 8]);
     }
-    // cups and buttons
+    // cups and buttons (the buttons print with the pieces)
     for (c = concat([for (s = [-1, 1]) [s * lo_cup_x, lo_cup_z]], [for (z = up_cup_z) [0, z]])) {
-        color("#DDEEFF", 0.45) translate([c[0], wall_gap, c[1]]) rotate([90, 0, 0])
+        color("#DDEEFF", 0.45) cut() translate([c[0], wall_gap, c[1]]) rotate([90, 0, 0])
             cylinder(d1 = cup_d, d2 = 14, h = cup_h);
-        color("#555555") translate([c[0], flange_t, c[1]]) rotate([90, 0, 0]) button();
+        color(piece_colour) cut() translate([c[0], flange_t, c[1]]) rotate([90, 0, 0]) button();
     }
     // pegs, pressed in from the front
-    for (s = [-1, 1]) color("#555555") translate([s * peg_x, -pad_t - peg_collar_t, peg_z]) rotate([-90, 0, 0]) peg();
+    for (s = [-1, 1]) color(piece_colour) cut() translate([s * peg_x, -pad_t - peg_collar_t, peg_z]) rotate([-90, 0, 0]) peg();
     // wall and counter
-    color("#EEEEEE") translate([-160, wall_gap, -counter_gap - 20]) cube([320, 10, cabinet_h + 20]);
-    color("#C8B89A") translate([-160, -sink_dist + wall_gap, -counter_gap - 20]) cube([320, sink_dist, 20]);
+    wall_top = section ? z_seat + bottle_h - seat_to_tip + 15 : cabinet_h;   // the section shows only round the caddy
+    color("#EEEEEE") cut() translate([-160, wall_gap, -counter_gap - 20]) cube([320, 10, wall_top + 20]);
+    color("#C8B89A") cut() translate([-160, -sink_dist + wall_gap, -counter_gap - 20]) cube([320, sink_dist, 20]);
 }
 
 // ---------------------------------------------------------------- selection
@@ -332,7 +340,7 @@ else if (part == "button") button();
 else if (part == "peg") peg();
 else if (part == "test_keyhole") test_keyhole();
 else {
-    color(piece_colour) lower();
-    color(piece_colour) translate([0, 0, z_seat]) upper();
+    color(piece_colour) cut() lower();
+    color(piece_colour) cut() translate([0, 0, z_seat]) upper();
     if (show_items) items();
 }

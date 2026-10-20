@@ -28,3 +28,19 @@ module lead_in_socket(depth, c = 0.6) {
         translate([0, 0, depth - c]) linear_extrude(c + 0.01) offset(delta = c) children();
     }
 }
+
+// Female side of diamond_key: a socket for a key of side s, `depth` deep from
+// z = 0 downwards (plus a hair above so it cuts through the face).
+module diamond_socket(s, depth, play = 0.15) diamond_key(s + 2 * play, -depth, 0.01);
+
+// Female side of tongue_profile: the groove, a hair deeper than the tongue.
+module groove_profile(t = 2, h = 2.5, play = 0.05) translate([0, -0.01]) tongue_profile(t, h + 0.2, play, 0);
+
+// Male side of lead_in_socket: a prism of `profile` (2D children) h long from
+// z = 0 up, its tip chamfered by c so it finds the socket's mouth.
+module lead_in_plug(h, c = 0.6) {
+    hull() {
+        linear_extrude(h - c) children();
+        linear_extrude(h) offset(delta = -c) children();
+    }
+}

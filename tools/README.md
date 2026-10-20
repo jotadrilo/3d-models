@@ -117,20 +117,28 @@ module with the same name as a library one hides it: wrap library calls under a 
 | File | What | Pieces |
 |---|---|---|
 | [`basics.scad`](scad/basics.scad) | FDM shapes | `box(a, b)`, `polyhole(d, h)` (vertical holes true to size), `teardrop(d, h, flat)` (horizontal holes without support), `chamfered_cylinder(d, h, c)`, `chamfered_prism(h, c) 2D` (layer-stepped 45° chamfers), `spaced(lo, hi, w, gap)` |
-| [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink), `keyhole_button` (screws onto a suction cup's M4 stud, or any stud), `standoff_peg` (stops a piece nodding forward), `countersunk_screw` (cutter); size functions `keyhole_*` |
-| [`joints.scad`](scad/joints.scad) | Part to part | `diamond_key(s, z0, z1)` (key and socket that print on their side), `tongue_profile(t, h, play, c)`, `lead_in_socket(depth, c) 2D` |
+| [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink) and its male `keyhole_button` (screws onto a suction cup's M4 stud, or any stud); `standoff_peg` (stops a piece nodding forward) and its `standoff_peg_hole`; `countersunk_screw` (cutter for a `wood_screw`); size functions `keyhole_*` |
+| [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth) |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)` |
-| [`catalog.scad`](scad/catalog.scad) | Check | One sample of everything, in print orientation; `cut = true` cuts a quarter off the ones whose inside matters |
+| [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`: stand-ins for assemblies, renders and clearance checks |
+| [`catalog.scad`](scad/catalog.scad) | Samples and demos | `part=`: every component and its mate, printable, in print orientation. `demo=`: each one in use, for the renders |
 
-`tools/scad/` follows the project layout: `make preview`, `make project` (`catalog-p1s.3mf`, every
-sample on one plate, 1 h 22 min and 40 g of grey PLA Basic: print it to check the fits on a new
-printer or filament) and `make render`.
+`tools/scad/` follows the project layout: `make project` (`catalog-p1s.3mf`, every sample and
+its mate on one plate, 1 h 38 min and 48 g of grey PLA Basic: print it to check the fits on a new
+printer or filament) and `make render`, which renders each `demo`: the component (grey) with its
+printed mate (orange), the hardware it takes (dark grey), the wall (white) and red arrows for how
+it goes together.
 
-| Keyhole pad | Keyhole button | Stand-off peg | House box |
-|---|---|---|---|
-| ![](scad/renders/keyhole_pad-hero.webp) | ![](scad/renders/keyhole_button-hero.webp) | ![](scad/renders/standoff_peg-hero.webp) | ![](scad/renders/house_box-hero.webp) |
-| **Holes**: teardrop, flat teardrop, polyhole, countersunk screw | **Sockets**: diamond, groove, lead-in | **Keys**: diamond key, tongue | **Plate** |
-| ![](scad/renders/holes-hero.webp) | ![](scad/renders/sockets-hero.webp) | ![](scad/renders/keys-hero.webp) | ![](scad/renders/catalog-hero.webp) |
+| Keyhole on a suction cup | Stand-off peg | Countersunk screw |
+|---|---|---|
+| ![](scad/renders/keyhole-hero.webp) | ![](scad/renders/standoff_peg-hero.webp) | ![](scad/renders/screw-hero.webp) |
+| The button screws onto the cup's stud; the keyhole goes over its head and drops 12 mm | Pressed into the piece, its tip rests on the wall | The 90° head sinks flush in the plate |
+| **Holes** | **Diamond key** | **Tongue and groove** |
+| ![](scad/renders/holes-hero.webp) | ![](scad/renders/diamond-hero.webp) | ![](scad/renders/tongue-hero.webp) |
+| Bolts into a teardrop and a flat teardrop (no support), a pin into a polyhole, a screw into a countersink | The key out of a part's side into a socket | Press fit along an edge |
+| **Lead-in plug and socket** | **House style** | **Sample plate** |
+| ![](scad/renders/lead_in-hero.webp) | ![](scad/renders/house-hero.webp) | ![](scad/renders/catalog-hero.webp) |
+| Chamfered tip and mouth find each other | Rounded front, straight back, slots, hung on a cup | Every sample and its mate |
 
 Where each piece comes from and was printed: keyholes, buttons, pegs and the house style in
 `soap-caddy`, the lead-in socket and stepped
@@ -138,5 +146,5 @@ chamfers in `desk-hanger-rail`. Clearances are defaults, not promises: keep the 
 (`test_keyhole`, `test_socket`, `test_anchor_*`) and print it before the real part.
 
 When a new project invents a mount or joint another project could use, move it here, make its
-sizes arguments, add it to `catalog.scad`, and check that the projects using it export the same
+sizes arguments, give it its mate, add both and a demo to `catalog.scad`, and check that the projects using it export the same
 geometry as before (same volume and triangle count per part).

@@ -18,7 +18,6 @@ make                                        # -> frame.3mf front.3mf wheels.3mf 
 make DEFS='-D show_investiture=false'       # only Health and Focus
 make DEFS='-D digit_h=6'                    # smaller (and narrower) tracker
 make stl                                    # single-colour STLs instead
-make preview                                # -> cosmere-tracker-front.png / -back.png (OpenSCAD, quick look; not committed)
 make render                                 # -> renders/*.webp, studio views with Blender
 ```
 

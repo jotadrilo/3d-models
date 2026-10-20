@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build a Bambu Studio project with one sample of every library piece.
 
-One plate, every sample in print orientation, grey PLA Basic on 0.20mm
-Standard: print it to check the library's fits on your printer.
+One plate, every sample and its mate in print orientation, grey PLA Basic
+on 0.20mm Standard: print it to check the library's fits on your printer.
 
     python3 bambu_project.py [-o catalog-p1s.3mf] [-D var=val ...]
 """
@@ -13,17 +13,22 @@ sys.path.insert(0, os.path.join(HERE, ".."))
 from bambu3mf import PLA_BASIC, Filament, Project, load_scad  # noqa: E402
 
 SCAD = os.path.join(HERE, "catalog.scad")
-# sample -> (object name, x, y)
+# sample -> (object name, x, y). Pairs sit side by side.
 SAMPLES = {
-    "house_box": ("House box", 70, 180),
-    "holes": ("Holes", 170, 190),
-    "sockets": ("Sockets", 170, 150),
-    "keys": ("Keys", 170, 115),
-    "keyhole_pad": ("Keyhole pad", 50, 110),
-    "keyhole_button": ("Keyhole button", 90, 110),
-    "standoff_peg": ("Standoff peg", 115, 110),
+    "house_box": ("House box", 50, 205),
+    "holes": ("Holes", 125, 215),
+    "screw_plate": ("Screw plate", 190, 210),
+    "peg_block": ("Peg block", 232, 215),
+    "tongue_female": ("Tongue female", 45, 160),
+    "tongue_male": ("Tongue male", 95, 160),
+    "diamond_female": ("Diamond female", 140, 160),
+    "diamond_male": ("Diamond male", 190, 160),
+    "lead_in_female": ("Lead-in female", 45, 110),
+    "lead_in_male": ("Lead-in male", 75, 110),
+    "keyhole_pad": ("Keyhole pad", 110, 110),
+    "keyhole_button": ("Keyhole button", 140, 110),
+    "standoff_peg": ("Standoff peg", 165, 110),
 }
-
 
 def main():
     ap = argparse.ArgumentParser()

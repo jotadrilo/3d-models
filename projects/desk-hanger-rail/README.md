@@ -13,14 +13,13 @@ make report                                    # rebuild it, slice it, print tim
 make                                           # -> one STL per part (rail and fit test)
 make stl PARTS="test_socket test_bar test_clip"  # fit test only
 make project DEFS='-D desk_t=18'               # another desk thickness
-make preview                                   # -> desk-hanger-rail.png (quick look, not committed) + desk-hanger-rail-side.png (OpenSCAD)
 make render                                    # -> renders/*.webp, studio views with Blender
 make help                                      # every target
 ```
 
 ## How it holds
 
-![Bracket profile](desk-hanger-rail-side.png)
+![Bracket profile](renders/desk-hanger-rail-side.webp)
 
 The weight on the bar levers each bracket around the desk edge: the tip of the
 top lip presses down on the desk top and the underside arm presses up

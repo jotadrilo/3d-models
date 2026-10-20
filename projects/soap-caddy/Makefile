@@ -10,10 +10,9 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
-VIEW           := --render --imgsize=1400,1100 --colorscheme=Tomorrow
 
 .DEFAULT_GOAL := all
-.PHONY: all stl project report preview render clean help
+.PHONY: all stl project report render clean help
 
 all: stl ## Build everything (same as stl)
 
@@ -29,14 +28,12 @@ project: ## Build soap-caddy-p1s.3mf, the ready-to-print Bambu Studio project
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report soap-caddy-p1s.3mf
 
-preview: ## Render soap-caddy.png (on the wall, with bottle and sponge) and soap-caddy-side.png (profile)
-	$(SCAD) $(VIEW) --camera=0,-40,120,62,0,325,900 -o soap-caddy.png $(SRC)
-	$(SCAD) $(VIEW) --projection=o --camera=0,-40,120,90,0,270,700 -o soap-caddy-side.png $(SRC)
-
-render: project ## Render the caddy on the wall and the print plate into renders/ with Blender, in the project's filament
+render: project ## Render the caddy, a section through it on the wall (bottle, sponge, cups) and the print plate into renders/ with Blender
 	mkdir -p renders
 	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'show_items=false' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy --model assembly.3mf $(RENDER_FLAGS)
+	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'section=true' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
+	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-section --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-parts --views hero,top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
