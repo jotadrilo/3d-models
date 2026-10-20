@@ -83,7 +83,6 @@ slat_w = 2.1;        // slat thickness (5 lines) [1.26:0.42:4.2]
 slat_h = 5;          // slat height [3:0.5:12]
 slat_pitch = 9;      // slat spacing [5:0.5:15]
 slat_clear = 3;      // gap between the slats and the tray floor, at the back [2:0.5:10]
-tooth_h = 10;        // teeth at the front of the slats that keep the sponge on [0:1:25]
 sponge_rim = 12;     // side walls rise this much above the slats [0:1:40]
 rim_h = 6;           // side walls along the spill lip, above the tray floor [2:1:20]
 peg_d = 6;           // pegs that rest the bottom of the lower piece on the wall [4:0.5:10]
@@ -134,8 +133,7 @@ collar_d = hole_d + 12;
 // Lower piece
 lo_inner = sponge_w + 2 * sponge_play;
 lo_w = lo_inner + 2 * side_t;
-tooth_d = slat_w;
-cradle_end = head_front + sponge_play + sponge_d + sponge_play + tooth_d;
+cradle_end = head_front + sponge_play + sponge_d + sponge_play + slat_w;
 lo_cup_x = lower_cup_span / 2;
 peg_x = lo_w / 2 - peg_inset;
 peg_z = (z_fb - tray_tv) / 2;                  // under the tray floor
@@ -339,11 +337,9 @@ module lower() {
                 }
                 box([-(hx - corner_r), -reach - 1, -1], [hx - corner_r, -reach + side_t + 1, lower_top]);
             }
-            // slats, with teeth at the front
-            for (x = slat_xs) {
+            // slats, flush at the front so the sponge slides in and out freely
+            for (x = slat_xs)
                 box([x - slat_w / 2, -back_t + eps, z_s - slat_h], [x + slat_w / 2, -cradle_end, z_s]);
-                box([x - slat_w / 2, -cradle_end, z_s - eps], [x + slat_w / 2, -cradle_end + tooth_d, z_s + tooth_h]);
-            }
             // ties across the slats: one at the front, one in the middle, under the sponge
             box([-ix - eps, -cradle_end, z_s - slat_h], [ix + eps, -cradle_end + slat_w, z_s]);
             box([-ix - eps, -cradle_end / 2 - slat_w / 2, z_s - slat_h], [ix + eps, -cradle_end / 2 + slat_w / 2, z_s - slat_h + 2.5]);
