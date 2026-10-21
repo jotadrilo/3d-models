@@ -1,4 +1,5 @@
-// Joints between printed parts. Load with
+// Joints between printed parts: diamond keys, tongues, lead-in sockets, the
+// sprung handle and the sliding dovetail. Load with
 //   use <../tools/scad/joints.scad>
 // Clearances are per side; print the project's fit test before trusting them.
 
@@ -103,3 +104,64 @@ module sprung_handle_socket(pin_s = 6, depth = 6, play = 0.15, lead = 1) {
 // 1 % in PETG for a handle taken on and off often, 2 % for a one-off.
 function sprung_handle_strain(span, reach, s, spread) =
     let(a = reach + s / 2, L = span + s) 3 * s * spread / (a * (2 * a + 3 * L));
+
+// ---------------------------------------------------------------- sliding dovetail
+
+// A tail on the edge of a wall slides along z into a housing on a plate:
+// the wall can neither pull away from the plate nor move along it, only
+// slide along z, and it rests on the housing's closed bottom. For a body
+// hung on a wall plate: the plate prints flat (the housing's 45° flanks are
+// its only overhangs), the body prints standing (the tail runs along Z and
+// prints like any wall). Rules and sources in CLAUDE.md §4.7.
+// Coordinates: the plate's face on y = 0 (the plate at y > 0), the joint
+// centred on x = 0 and running along z from 0 (the closed end) to h.
+//   t           the wall's thickness, which is the tail's neck
+//   w           how far the tail widens on each side, at 45°
+//   d           tail depth, from its wide face to the neck
+//   play        per side on the flanks; play_floor between the tail and the plate
+//   lip         housing in front of the flanks; side: housing beside the tail
+//   cap         the housing's closed bottom, below z = 0
+//   lead        45° lead-in on the tail's tip and the housing's mouth (also takes up elephant foot)
+//   layer       height of the steps the lead-ins are built of (the print layer)
+
+function dovetail_housing_w(t = 1.68, w = 1.26, play = 0.25, side = 1.68) = t + 2 * (w + play + side);
+function dovetail_housing_d(d = 3, play_floor = 0.35, lip = 1.26) = play_floor + d + lip;
+
+// The tail in plan: its wide face on y = 0, the neck at y = -d, and the wall
+// on from there to y = -d - neck. Grown by o (the housing's cavity).
+module dovetail_profile(t = 1.68, w = 1.26, d = 3, neck = 1, o = 0)
+    offset(delta = o) polygon([[-t / 2 - w, 0], [t / 2 + w, 0], [t / 2 + w, -(d - w)], [t / 2, -d], [t / 2, -d - neck],
+                               [-t / 2, -d - neck], [-t / 2, -d], [-t / 2 - w, -(d - w)]]);
+
+// A prism of the 2D children from z0 to z1 whose end at z0 (lead > 0) or z1
+// (lead < 0) is chamfered at 45° by |lead|, in steps of `layer`: the
+// children are not convex, so a hull would fill the undercut.
+module stepped_chamfer(z0, z1, lead, layer = 0.2) {
+    c = abs(lead);
+    n = max(1, ceil(c / layer));
+    s = c / n;
+    for (k = [0 : n - 1])
+        translate([0, 0, lead > 0 ? z0 + k * s : z1 - (k + 1) * s]) linear_extrude(s + 0.01) offset(delta = (lead > 0 ? -1 : 1) * (c - (k + 1) * s)) children();
+    translate([0, 0, lead > 0 ? z0 + c : z0]) linear_extrude(z1 - z0 - c) children();
+}
+
+// The tail, from z = 0 to h, its tip chamfered; its wall carries on towards
+// -y past the housing (neck).
+module dovetail_tail(h, t = 1.68, w = 1.26, d = 3, play_floor = 0.35, lip = 1.26, neck = 2, lead = 0.8, layer = 0.2)
+    translate([0, -play_floor, 0]) stepped_chamfer(0, h, lead, layer) dovetail_profile(t, w, d, lip + neck);
+
+// The housing: a block on the plate's face with the tail's cavity, the play
+// all round, closed below z = 0 by cap and open at z = h with a lead-in.
+module dovetail_housing(h, t = 1.68, w = 1.26, d = 3, play = 0.25, play_floor = 0.35, lip = 1.26, side = 1.68, cap = 2,
+                        lead = 0.8, layer = 0.2) {
+    hw = dovetail_housing_w(t, w, play, side) / 2;
+    hd = dovetail_housing_d(d, play_floor, lip);
+    difference() {
+        translate([-hw, -hd, -cap]) cube([2 * hw, hd + 0.01, h + cap]);
+        stepped_chamfer(0, h + 0.01, -lead, layer) dovetail_cavity(t, w, d, play, play_floor, lip);
+    }
+}
+module dovetail_cavity(t = 1.68, w = 1.26, d = 3, play = 0.25, play_floor = 0.35, lip = 1.26) {
+    translate([0, -play_floor]) dovetail_profile(t, w, d, lip + 1, play);
+    translate([-t / 2 - w - play, -play_floor]) square([t + 2 * (w + play), play_floor + 0.01]);
+}

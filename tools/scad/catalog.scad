@@ -17,8 +17,8 @@ use <mounts.scad>
 use <joints.scad>
 use <hardware.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, house_box]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle]
+part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail]
 assembled = false;
 section = false;
 
@@ -42,6 +42,7 @@ key_s = 3;   // diamond key side
 plug_d = 8;  // lead-in plug
 hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
 h_play = 0.4; h_reach = 14;
+dt_h = 30; dt_plate = 2.1; dt_wall = 20;   // sliding dovetail: length, the plate under the housing, the wall behind the tail
 
 // ---------------------------------------------------------------- printable samples
 
@@ -105,6 +106,17 @@ module handle_block_sample()    // a block with a socket on each side, on its si
         for (m = [0, 1]) mirror([m, 0, 0]) translate([hb_w / 2, 0, hb_h / 2]) sprung_handle_socket(6, 7);
     }
 module handle_sample() sprung_handle(hb_w + 2 * h_play, h_reach, 8, 6, 5);
+module dovetail_housing_sample()   // a strip of wall plate, flat, the housing up
+    rotate([-90, 0, 0]) {
+        w = dovetail_housing_w() + 8;
+        translate([-w / 2, 0, -2]) cube([w, dt_plate, dt_h + 2]);
+        dovetail_housing(dt_h);
+    }
+module dovetail_tail_sample()      // a strip of wall standing on its end, the tail along Z
+    translate([0, dt_wall, 0]) {
+        dovetail_tail(dt_h);
+        translate([-1.68 / 2, -dovetail_housing_d() - dt_wall, 0]) cube([1.68, dt_wall, dt_h]);
+    }
 module house_box_sample() {   // the house style: a small box with a keyhole in its back
     w = 60; d = 45; h = 40; t = 1.68;
     difference() {
@@ -137,6 +149,8 @@ module sample(p) {
     else if (p == "lead_in_male") lead_in_male_sample();
     else if (p == "handle_block") handle_block_sample();
     else if (p == "handle") handle_sample();
+    else if (p == "dovetail_housing") dovetail_housing_sample();
+    else if (p == "dovetail_tail") dovetail_tail_sample();
     else if (p == "house_box") house_box_sample();
 }
 
@@ -157,13 +171,14 @@ X = assembled ? 0 : 1;   // explode factor
 
 // The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
 // +x), "y" keeps y >= 0 (look from -y, the front).
-function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" ? "z" : "x";
+function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
+function cut_z(name) = name == "dovetail" ? dt_h / 2 : hb_h / 2;
 module cut(name) {
     if (!section) children();
     else intersection() {
         children();
         if (cut_plane(name) == "x") translate([-1000, -1000, -1000]) cube([1000, 2000, 2000]);
-        else if (cut_plane(name) == "z") translate([-1000, -1000, hb_h / 2 - 2000]) cube([2000, 2000, 2000]);
+        else if (cut_plane(name) == "z") translate([-1000, -1000, cut_z(name) - 2000]) cube([2000, 2000, 2000]);
         else translate([-1000, 0, -1000]) cube([2000, 1000, 2000]);
     }
 }
@@ -241,6 +256,20 @@ module demo_part(name, role) {
         if (role == "mate") translate([0, 0, 17 + 22 * X]) rotate([180, 0, 0]) lead_in_male_sample();
         if (role == "arrow") arrow([14, 0, 32], [14, 0, 16]);
     }
+    else if (name == "dovetail") {
+        // a wall plate (on the wall) with the housing; the body's side wall
+        // slides down into it, its tail resting on the closed bottom
+        if (role == "wall") wall(-20, 20, -5, dt_h + 5);
+        if (role == "piece") translate([0, -dt_plate, 0]) {
+            translate([-12, 0, -2]) cube([24, dt_plate, dt_h + 2]);
+            dovetail_housing(dt_h);
+        }
+        if (role == "mate") translate([0, -dt_plate, 30 * X]) {
+            dovetail_tail(dt_h);
+            translate([-1.68 / 2, -dovetail_housing_d() - dt_wall, 0]) cube([1.68, dt_wall, dt_h]);
+        }
+        if (role == "arrow") arrow([8, -dt_plate - 10, dt_h + 40], [8, -dt_plate - 10, dt_h + 6]);
+    }
     else if (name == "handle") {
         // the handle's arms sprung over the block, its pins seated in the sockets
         if (role == "piece") handle_block_sample();
@@ -250,7 +279,7 @@ module demo_part(name, role) {
 
 names = ["keyhole_pad", "keyhole_button", "standoff_peg", "peg_block", "screw_plate", "holes",
          "diamond_female", "diamond_male", "tongue_female", "tongue_male", "lead_in_female",
-         "lead_in_male", "house_box"];
+         "lead_in_male", "dovetail_housing", "dovetail_tail", "house_box"];
 
 if (demo != "none") {
     color(PIECE) cut(demo) demo_part(demo, "piece");

@@ -30,6 +30,8 @@ SAMPLES = {
     "standoff_peg": ("Standoff peg", 165, 110),
     "handle_block": ("Handle block", 200, 110),
     "handle": ("Handle", 200, 65),
+    "dovetail_housing": ("Dovetail housing", 60, 60),
+    "dovetail_tail": ("Dovetail tail", 100, 60),
 }
 
 def main():

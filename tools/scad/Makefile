@@ -5,8 +5,8 @@
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SAMPLES        ?= keyhole_pad keyhole_button standoff_peg peg_block screw_plate holes diamond_female diamond_male tongue_female tongue_male lead_in_female lead_in_male handle_block handle house_box
-DEMOS          ?= keyhole standoff_peg screw holes diamond tongue lead_in handle
+SAMPLES        ?= keyhole_pad keyhole_button standoff_peg peg_block screw_plate holes diamond_female diamond_male tongue_female tongue_male lead_in_female lead_in_male handle_block handle dovetail_housing dovetail_tail house_box
+DEMOS          ?= keyhole standoff_peg screw holes diamond tongue lead_in handle dovetail
 SRC            := catalog.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
@@ -35,7 +35,7 @@ render: project ## Render each demo in DEMOS assembled and in section (with its 
 	@set -e; for d in $(DEMOS); do \
 		echo "render $$d"; \
 		$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "demo=\"$$d\"" -D assembled=true -D section=true -o demo.3mf $(SRC); \
-		case $$d in holes|diamond|lead_in) cut=-y; view=front;; handle) cut=-y; view=top;; *) cut=+x; view=front;; esac; \
+		case $$d in holes|diamond|lead_in) cut=-y; view=front;; handle|dovetail) cut=-y; view=top;; *) cut=+x; view=front;; esac; \
 		$(RENDER) catalog-p1s.3mf renders/$$d-section --model demo.3mf --views $$view --front=$$cut $(RENDER_FLAGS); \
 	done
 	$(RENDER) catalog-p1s.3mf renders/catalog --views hero,top $(RENDER_FLAGS)

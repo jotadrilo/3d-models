@@ -229,6 +229,12 @@ committed and linked from the README). No OpenSCAD renders (`openscad -o x.png`)
 repo, not in a README, not as a sketch to show the user. They look poor; while designing, render a
 draft instead (`RENDER_FLAGS="--samples 16 --scale 0.3"`, seconds).
 
+**Drafts first, final renders after the user confirms.** After every change to a model, render
+quick drafts (`--samples 16 --scale 0.4`, seconds each) of the views that show the change into a
+scratch folder, never `renders/`, and open them for the user to check by hand. Run the final
+`make render` and commit `renders/` only once the user has confirmed the design: a full render
+takes many minutes and is wasted if the design still changes.
+
 What used to need a flat OpenSCAD picture is a Blender render of an OpenSCAD colour export
 (`--model`):
 - **Sections**: a `section` (or `cut`) parameter in the `.scad` that intersects every top-level
@@ -286,6 +292,15 @@ side, top). The renders go in "Model images".
   side walls (frame on its back, slots across Z) came out with sagging, blobby ribs while the
   slots in the plate on the bed were clean. `wall_slots_tilted()` (`tools/scad/style.scad`)
   fills such a wall with 45° slots.
+- **No slot longer than ~30 mm in a wall that prints standing** (`max_len` in `wall_slot()` and
+  `wall_slots_tilted()`). The rib between two slots grows as a free column a couple of mm
+  across, and its stiffness drops with the cube of its height: the soap caddy box's 76 mm slots
+  came out clean up to ~35 mm and rough and stringy above, where the nozzle pushed the ribs about.
+- **Tie open-fronted walls across the front.** Two side walls joined only by a back plate spread,
+  and whatever rests on ledges between them drops or slides out (the soap caddy's frame). When
+  the part prints on its back, a front bar is a long bridge: tie them with a plate that is
+  horizontal in use (it prints as an upright wall) slotted at 45°, and stop sliding parts
+  with 45° gussets in plan.
 - **Horizontal holes as teardrops** (45° tip) or flat-topped teardrops. BOSL2 has `teardrop()`.
 - **Bottom edges get a 45° chamfer of 0.4–0.6 mm, not a fillet.** A fillet at the bed is an
   overhang, and the chamfer hides elephant foot. Fillets go on top and vertical edges.
@@ -381,6 +396,30 @@ designs its own shape, never its own component.
 
 ### 4.7 Component notes
 Research behind each component in `tools/scad/`, one entry per component.
+
+- **Sliding dovetail** (`joints.scad`, from sink-organizers): a tail on a wall's edge slides
+  along z into a housing on a plate and rests on its closed bottom; the wall can neither pull
+  off the plate nor move along it. It hangs a body (printed standing, so it can have a front
+  wall and vertical slots) on a wall plate (printed flat, the keyholes' best orientation). No
+  published test of a printed sliding dovetail exists (only short dovetails in tension, which
+  hold 0.5–2 kN in PLA: Demirel & Manav 2025, a Ljubljana thesis), so the defaults come from
+  fit guides, this repo's measured clearances and statics; the fit test decides.
+  - **Flanks at 45°**: the steepest the flat-printed housing takes as an overhang, and the
+    wedge then pushes the housing apart with no more than the pull (woodworking's 10° gives
+    5.7×, and turns 0.25 play into 1.4 mm of lift).
+  - **Play** 0.25 per side on the flanks (0.2–0.3 in Sovol's and Hubs' guides; 0.25 is what a
+    part sliding between printed walls needed here), 0.35 at the floor (Z accuracy).
+  - Neck = the wall (1.68), widening 1.26 per side, 3 deep; lip in front of the flanks ≥1.26,
+    housing wall beside the tail ≥1.68.
+  - 0.8 mm 45° lead-in on the tail's tip (which also takes up its elephant foot) and the
+    housing's mouth, built as layer steps (the profile is not convex, so no hull).
+  - Loads are tiny (≈0.03 MPa on the lips for 5 N over 100 mm), but the housing's lips are
+    pulled across the plate's layers: derate to 40 % in PETG. The tail's neck bends within
+    its layers, the strong way. What fails first is the slide binding over 100–200 mm:
+    the plate bowing, drooping lip overhangs, seams or blobs on the flanks. Keep seams off the
+    flanks, and print a full-length fit test before the big parts.
+  - A detent, if one is ever needed, must sit unloaded once seated: PETG creeps under load,
+    faster when warm (UTS creep study; Polymers 2025).
 
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
