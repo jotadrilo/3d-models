@@ -138,7 +138,7 @@ it does not reach past the sink or the cups do not fit.
 | `front_lip` | 8 | Tray floor in front of the bins, where the water spills |
 | `towel_gap` | 14 | Room for the towel between the front of the frame and the handle |
 | **Tray** | | |
-| `tray_play`, `tray_t`, `tray_wall` | 0.4, 1.26, 1.68 | Clearance in the frame, floor, rims |
+| `tray_play`, `tray_t`, `tray_wall` | 0.25, 1.26, 1.68 | Clearance in the frame, floor, rims |
 | `tray_slope` | 6 | Floor slope towards the sink, degrees |
 | `slat_w`, `slat_h`, `slat_pitch`, `slat_clear` | 2.1, 5, 18, 3 | Slats under the bins |
 | `stop_h` | 8 | Tie across the front of the bins |

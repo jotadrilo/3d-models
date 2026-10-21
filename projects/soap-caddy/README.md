@@ -150,7 +150,7 @@ pieces do not fit.
 | **Keyhole** | | |
 | `shank_d`, `head_d`, `flange_d` | 7, 12, 16 | Button sizes |
 | `keyhole_play` | 0.3 | Radial clearance in the keyhole |
-| `shank_play` | 0.2 | Axial clearance between pad and head |
+| `shank_play` | 0.1 | Axial clearance between pad and head (0.2 left a little play) |
 | `drop` | 12 | How far the frame drops onto its buttons |
 | `pad_t`, `pad_w` | 4.2, 22 | Pad round each keyhole |
 | **Frame** | | |
@@ -159,12 +159,12 @@ pieces do not fit.
 | `sponge_rim` | 12 | The side walls' deep part, above the slats |
 | `step_r` | 10 | Radius of the step in the side walls |
 | **Tray** | | |
-| `tray_play` | 0.4 | Clearance in the frame, per side |
+| `tray_play` | 0.25 | Clearance in the frame, per side (0.4 came out at ≈0.5) |
 | `tray_slope` | 6 | Floor slope, degrees |
 | `tray_t`, `tray_wall` | 1.26, 1.68 | Floor and rims |
 | `slat_w`, `slat_h`, `slat_pitch`, `slat_clear` | 2.1, 5, 9, 3 | Slats |
 | **Box** | | |
-| `box_play` | 0.4 | Clearance in the frame, per side |
+| `box_play` | 0.25 | Clearance in the frame, per side (0.4 came out at ≈0.5) |
 | `box_h` | 90 | Box height (and the top of the frame) |
 | `wall_t`, `floor_t`, `collar_t` | 1.68, 2, 4 | Walls, floor, collar round the hole |
 | `return_w` | 10 | Front returns, rounding into the sides |

@@ -304,7 +304,7 @@ side, top). The renders go in "Model images".
 |---|---|
 | Press | 0.0–0.1 mm |
 | Slip (M3 → Ø3.2) | 0.2 mm |
-| Running / loose | 0.3–0.5 mm |
+| Running / loose | 0.3–0.5 mm (a part sliding between printed walls: 0.25; 0.4 per side measured ≈0.5 in PETG) |
 | Print-in-place hinge | 0.3–0.4 mm radial; Z gap a whole number of layers (+0.1 if it is a bridge) |
 | Snap-fit | 0.5 mm; arm ≥1 mm thick, ≥5 mm wide, fillet at the root; PETG/ABS/PA, never PLA |
 | M3 heat-set insert | hole **Ø4.2 mm** as printed, ≥1 mm deeper than the insert, ≥1.6 mm wall around it |
@@ -379,7 +379,8 @@ Research behind each component in `tools/scad/`, one entry per component.
 
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
-  head, which pulls the piece against the button flange. The button self-taps onto an M4 stud
+  head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left
+  the seated piece a little loose front to back in PETG. The button self-taps onto an M4 stud
   through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45). A plain
   Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. The
   hole goes right through the button: a blind hole sized to the nominal stud stopped the
@@ -393,7 +394,8 @@ Research behind each component in `tools/scad/`, one entry per component.
   was no room to line a 23 mm pin up with its hole, and the hole printed loose for it anyway.
   Check that a part can actually be put in, along its whole path, not just where it ends up.
   Crush ribs on the spigot hold it when the piece is off the wall: 4 ribs, their diameter
-  `rib_d` 0.2–0.5 mm over the hole, tapered at the tip (community tests on Printables/Prusa and
+  `rib_d` 0.2–0.5 mm over the hole by the guides, but 0.4 fell out of a PETG hole: 0.8 by
+  default, tapered at the tip (community tests on Printables/Prusa and
   MakerWorld; Protolabs for the moulded origin; no FDM standard, so print one and tune
   `rib_d`). It is loaded along its axis, so it prints standing on its wall end.
 - **Sprung handle** (`joints.scad`, from cutlery-drainer): a U whose arms are sprung apart by

@@ -51,15 +51,15 @@ module keyhole_cut(t, drop, shank_d, head_d, play = 0.3, cone = true) {
 //               is at least 1 mm longer, and the stud stays inside the head
 //   stud_hole   pilot hole as modelled (3.7 for M4 tapping into PETG/PLA: a
 //               polyhole that prints ~3.45, with a lead-in at its mouth)
-function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.2) =
+function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.1) =
     pad_t - (head_d - shank_d) / 2 + axial_play;
-function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 12, min_flange = 3) =
+function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.1, head_cyl = 1, stud_len = 12, min_flange = 3) =
     max(min_flange, stud_len + 1 - (keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl));
-function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 12, min_flange = 3) =
+function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.1, head_cyl = 1, stud_len = 12, min_flange = 3) =
     keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange)
     + keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl;
 
-module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play = 0.2, head_cyl = 1,
+module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play = 0.1, head_cyl = 1,
                       stud_len = 12, stud_hole = 3.7, min_flange = 3, chamfer = 0.6) {
     sl = keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play);
     ft = keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange);
@@ -88,10 +88,10 @@ module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play
 //   d       nominal hole (standoff_peg_hole); the spigot core is d - 2 * play
 //   wall_t  thickness of the wall the hole goes through; the spigot stops 0.4 short
 //   len     from the wall to the piece's back face (the shoulder)
-//   rib_d   diameter over the ribs: the interference they crush into the hole
+//   rib_d   diameter over the ribs: the interference they crush into the hole (d + 0.8)
 module standoff_peg(d = 6, wall_t = 4.2, len = 16, body_d = 10, ribs = 4, rib_d = undef, rib_w = 0.8,
                     play = 0.15, chamfer = 0.6) {
-    rib_d = rib_d == undef ? d + 0.4 : rib_d;
+    rib_d = rib_d == undef ? d + 0.8 : rib_d;   // 0.4 over the hole fell out in PETG
     sl = wall_t - 0.4;
     core = d - 2 * play;
     chamfered_cylinder(body_d, len, chamfer);

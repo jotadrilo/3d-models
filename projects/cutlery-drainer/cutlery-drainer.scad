@@ -60,7 +60,7 @@ head_d = 12;         // button head diameter [9:0.5:16]
 head_cyl = 1.2;      // straight part of the head, proud of the pad [0.6:0.2:3]
 flange_d = 16;       // button flange diameter (rests on the cup hub) [10:0.5:24]
 keyhole_play = 0.3;  // radial clearance of shank and head in the keyhole [0.1:0.05:0.6]
-shank_play = 0.2;    // axial clearance between the pad and the head cone [0:0.05:0.6]
+shank_play = 0.1;    // axial clearance between the pad and the head cone (0.2 left a little play) [0:0.05:0.6]
 drop = 12;           // how far the frame drops onto its buttons; lift it this much to take it off [8:1:20]
 pad_t = 4.2;         // pad thickness around each keyhole (10 lines) [3.36:0.42:6.3]
 pad_w = 22;          // pad width [18:1:40]
@@ -75,7 +75,7 @@ front_lip = 8;       // tray floor in front of the bins, where the water spills 
 towel_gap = 14;      // room for the towel between the front of the frame and the handle [8:1:30]
 
 /* [Tray] */
-tray_play = 0.4;     // clearance between the tray and the side walls, per side [0.2:0.1:1]
+tray_play = 0.25;    // clearance between the tray and the side walls, per side (0.4 printed ~0.5) [0.1:0.05:1]
 tray_t = 1.26;       // tray floor (3 lines) [0.84:0.42:2.52]
 tray_wall = 1.68;    // tray back and side rims (4 lines) [1.26:0.42:2.52]
 tray_slope = 6;      // floor slope towards the sink, degrees [3:0.5:15]
