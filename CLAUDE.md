@@ -407,9 +407,13 @@ Research behind each component in `tools/scad/`, one entry per component.
   - **Flanks at 45°**: the steepest the flat-printed housing takes as an overhang, and the
     wedge then pushes the housing apart with no more than the pull (woodworking's 10° gives
     5.7×, and turns 0.25 play into 1.4 mm of lift).
-  - **Play** 0.25 per side on the flanks (0.2–0.3 in Sovol's and Hubs' guides; 0.25 is what a
-    part sliding between printed walls needed here), 0.35 at the floor (Z accuracy).
-  - Neck = the wall (1.68), widening 1.26 per side, 3 deep; lip in front of the flanks ≥1.26,
+  - **Play**: 0.25 per side on the flanks (0.2–0.3 in Sovol's and Hubs' guides) and 0.35 at
+    the floor came out **loose** in PETG (sink-organizers fit test, 2026-10): the tail rocked.
+    Now 0.2 at the floor and the flank play from a ladder test (0.05–0.20 in one strip); the
+    default 0.1 is a guess until it is printed.
+  - **Head**: widening 1.26 per side, 3 deep, printed standing, came out round (outer and
+    inner perimeters meet, the 45° corners fill in), so it caught little of the lip. Now 1.68
+    per side (4 lines), 4 deep. Neck = the wall (1.68); lip in front of the flanks ≥1.26,
     housing wall beside the tail ≥1.68.
   - 0.8 mm 45° lead-in on the tail's tip (which also takes up its elephant foot) and the
     housing's mouth, built as layer steps (the profile is not convex, so no hull).

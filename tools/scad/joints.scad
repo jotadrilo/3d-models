@@ -124,12 +124,12 @@ function sprung_handle_strain(span, reach, s, spread) =
 //   lead        45° lead-in on the tail's tip and the housing's mouth (also takes up elephant foot)
 //   layer       height of the steps the lead-ins are built of (the print layer)
 
-function dovetail_housing_w(t = 1.68, w = 1.26, play = 0.25, side = 1.68) = t + 2 * (w + play + side);
-function dovetail_housing_d(d = 3, play_floor = 0.35, lip = 1.26) = play_floor + d + lip;
+function dovetail_housing_w(t = 1.68, w = 1.68, play = 0.1, side = 1.68) = t + 2 * (w + play + side);
+function dovetail_housing_d(d = 4, play_floor = 0.2, lip = 1.26) = play_floor + d + lip;
 
 // The tail in plan: its wide face on y = 0, the neck at y = -d, and the wall
 // on from there to y = -d - neck. Grown by o (the housing's cavity).
-module dovetail_profile(t = 1.68, w = 1.26, d = 3, neck = 1, o = 0)
+module dovetail_profile(t = 1.68, w = 1.68, d = 4, neck = 1, o = 0)
     offset(delta = o) polygon([[-t / 2 - w, 0], [t / 2 + w, 0], [t / 2 + w, -(d - w)], [t / 2, -d], [t / 2, -d - neck],
                                [-t / 2, -d - neck], [-t / 2, -d], [-t / 2 - w, -(d - w)]]);
 
@@ -147,12 +147,12 @@ module stepped_chamfer(z0, z1, lead, layer = 0.2) {
 
 // The tail, from z = 0 to h, its tip chamfered; its wall carries on towards
 // -y past the housing (neck).
-module dovetail_tail(h, t = 1.68, w = 1.26, d = 3, play_floor = 0.35, lip = 1.26, neck = 2, lead = 0.8, layer = 0.2)
+module dovetail_tail(h, t = 1.68, w = 1.68, d = 4, play_floor = 0.2, lip = 1.26, neck = 2, lead = 0.8, layer = 0.2)
     translate([0, -play_floor, 0]) stepped_chamfer(0, h, lead, layer) dovetail_profile(t, w, d, lip + neck);
 
 // The housing: a block on the plate's face with the tail's cavity, the play
 // all round, closed below z = 0 by cap and open at z = h with a lead-in.
-module dovetail_housing(h, t = 1.68, w = 1.26, d = 3, play = 0.25, play_floor = 0.35, lip = 1.26, side = 1.68, cap = 2,
+module dovetail_housing(h, t = 1.68, w = 1.68, d = 4, play = 0.1, play_floor = 0.2, lip = 1.26, side = 1.68, cap = 2,
                         lead = 0.8, layer = 0.2) {
     hw = dovetail_housing_w(t, w, play, side) / 2;
     hd = dovetail_housing_d(d, play_floor, lip);
@@ -161,7 +161,7 @@ module dovetail_housing(h, t = 1.68, w = 1.26, d = 3, play = 0.25, play_floor = 
         stepped_chamfer(0, h + 0.01, -lead, layer) dovetail_cavity(t, w, d, play, play_floor, lip);
     }
 }
-module dovetail_cavity(t = 1.68, w = 1.26, d = 3, play = 0.25, play_floor = 0.35, lip = 1.26) {
+module dovetail_cavity(t = 1.68, w = 1.68, d = 4, play = 0.1, play_floor = 0.2, lip = 1.26) {
     translate([0, -play_floor]) dovetail_profile(t, w, d, lip + 1, play);
     translate([-t / 2 - w - play, -play_floor]) square([t + 2 * (w + play), play_floor + 0.01]);
 }

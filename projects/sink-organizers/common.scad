@@ -49,10 +49,10 @@ ledge_h = 4;         // ledge height, at the front [2:0.5:10]
 ledge_stop = 2;      // bump at the front of each ledge: lift the tray this much to slide it out [1:0.5:4]
 
 /* [Dovetail] */
-dt_w = 1.26;         // how far the tails widen on each side, at 45° (3 lines) [0.84:0.42:2.52]
-dt_d = 3;            // tail depth, from its wide face to the neck [2:0.5:5]
-dt_play = 0.25;      // clearance on the flanks, per side [0.1:0.05:0.5]
-dt_floor = 0.35;     // clearance between the tails and the plate [0.2:0.05:0.6]
+dt_w = 1.68;         // how far the tails widen on each side, at 45° (4 lines: 1.26 printed round, standing) [0.84:0.42:2.52]
+dt_d = 4;            // tail depth, from its wide face to the neck [2:0.5:6]
+dt_play = 0.1;       // clearance on the flanks, per side (0.25 was loose in PETG: pick it from the fit test) [0:0.05:0.5]
+dt_floor = 0.2;      // clearance between the tails and the plate (0.35 let them rock) [0.1:0.05:0.6]
 dt_lip = 1.26;       // housing in front of the flanks (3 lines) [0.84:0.42:2.52]
 dt_side = 1.68;      // housing beside the tails (4 lines) [1.26:0.42:3.36]
 dt_cap = 2;          // the housings' closed bottoms, under the body: it rests on them [1:0.2:4]
@@ -207,16 +207,28 @@ module test_keyhole() difference() {
     translate([0, pad_t, 0]) pad_at(0, 0);
     translate([0, pad_t, 0]) keyhole_at(0, 0);
 }
-// A strip of plate with one housing, printed flat like the plate, and a
-// strip of side wall with its tail, printed standing like the body: the tail
-// must slide all the way down with a little play and not pull out forward.
+// A strip of plate with a housing for each play in test_dt_plays, printed
+// flat like the plate (k notches in its edge past the mouths mark the k-th), and a strip of
+// side wall with its tail, printed standing like the body: the play to use is
+// the tightest housing the tail slides all the way down with no rocking.
 // 20 mm long: every layer of the standing strip is tiny and waits out the
 // filament's minimum layer time (12 s in PETG), so length is print time. The
 // strip ends in a return, so it stands without a brim.
 test_dt_h = 20;
-module test_dovetail_housing() rotate([-90, 0, 0]) {
-    translate([-house_hw - 4, 0, -dt_cap]) cube([2 * house_hw + 8, back_t, test_dt_h + dt_cap]);
-    dovetail_housing(test_dt_h, side_t, dt_w, dt_d, dt_play, dt_floor, dt_lip, dt_side, dt_cap);
+test_dt_plays = [0.05, 0.1, 0.15, 0.2];
+module test_dovetail_housing() {
+    n = len(test_dt_plays);
+    hw = dovetail_housing_w(side_t, dt_w, max(test_dt_plays), dt_side) / 2;
+    pitch = 2 * hw + 3;
+    rotate([-90, 0, 0]) difference() {
+        union() {
+            translate([-n * pitch / 2, 0, -dt_cap]) cube([n * pitch, back_t, test_dt_h + dt_cap + 4]);
+            for (i = [0 : n - 1]) translate([(i - (n - 1) / 2) * pitch, 0, 0])
+                dovetail_housing(test_dt_h, side_t, dt_w, dt_d, test_dt_plays[i], dt_floor, dt_lip, dt_side, dt_cap);
+        }
+        for (i = [0 : n - 1], k = [0 : i]) translate([(i - (n - 1) / 2) * pitch + (k - i / 2) * 2 - 0.5, -1, test_dt_h + 2])
+            cube([1, back_t + 2, 3]);
+    }
 }
 module test_dovetail_tail() {
     dovetail_tail(test_dt_h, side_t, dt_w, dt_d, dt_floor, dt_lip);
