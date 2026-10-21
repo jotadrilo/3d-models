@@ -73,8 +73,8 @@ else rests on the wall, so the earlier caddy's stand-off pegs are gone.
   comes out ~5 mm when open, so it still clears the sponge.
 - Style: a straight back against the wall, side walls deep round the tray
   and as deep as the box above it with a rounded step between them, front
-  corners rounded in plan (`corner_r`), close rounded slots in the walls and
-  rounded floor windows round a round collar. The style, the keyholes and the
+  corners rounded in plan (`corner_r`), close rounded slots in the walls
+  (at 45° in the side walls, which print standing) and rounded floor windows round a round collar. The style, the keyholes and the
   buttons come from the shared library ([`tools/scad/`](../../tools/scad/)).
 
 ## Installing
@@ -170,7 +170,8 @@ pieces do not fit.
 | `return_w` | 10 | Front returns, rounding into the sides |
 | **Style** | | |
 | `corner_r` | 14 | Front corners of the tray and box, rounded in plan |
-| `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded vertical slots in the walls |
+| `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded slots in the walls |
+| `side_slot_tilt` | 45 | Side wall slots, degrees from vertical. The frame prints on its back, so vertical slots (0) lie across Z and each roofs over as a long bridge: the first print came out with sagging ribs |
 
 ## Strength and orientation
 
@@ -199,7 +200,7 @@ its floor. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Frame | frame | 3 h 13 min | 70 g |
+| 1 · Frame | frame | 3 h 45 min | 70 g |
 | 2 · Tray, box and buttons | tray, box, 4 buttons | 3 h 12 min | 68 g |
 | 3 · Fit tests | keyhole pad, button, width strip and bar | 25 min | 6 g |
 

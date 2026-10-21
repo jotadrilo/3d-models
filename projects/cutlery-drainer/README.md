@@ -148,7 +148,7 @@ it does not reach past the sink or the cups do not fit.
 | `handle_s`, `handle_drop` | 10, 12 | Section; pin axes below the top of the frame |
 | `pin_s`, `pin_len`, `pin_play` | 6, 5, 0.15 | Diamond pins and their clearance in the sockets |
 | `boss_t`, `boss_w`, `handle_play` | 4.2, 16, 0.4 | Bosses round the sockets; clearance between the arms and the bosses |
-| **Style** | | `corner_r` (tray front corners), `slot_w`, `slot_rib`, `slot_margin`, as in the soap caddy |
+| **Style** | | `corner_r` (tray front corners), `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt` (45°: the side walls print standing with the slots across Z), as in the soap caddy |
 
 ## Printing (Bambu P1S)
 
@@ -161,7 +161,7 @@ lies flat. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Frame | frame | 3 h 05 min | 63 g |
+| 1 · Frame | frame | 3 h 24 min | 64 g |
 | 2 · Tray, bins and handle | tray, 3 bins, handle, 4 buttons | 7 h 45 min | 145 g |
 | 3 · Handle fit test | block and small handle | 28 min | 8 g |
 

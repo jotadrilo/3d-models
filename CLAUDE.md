@@ -281,6 +281,11 @@ side, top). The renders go in "Model images".
 ### 4.1 Printable geometry
 - **Overhangs ≤45°.** Good cooling reaches 55–60°, but design for 45°.
 - **Bridges ≤10 mm** as a rule. The P1S usually manages 20–30 mm, but test before relying on it.
+- **Slots and windows in a wall that prints standing run along the print Z, or at ≥45° to the
+  bed.** A slot lying horizontal roofs over its whole length as one bridge: the soap caddy's
+  side walls (frame on its back, slots across Z) came out with sagging, blobby ribs while the
+  slots in the plate on the bed were clean. `wall_slots_tilted()` (`tools/scad/style.scad`)
+  fills such a wall with 45° slots.
 - **Horizontal holes as teardrops** (45° tip) or flat-topped teardrops. BOSL2 has `teardrop()`.
 - **Bottom edges get a 45° chamfer of 0.4–0.6 mm, not a fillet.** A fillet at the bed is an
   overhang, and the chamfer hides elephant foot. Fillets go on top and vertical edges.

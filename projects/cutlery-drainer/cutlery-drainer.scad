@@ -106,6 +106,7 @@ corner_r = 14;       // radius of the tray's front corners, in plan [0:1:40]
 slot_w = 4;          // width of the rounded vertical slots in the walls [2:0.5:12]
 slot_rib = 2.6;      // material between slots [2:0.2:12]
 slot_margin = 6;     // solid band above and below the slots [3:1:20]
+side_slot_tilt = 45; // side wall slots, degrees from vertical: the frame prints on its back, so at 0 each slot roofs over as one long bridge [0:5:60]
 
 /* [Hidden] */
 $fa = 1; $fs = $preview ? 0.8 : 0.4;
@@ -220,8 +221,13 @@ module frame() {
         for (x = slot_xs(-ix + slot_rib, ix - slot_rib))
             if (min([for (c = cup_xs) abs(x - c)]) >= pad_w / 2 + slot_rib + slot_w / 2)
                 slot(x, 0, z_s + slot_margin, top - slot_margin, "y");
-        for (s = [-1, 1], y = slot_xs(-tray_y0 + slot_rib, -bin_y1 - slot_rib))
-            slot(s * hx, -y, z_s + slot_margin, top - slot_margin, "x");
+        if (side_slot_tilt > 0)
+            for (s = [-1, 1])
+                wall_slots_tilted(s * hx, bin_y1 + slot_rib, tray_y0 - slot_rib, z_s + slot_margin, top - slot_margin,
+                                  "x", side_slot_tilt, slot_w, slot_rib);
+        else
+            for (s = [-1, 1], y = slot_xs(-tray_y0 + slot_rib, -bin_y1 - slot_rib))
+                slot(s * hx, -y, z_s + slot_margin, top - slot_margin, "x");
     }
 }
 

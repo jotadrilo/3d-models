@@ -107,6 +107,7 @@ corner_r = 14;       // radius of the front corners of the tray and box, in plan
 slot_w = 4;          // width of the rounded vertical slots in the walls [2:0.5:12]
 slot_rib = 2.6;      // material between slots [2:0.2:12]
 slot_margin = 6;     // solid band above and below the slots [3:1:20]
+side_slot_tilt = 45; // side wall slots, degrees from vertical: the frame prints on its back, so at 0 each slot roofs over as one long bridge [0:5:60]
 
 /* [Hidden] */
 $fa = 1; $fs = $preview ? 0.8 : 0.4;
@@ -247,10 +248,15 @@ module frame() {
             if (abs(x) >= pad_w / 2 + slot_rib + slot_w / 2) slot(x, 0, z_seat + slot_margin, top - slot_margin, "y");
         }
         // side walls: along the box, and between the sponge and the box ledges
-        for (s = [-1, 1], y = slot_xs(back_t + slot_rib, up_d - slot_rib - slot_w / 2)) {
-            slot(s * (hx - side_t / 2), -y, z_seat + slot_margin, top - slot_margin, "x");
-            slot(s * (hx - side_t / 2), -y, lower_top, z_seat - ledge_h - slot_margin, "x");
-        }
+        if (side_slot_tilt > 0)
+            for (s = [-1, 1], z = [[z_seat + slot_margin, top - slot_margin], [lower_top, z_seat - ledge_h - slot_margin]])
+                wall_slots_tilted(s * (hx - side_t / 2), -(up_d - slot_rib - slot_w / 2), -(back_t + slot_rib), z[0], z[1],
+                                  "x", side_slot_tilt, slot_w, slot_rib);
+        else
+            for (s = [-1, 1], y = slot_xs(back_t + slot_rib, up_d - slot_rib - slot_w / 2)) {
+                slot(s * (hx - side_t / 2), -y, z_seat + slot_margin, top - slot_margin, "x");
+                slot(s * (hx - side_t / 2), -y, lower_top, z_seat - ledge_h - slot_margin, "x");
+            }
     }
 }
 
