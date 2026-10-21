@@ -24,9 +24,9 @@
 // back (see bambu_project.py). Every wall is a multiple of the 0.42 mm line.
 
 /* [Part] */
-part = "assembly";   // [assembly, upper, lower, button, peg, test_keyhole]
+part = "assembly";   // [assembly, upper, lower, button, peg, test_keyhole, lower_pegs]  lower_pegs: the tray piece with its pegs in orange (render)
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
-section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
+section = "none";    // [none, upper, lower, peg] cut the assembly through the upper keyholes (x = 0), a lower one or a peg, for the section renders
 
 /* [Bottle] */
 bottle_w = 82;       // bottle width, along the wall [50:0.5:120]
@@ -55,7 +55,7 @@ cup_h = 12;          // wall to the cup's hub face, cup pressed on [5:0.5:30]
 cup_pitch = 55;      // vertical distance between the upper piece's two cups [50:1:90]
 lower_cup_span = 56; // horizontal distance between the lower piece's two cups [50:1:90]
 stud_len = 10;       // length of the cup's threaded stud [5:0.5:20]
-stud_hole = 3.4;     // pilot hole for the M4 stud, which taps its own thread [3:0.1:4.2]
+stud_hole = 3.7;     // pilot hole for the M4 stud as modelled (prints ~3.45); the stud taps its own thread [3:0.1:4.2]
 
 /* [Keyhole] */
 shank_d = 7;         // button shank diameter [5:0.5:10]
@@ -86,7 +86,8 @@ slat_pitch = 9;      // slat spacing [5:0.5:15]
 slat_clear = 3;      // gap between the slats and the tray floor, at the back [2:0.5:10]
 sponge_rim = 12;     // side walls rise this much above the slats [0:1:40]
 peg_d = 6;           // pegs that rest the bottom of the lower piece on the wall [4:0.5:10]
-peg_fit = 0.1;       // added to the peg holes, which print ~0.2 small: a press fit [-0.1:0.05:0.4]
+peg_fit = 0.1;       // added to the peg holes, which print ~0.2 small [-0.1:0.05:0.4]
+peg_grip = 0.4;      // the peg's crush ribs, over the hole: how hard it grips [0:0.05:0.8]
 peg_inset = 10;      // peg axis, in from each side of the lower piece [6:1:30]
 
 /* [Style] */
@@ -135,9 +136,8 @@ cradle_end = head_front + sponge_play + sponge_d + sponge_play + slat_w;
 lo_cup_x = lower_cup_span / 2;
 peg_x = lo_w / 2 - peg_inset;
 peg_z = (z_fb - tray_tv) / 2;                  // under the tray floor
-peg_len = pad_t + wall_gap;                    // through the boss and back to the wall
-peg_collar = peg_d + 4;
-peg_collar_t = 1.6;
+peg_len = wall_gap;                            // from the wall to the back face, where its shoulder bears
+peg_collar = peg_d + 4;                        // the peg's body, behind the piece
 
 // Cup heights, lower-piece coordinates. The lower pair's keyhole entries must
 // clear the tray floor; the upper pair's lowest keyhole must clear the box floor.
@@ -159,7 +159,7 @@ echo(str("upper piece: ", up_w, " x ", up_d, " x ", frame_h, " mm (w x d x h)"))
 echo(str("lower piece: ", lo_w, " x ", reach, " x ", lower_top, " mm (w x d x h)"));
 echo(str("cups above the counter: lower pair ", counter_gap + lo_cup_z, " (", lower_cup_span,
          " apart), upper pair ", [for (z = up_cup_z) counter_gap + z], " mm (centred)"));
-echo(str("pegs ", peg_len + peg_collar_t, " mm long, reach ", wall_gap, " mm behind the lower piece"));
+echo(str("pegs ", peg_len + pad_t - 0.4, " mm long, reach ", wall_gap, " mm behind the lower piece"));
 echo(str("tray edge ", reach + wall_gap, " mm from the wall; button ", button_h, " mm long (flange ", flange_t, ")"));
 echo(str("top of the box ", top_above_counter, " mm above the counter; bottle needs ",
          top_above_counter + bottle_h, " of ", cabinet_h, " mm to go in from the top"));
@@ -285,9 +285,10 @@ module lower() {
     }
 }
 
-// Peg, in print orientation: collar on the bed. It presses into its boss from
-// the front of the lower piece, and its rounded tip rests on the wall.
-module peg() standoff_peg(peg_d, peg_len, peg_collar, peg_collar_t, chamfer);
+// Peg, in print orientation: its wall end on the bed. It pushes into its boss
+// from behind, its shoulder on the back face, and its crush ribs hold it there.
+module peg() standoff_peg(peg_d + peg_fit, pad_t, peg_len, peg_collar, rib_d = peg_d + peg_fit + peg_grip, chamfer = chamfer);
+module peg_placed(s) translate([s * peg_x, wall_gap, peg_z]) rotate([90, 0, 0]) peg();
 
 // Fit test: a flat pad with one keyhole, for a button.
 module test_keyhole() {
@@ -300,7 +301,8 @@ module test_keyhole() {
 // ---------------------------------------------------------------- items (preview)
 
 // Keep x <= the section plane of the children when a section is on.
-section_x = section == "lower" ? -lo_cup_x : 0;
+section_x = section == "lower" ? -lo_cup_x : section == "peg" ? -peg_x : 0;
+lower_only = section == "lower" || section == "peg";
 module cut() {
     if (section != "none") intersection() { children(); translate([section_x - 1000, -1000, -1000]) cube([1000, 2000, 2000]); }
     else children();
@@ -312,7 +314,7 @@ mate_colour = section != "none" ? "#FF6A13" : piece_colour;
 
 module items() {
     // bottle, upside down
-    if (section != "lower") color("#3C9A3C", 0.55) cut() translate([0, y_bc, z_seat]) {
+    if (!lower_only) color("#3C9A3C", 0.55) cut() translate([0, y_bc, z_seat]) {
         translate([0, 0, -seat_to_tip]) cylinder(d = neck_d - 6, h = seat_to_tip + 3);
         translate([0, 0, collar_t])
             linear_extrude(bottle_h - seat_to_tip - collar_t)
@@ -325,15 +327,15 @@ module items() {
     }
     // cups and buttons (the buttons print with the pieces)
     // (the lower section shows the tray piece only)
-    for (c = concat([for (s = [-1, 1]) [s * lo_cup_x, lo_cup_z]], section == "lower" ? [] : [for (z = up_cup_z) [0, z]])) {
+    for (c = concat([for (s = [-1, 1]) [s * lo_cup_x, lo_cup_z]], lower_only ? [] : [for (z = up_cup_z) [0, z]])) {
         color("#DDEEFF", 0.45) cut() translate([c[0], wall_gap, c[1]]) rotate([90, 0, 0])
             cylinder(d1 = cup_d, d2 = 14, h = cup_h);
         color(mate_colour) cut() translate([c[0], flange_t, c[1]]) rotate([90, 0, 0]) button();
     }
-    // pegs, pressed in from the front
-    for (s = [-1, 1]) color(mate_colour) cut() translate([s * peg_x, -pad_t - peg_collar_t, peg_z]) rotate([-90, 0, 0]) peg();
+    // pegs, pushed in from behind
+    for (s = [-1, 1]) color(mate_colour) cut() peg_placed(s);
     // wall and counter
-    wall_top = section == "lower" ? lower_top + 25
+    wall_top = lower_only ? lower_top + 25
              : section == "upper" ? z_seat + bottle_h - seat_to_tip + 15 : cabinet_h;   // sections show only round what they cut
     color("#EEEEEE") cut() translate([-160, wall_gap, -counter_gap - 20]) cube([320, 10, wall_top + 20]);
     color("#C8B89A") cut() translate([-160, -sink_dist + wall_gap, -counter_gap - 20]) cube([320, sink_dist, 20]);
@@ -346,8 +348,12 @@ else if (part == "lower") lower();
 else if (part == "button") button();
 else if (part == "peg") peg();
 else if (part == "test_keyhole") test_keyhole();
+else if (part == "lower_pegs") {
+    color(piece_colour) lower();
+    for (s = [-1, 1]) color("#FF6A13") peg_placed(s);
+}
 else {
     color(piece_colour) cut() lower();
-    if (section != "lower") color(piece_colour) cut() translate([0, 0, z_seat]) upper();
+    if (!lower_only) color(piece_colour) cut() translate([0, 0, z_seat]) upper();
     if (show_items) items();
 }

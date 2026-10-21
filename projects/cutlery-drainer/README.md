@@ -79,7 +79,7 @@ the lines, and the pins lie in the bed plane too.
 1. Clean the tile with isopropyl alcohol; on tile that is not quite smooth, a
    very thin film of petroleum jelly on each cup rim seals much better.
 2. Screw a button onto each cup by turning the cup: the M4 stud taps its own
-   thread into the 3.4 mm hole.
+   thread into the ≈3.45 mm hole (3.7 as modelled).
 3. Hang the frame on its buttons on the table, press the whole frame against
    the wall pushing over each cup, then lift it off and back on to check it
    slides.

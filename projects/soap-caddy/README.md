@@ -42,10 +42,21 @@ in 45° countersinks and pull the piece tight against the flanges.
 
 The upper pair, one above the other, takes the bottle's turning moment. The
 lower pair, side by side, only stops the tray swinging sideways; two printed
-**pegs**, pressed into bosses under the tray floor, rest on the wall and
-stop it nodding forward when you press on the sponge.
+**pegs**, pushed into the bottom corners of its back plate from behind,
+rest on the wall and stop it nodding forward when you press on the sponge.
 
 ![Section through a lower keyhole: button, peg on the wall, tray](renders/soap-caddy-section-lower-front.webp)
+
+The pegs are the two orange posts in the bottom corners of the tray piece's
+back plate. Push each one into its hole from behind, thin end first, until
+its shoulder sits on the back plate: four crush ribs on the thin end grip the
+hole, and once the piece hangs, the wall only pushes the peg further in. Its
+flat end, 17 mm behind the piece, rests on the wall. Too loose or too tight:
+`peg_grip` (0.4 mm of ribs over the hole) and print the pegs again.
+
+| From behind | Cut through a peg, on the wall |
+|---|---|
+| ![The tray piece from behind, with its two pegs](renders/soap-caddy-pegs-back.webp) | ![Section through a peg: shoulder on the back plate, end on the wall](renders/soap-caddy-section-peg-front.webp) |
 
 To clean, lift the upper piece 12 mm and pull it off, then the lower one.
 There is room under the box to lift the tray piece off on its own.
@@ -73,8 +84,8 @@ There is room under the box to lift the tray piece off on its own.
 1. Clean the tile with isopropyl alcohol. On tile that is not quite smooth,
    a very thin film of petroleum jelly on each cup rim seals much better.
 2. Screw a button onto each cup by turning the cup: the M4 stud taps its own
-   thread into the 3.4 mm hole. Press the two pegs into the bosses under the
-   tray, from the front.
+   thread into the ≈3.45 mm hole (3.7 as modelled). Push the two pegs into the
+   holes at the bottom of the tray piece, from behind (see "How it hangs").
 3. Hang both pieces on their buttons on the table, then press the whole
    assembly against the wall, pushing over each cup.
 4. Lift the pieces off and on again to check they slide freely.
@@ -89,7 +100,7 @@ the wall: it sets how far the tray reaches.
 | `upper` | 88 × 66 × 90 | Bottle box; printed standing on its floor |
 | `lower` | 97 × 108 × 40 | Sponge cradle and tray; printed lying on its back |
 | `button` | Ø 16 × 11 | One per cup (4); printed on its flange |
-| `peg` | Ø 10 × 23 | Two; press-fit into the tray's bosses, tip on the wall; printed on its collar |
+| `peg` | Ø 10 × 21 | Two; pushed into the tray piece from behind, crush ribs, end on the wall; printed standing on its wall end |
 | `test_keyhole` | 22 × 30 × 4.2 | Fit test: one keyhole pad, printed flat |
 
 ## Parameters
@@ -120,7 +131,7 @@ cups do not fit their pieces.
 | `cup_d`, `cup_h` | 50, 12 | Cup diameter; wall to the hub face, pressed on |
 | `cup_pitch` | 55 | Vertical distance between the upper cups |
 | `lower_cup_span` | 56 | Horizontal distance between the lower cups |
-| `stud_len`, `stud_hole` | 10, 3.4 | Stud length; pilot hole the stud taps into |
+| `stud_len`, `stud_hole` | 10, 3.7 | Stud length; pilot hole the stud taps into, as modelled (it prints ≈0.25 smaller) |
 | **Keyhole** | | |
 | `shank_d`, `head_d`, `flange_d` | 7, 12, 16 | Button sizes |
 | `keyhole_play` | 0.3 | Radial clearance in the keyhole |
@@ -137,7 +148,7 @@ cups do not fit their pieces.
 | `tray_t`, `side_t` | 1.26, 1.68 | Tray floor and side walls |
 | `slat_w`, `slat_h`, `slat_pitch` | 2.1, 5, 9 | Slats |
 | `sponge_rim` | 12 | Side walls above the slats (they run at that height out to the front) |
-| `peg_d`, `peg_fit`, `peg_inset` | 6, 0.1, 10 | Pegs; extra on their holes (press fit); axis in from each side |
+| `peg_d`, `peg_fit`, `peg_grip`, `peg_inset` | 6, 0.1, 0.4, 10 | Pegs; extra on their holes; the crush ribs over the hole; axis in from each side |
 | **Style** | | |
 | `corner_r` | 14 | Front corners, rounded in plan (the back stays straight) |
 | `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded vertical slots in the walls |
@@ -154,7 +165,7 @@ pressing the sponge (≈30 N).
 | `lower` slats | the hand on the sponge: ≈4.3 N per slat (7 slats), simply supported over ≈38 mm (back plate, middle tie) | on its back, slats along Z | yes: they bend across the layers | ≈4× (≈4.7 MPa against ≈19). Raise `slat_h` if needed: the stress drops with its square |
 | `lower` tray | dripping water | on its back | yes | no real load |
 | `button` | shear on the shank and pull on the head, ≤6 N | standing on its flange | yes | > 50× (≈0.2 MPa on a 7 mm shank) |
-| `peg` | pushes on the wall along its axis | standing on its collar | no: compression | — |
+| `peg` | pushes on the wall along its axis | standing on its wall end | no: compression | — |
 
 Lying on its side would put the slats in XY, but the side wall would
 then be a 108 × 40 mm roof in the air. With a 4× margin, the back is the
@@ -179,8 +190,9 @@ upright walls. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 57 min | 85 g |
+| 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 58 min | 86 g |
 | 2 · Keyhole fit test | keyhole pad, button | 19 min | 3 g |
+| 3 · Buttons and pegs | 4 buttons, 2 pegs, to reprint them on their own | 36 min | 6 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
@@ -188,7 +200,7 @@ and let the plate cool before removing the parts.
 ## Renders
 
 `make render` builds the project and renders the caddy, a section through
-its middle on the wall (`-D section="upper"`, and `"lower"` through a lower keyhole: the bottle,
+its middle on the wall (`-D section="upper"`, `"lower"` through a lower keyhole and `"peg"` through a peg: the bottle,
 sponge, cups and counter are cut with it) and the print plate with Blender
 (`../../tools/render_studio.py`), in the filament colour and with
 layer lines at the project's layer height. 2400 × 1800 WebP; add

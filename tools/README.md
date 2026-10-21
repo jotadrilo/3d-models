@@ -117,7 +117,7 @@ module with the same name as a library one hides it: wrap library calls under a 
 | File | What | Pieces |
 |---|---|---|
 | [`basics.scad`](scad/basics.scad) | FDM shapes | `box(a, b)`, `polyhole(d, h)` (vertical holes true to size), `teardrop(d, h, flat)` (horizontal holes without support), `chamfered_cylinder(d, h, c)`, `chamfered_prism(h, c) 2D` (layer-stepped 45° chamfers), `spaced(lo, hi, w, gap)` |
-| [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink) and its male `keyhole_button` (screws onto a suction cup's M4 stud, or any stud); `standoff_peg` (stops a piece nodding forward) and its `standoff_peg_hole`; `countersunk_screw` (cutter for a `wood_screw`); size functions `keyhole_*` |
+| [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink) and its male `keyhole_button` (screws onto a suction cup's M4 stud, or any stud); `standoff_peg` (stops a piece nodding forward; goes in from behind, crush ribs) and its `standoff_peg_hole`; `countersunk_screw` (cutter for a `wood_screw`); size functions `keyhole_*` |
 | [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth), `sprung_handle` / `sprung_handle_socket` (a U snapped onto a part by its diamond pins) and `sprung_handle_strain` |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)` |
 | [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`: stand-ins for assemblies, renders and clearance checks |
@@ -132,7 +132,7 @@ and the wall (white).
 | Component | Assembled, in section |
 |---|---|
 | **Keyhole on a suction cup**: The button screws onto the cup's stud; the keyhole drops over it and its cone head pulls the pad against the flange | ![](scad/renders/keyhole-section-front.webp) |
-| **Stand-off peg**: Pressed into the piece, its tip rests on the wall | ![](scad/renders/standoff_peg-section-front.webp) |
+| **Stand-off peg**: Pushed into the piece from behind, crush ribs hold it; it rests on the wall | ![](scad/renders/standoff_peg-section-front.webp) |
 | **Countersunk screw**: The 90° head sinks flush in the plate; the screw bites into the wall through a pilot hole | ![](scad/renders/screw-section-front.webp) |
 | **Holes**: Bolts in a teardrop and a flat teardrop (no support), a pin in a polyhole, a screw in a countersink | ![](scad/renders/holes-section-front.webp) |
 | **Diamond key**: The key out of a part's side, seated in its socket | ![](scad/renders/diamond-section-front.webp) |

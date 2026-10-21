@@ -28,7 +28,7 @@ project: ## Build soap-caddy-p1s.3mf, the ready-to-print Bambu Studio project
 report: project ## Rebuild the project, slice it and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report soap-caddy-p1s.3mf
 
-render: project ## Render the caddy, sections through its upper and lower keyholes on the wall (bottle, sponge, cups) and the print plate into renders/ with Blender
+render: project ## Render the caddy, sections through its upper and lower keyholes and a peg on the wall (bottle, sponge, cups), the tray piece with its pegs from behind and the print plate into renders/ with Blender
 	mkdir -p renders
 	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'show_items=false' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy --model assembly.3mf $(RENDER_FLAGS)
@@ -36,6 +36,10 @@ render: project ## Render the caddy, sections through its upper and lower keyhol
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-section --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
 	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'section="lower"' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-section-lower --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
+	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'section="peg"' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
+	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-section-peg --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
+	$(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'part="lower_pegs"' -D 'piece_colour="#000000"' -o assembly.3mf $(SRC)
+	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-pegs --model assembly.3mf --views back $(RENDER_FLAGS)
 	$(RENDER) soap-caddy-p1s.3mf renders/soap-caddy-parts --views hero,top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 

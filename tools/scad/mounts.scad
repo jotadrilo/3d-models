@@ -47,7 +47,8 @@ module keyhole_cut(t, drop, shank_d, head_d, play = 0.3, cone = true) {
 //   axial_play  clearance between pad and head, front to back
 //   head_cyl    straight band on top of the cone
 //   stud_len    stud length; the flange grows so the hole fits it
-//   stud_hole   pilot hole (3.4 for M4 tapping into PETG/PLA)
+//   stud_hole   pilot hole as modelled (3.7 for M4 tapping into PETG/PLA: a
+//               polyhole that prints ~3.45, with a lead-in at its mouth)
 function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.2) =
     pad_t - (head_d - shank_d) / 2 + axial_play;
 function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 10, min_flange = 3) =
@@ -57,7 +58,7 @@ function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1
     + keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl;
 
 module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play = 0.2, head_cyl = 1,
-                      stud_len = 10, stud_hole = 3.4, min_flange = 3, chamfer = 0.6) {
+                      stud_len = 10, stud_hole = 3.7, min_flange = 3, chamfer = 0.6) {
     sl = keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play);
     ft = keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange);
     hc = (head_d - shank_d) / 2;
@@ -69,20 +70,40 @@ module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play
             translate([0, 0, ft + sl]) cylinder(d1 = shank_d, d2 = head_d, h = hc);
             translate([0, 0, ft + sl + hc - e]) cylinder(d = head_d, h = head_cyl + e);
         }
-        translate([0, 0, -e]) cylinder(d = stud_hole, h = stud_len + 0.3 + e, $fn = 24);
+        translate([0, 0, -e]) polyhole(stud_hole, stud_len + 0.3 + e);
+        translate([0, 0, -e]) cylinder(d1 = stud_hole + 1, d2 = stud_hole, h = 0.5 + e);
     }
 }
 
 // ---------------------------------------------------------------- stand-off peg
 
-// Peg that presses into a hole in the piece and rests its rounded tip on the
-// wall, so a piece hanging on two side-by-side mounts cannot nod forward. In
-// print orientation: collar on the bed. len = from the collar to the tip.
-// Its hole: polyhole(d + fit, depth); fit ~0.1 is a press fit in PETG.
-module standoff_peg(d = 6, len = 20, collar_d = 10, collar_t = 1.6, chamfer = 0.6) {
-    chamfered_cylinder(collar_d, collar_t, chamfer);
-    cylinder(d = d, h = collar_t + len - d / 4);
-    translate([0, 0, collar_t + len - d / 4]) cylinder(d1 = d, d2 = d / 2, h = d / 4);
+// Stand-off peg: a short post that rests on the wall, so a piece hanging on
+// two side-by-side mounts cannot nod forward. It goes into a through hole in
+// the piece from behind (the wall side), where there is always room: its
+// shoulder bears on the piece's back face, so the wall only ever pushes it
+// further in, and crush ribs on the spigot hold it in the hole when the piece
+// is off the wall. In print orientation: the wall end on the bed.
+//   d       nominal hole (standoff_peg_hole); the spigot core is d - 2 * play
+//   wall_t  thickness of the wall the hole goes through; the spigot stops 0.4 short
+//   len     from the wall to the piece's back face (the shoulder)
+//   rib_d   diameter over the ribs: the interference they crush into the hole
+module standoff_peg(d = 6, wall_t = 4.2, len = 16, body_d = 10, ribs = 4, rib_d = undef, rib_w = 0.8,
+                    play = 0.15, chamfer = 0.6) {
+    rib_d = rib_d == undef ? d + 0.4 : rib_d;
+    sl = wall_t - 0.4;
+    core = d - 2 * play;
+    chamfered_cylinder(body_d, len, chamfer);
+    translate([0, 0, len - 0.01]) {
+        cylinder(d = core, h = sl - 0.6);
+        translate([0, 0, sl - 0.6 - 0.01]) cylinder(d1 = core, d2 = core - 1.2, h = 0.6);   // lead-in
+        intersection() {   // ribs: full height over most of the spigot, tapering at its tip
+            for (a = [0:360 / ribs:359]) rotate(a) translate([0, -rib_w / 2, 0]) cube([rib_d / 2, rib_w, sl]);
+            union() {
+                cylinder(d = rib_d, h = sl - 1.2);
+                translate([0, 0, sl - 1.2 - 0.01]) cylinder(d1 = rib_d, d2 = core - 0.6, h = 1.2);
+            }
+        }
+    }
 }
 
 // ---------------------------------------------------------------- screws
@@ -97,6 +118,7 @@ module countersunk_screw(d = 4, head_d = 8, len = 20, head_play = 0.2, extra = 5
     cylinder(d = hd, h = extra);
 }
 
-// Female side of standoff_peg: its press-fit hole, `depth` deep from z = 0
-// down. fit ~0.1 over d is a press fit in PETG (vertical holes print small).
+// Female side of standoff_peg: its hole, `depth` deep from z = 0 down, right
+// through the piece's back wall. The peg's crush ribs make the fit, so the
+// hole only needs to be round: fit ~0.1 over d (vertical holes print small).
 module standoff_peg_hole(d = 6, depth = 5, fit = 0.1) translate([0, 0, -depth]) polyhole(d + fit, depth + 0.01);

@@ -37,7 +37,7 @@ ARROW = "#C12E1F";   // how it goes together
 pad_t = 4.2; pad_w = 22; drop = 12; shank_d = 7; head_d = 12;   // keyhole, as in soap-caddy
 cup_h = 12;
 flange_t = keyhole_button_flange_t(pad_t, shank_d, head_d);
-peg_d = 6; peg_len = pad_t + cup_h + flange_t; boss_t = pad_t;
+peg_d = 6; peg_len = cup_h + flange_t; boss_t = pad_t;
 key_s = 3;   // diamond key side
 plug_d = 8;  // lead-in plug
 hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
@@ -51,7 +51,7 @@ module keyhole_pad_sample()   // lying on its back, countersink up
         keyhole_cut(pad_t, drop, shank_d, head_d);
     }
 module keyhole_button_sample() keyhole_button(pad_t, shank_d, head_d);
-module standoff_peg_sample() standoff_peg(peg_d, peg_len);
+module standoff_peg_sample() standoff_peg(peg_d + 0.1, boss_t, peg_len);
 module peg_block_sample()     // a slice of the piece the peg presses into
     difference() {
         chamfered_prism(boss_t) square([24, 20], center = true);
@@ -189,15 +189,16 @@ module demo_part(name, role) {
         }
     }
     else if (name == "standoff_peg") {
-        // a piece hanging clear of the wall; the peg presses into it and rests on the wall
-        yf = -(cup_h + flange_t);              // piece back face
+        // a piece hanging clear of the wall; the peg goes into it from behind,
+        // its shoulder on the back face, and rests on the wall
+        yf = -peg_len - 16 * X;                // piece back face, exploded off the peg
         if (role == "wall") wall(-30, 30, -25, 25);
         if (role == "piece") translate([0, yf, 0]) rotate([90, 0, 0]) difference() {
             box([-20, -18, 0], [20, 18, boss_t]);
             translate([0, 0, boss_t]) standoff_peg_hole(peg_d, boss_t + 1);
         }
-        if (role == "mate") translate([0, yf - boss_t - 1.6 - 16 * X, 0]) rotate([-90, 0, 0]) standoff_peg(peg_d, peg_len);
-        if (role == "arrow") arrow([12, yf - boss_t - 18, 0], [12, yf - boss_t - 4, 0]);
+        if (role == "mate") rotate([90, 0, 0]) standoff_peg(peg_d + 0.1, boss_t, peg_len);
+        if (role == "arrow") arrow([12, yf - boss_t - 14, 0], [12, -peg_len - 2, 0]);
     }
     else if (name == "screw") {
         // the screw bites into a thick wall (a plug, or timber), through its pilot hole

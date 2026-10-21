@@ -380,11 +380,19 @@ Research behind each component in `tools/scad/`, one entry per component.
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. The button self-taps onto an M4 stud
-  through a Ø3.4 pilot hole. Print the pad flat (the slot in XY) and the button standing; the
+  through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45). A plain
+  Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. Print the pad flat (the slot in XY) and the button standing; the
   loads are small and stay in compression or shear (soap-caddy README, "Strength and orientation").
-- **Stand-off peg** (`mounts.scad`): a pin pressed into a hole (+0.1 mm in PETG) that rests on
-  the wall in compression. It stops a piece hung on two side-by-side mounts from nodding forward.
-  It is loaded along its axis, so it can print standing.
+- **Stand-off peg** (`mounts.scad`): a post that rests on the wall in compression. It stops a
+  piece hung on two side-by-side mounts from nodding forward. It goes into a through hole
+  **from behind**, its shoulder on the piece's back face, so the wall only pushes it further in.
+  The first version went in from the front, under the soap caddy's sloping tray floor: there
+  was no room to line a 23 mm pin up with its hole, and the hole printed loose for it anyway.
+  Check that a part can actually be put in, along its whole path, not just where it ends up.
+  Crush ribs on the spigot hold it when the piece is off the wall: 4 ribs, their diameter
+  `rib_d` 0.2–0.5 mm over the hole, tapered at the tip (community tests on Printables/Prusa and
+  MakerWorld; Protolabs for the moulded origin; no FDM standard, so print one and tune
+  `rib_d`). It is loaded along its axis, so it prints standing on its wall end.
 - **Sprung handle** (`joints.scad`, from cutlery-drainer): a U whose arms are sprung apart by
   hand so diamond pins at their ends snap into sockets on both sides of a part. Once seated it
   cannot turn, and a pull up or forward cannot unseat it: the pins only leave if the arms are

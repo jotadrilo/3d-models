@@ -52,7 +52,7 @@ cup_h = 12;          // wall to the cup's hub face, cup pressed on [5:0.5:30]
 cup_span = 120;      // horizontal distance between the cups of a row [52:1:250]
 cup_pitch = 55;      // vertical distance between the two rows [52:1:90]
 stud_len = 10;       // length of the cup's threaded stud [5:0.5:20]
-stud_hole = 3.4;     // pilot hole for the M4 stud, which taps its own thread [3:0.1:4.2]
+stud_hole = 3.7;     // pilot hole for the M4 stud as modelled (prints ~3.45); the stud taps its own thread [3:0.1:4.2]
 
 /* [Keyhole] */
 shank_d = 7;         // button shank diameter [5:0.5:10]
