@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-"""Build a ready-to-print Bambu Studio project for the soap caddy.
+"""Build a ready-to-print Bambu Studio project for the sink organizers.
 
-Plate 1: the frame, lying on its back (side walls and ledges become upright
-walls, so nothing needs support).
-Plate 2: the tray lying on its back, the box standing on its floor and the
-four buttons on their flanges.
-Plate 3: fit tests, minutes and a few grams before the big plates: a keyhole
-pad with a button (screw it onto a cup first), and a strip of the frame with
-a bar as wide as the tray and the box.
+Plate 1: the soap caddy's body standing on its floor (its dovetail tails
+along Z) and its wall plate flat on its back (the keyholes' slots and the
+housings' flanks in XY).
+Plate 2: the soap caddy's tray on its back, the box on its floor and the four
+buttons on their flanges.
+Plate 3: the cutlery drainer's body standing and its wall plate flat.
+Plate 4: the cutlery drainer's tray on its back, the three bins on their
+floors, the towel handle flat (the towel's weight bends it along XY) and the
+four buttons.
+Plate 5: fit tests, minutes and a few grams before the big plates: a keyhole
+pad with a button (screw it onto a cup first), a strip of plate with a
+dovetail housing and a strip of wall with its tail, a slice of the soap
+caddy's body with the bottom of its box, and the handle's pins in a block.
 
 Black PETG Basic on 0.20mm Standard with gyroid infill, the seam at the back,
-a scarf seam and precise walls: it hangs in plain sight.
+a scarf seam and precise walls: they hang in plain sight.
 
-    python3 bambu_project.py [-o soap-caddy-p1s.3mf] [-D var=val ...]
+    python3 bambu_project.py [-o sink-organizers-p1s.3mf] [-D var=val ...]
 """
 import argparse, os, sys
 
@@ -20,17 +26,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from bambu3mf import PETG_BASIC, Filament, Project, load_scad  # noqa: E402
 
-SCAD = os.path.join(HERE, "soap-caddy.scad")
+SOAP = os.path.join(HERE, "soap-caddy.scad")
+DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
+FLAT = (-90, 0, 0)   # the plates and trays on their backs
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("-o", "--output", default=os.path.join(HERE, "soap-caddy-p1s.3mf"))
+    ap.add_argument("-o", "--output", default=os.path.join(HERE, "sink-organizers-p1s.3mf"))
     ap.add_argument("-D", dest="defs", action="append", default=[], help="OpenSCAD override")
     args = ap.parse_args()
 
     proj = Project(
-        "Soap caddy",
+        "Sink organizers",
         process="0.20mm Standard @BBL X1C",
         filaments=[Filament(PETG_BASIC, "#000000")],
         process_overrides={
@@ -42,23 +50,44 @@ def main():
             "seam_slope_conditional": "1",
         },
     )
-    def part(name, **kw):
-        return load_scad(SCAD, name, args.defs, colour=False, **kw)
 
-    frame = proj.plate("Frame")
-    frame.add("Frame", part("frame", rotate=(-90, 0, 0)), 128, 140)
+    def soap(name, **kw):
+        return load_scad(SOAP, name, args.defs, colour=False, **kw)
 
-    parts = proj.plate("Tray, box and buttons")
-    parts.add("Tray", part("tray", rotate=(-90, 0, 0)), 128, 95)
-    parts.add("Bottle box", part("box"), 128, 175)
-    button = part("button")
+    def drainer(name, **kw):
+        return load_scad(DRAINER, name, args.defs, colour=False, **kw)
+
+    p = proj.plate("Soap caddy - body and wall plate")
+    p.add("Soap caddy body", soap("body"), 70, 128)
+    p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 186, 128)
+
+    p = proj.plate("Soap caddy - tray, box and buttons")
+    p.add("Soap caddy tray", soap("tray", rotate=FLAT), 128, 95)
+    p.add("Soap caddy box", soap("box"), 128, 175)
+    button = soap("button")
     for i, x in enumerate((92, 116, 140, 164)):
-        parts.add(f"Button {i + 1}", button, x, 40)
+        p.add(f"Soap caddy button {i + 1}", button, x, 40)
 
-    test = proj.plate("Fit tests")
-    test.add("Width test", part("test_width"), 128, 150)
-    test.add("Keyhole pad", part("test_keyhole", rotate=(-90, 0, 0)), 112, 95)
-    test.add("Test button", button, 146, 95)
+    p = proj.plate("Cutlery drainer - body and wall plate")
+    p.add("Cutlery drainer body", drainer("body"), 128, 74)
+    p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), 128, 190)
+
+    p = proj.plate("Cutlery drainer - tray, bins, handle and buttons")
+    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 215)
+    bin_ = drainer("bin")
+    for i, x in enumerate((55, 128, 201)):
+        p.add(f"Cutlery drainer bin {i + 1}", bin_, x, 125)
+    p.add("Towel handle", drainer("handle"), 128, 50)
+    for i, x in enumerate((30, 48, 208, 226)):
+        p.add(f"Cutlery drainer button {i + 1}", button, x, 22)
+
+    p = proj.plate("Fit tests")
+    p.add("Keyhole pad", soap("test_keyhole", rotate=FLAT), 45, 60)
+    p.add("Test button", button, 75, 60)
+    p.add("Dovetail housing", soap("test_dovetail_housing"), 110, 60)
+    p.add("Dovetail tail", soap("test_dovetail_tail"), 140, 60)
+    p.add("Handle pin test", drainer("test_pin"), 200, 60)
+    p.add("Soap caddy width test", soap("test_width"), 128, 175)
     proj.write(args.output)
 
 
