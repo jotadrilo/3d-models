@@ -2,19 +2,24 @@
 
 A wall-mounted holder for the dish soap bottle and the scourer sponge, next to
 the sink. It replaces a metal rack that scratched the counter and was hard to
-clean around: nothing touches the counter, and both pieces lift off the wall
-for washing while the suction cups stay in place.
+clean around: nothing touches the counter, and every piece that gets wet
+comes out on its own, to wash it or reprint it, while the frame stays on the
+wall. It is modular in the same way as the [cutlery drainer](../cutlery-drainer/).
 
-- **Upper piece**: an open-front box that holds the bottle **upside down**, so
-  the soap is always at the cap. The cap goes through a hole in the floor and
+- **Frame**: the back plate and two side walls. It hangs on four suction
+  cups and stays there.
+- **Box**: an open-front box that holds the bottle **upside down**, so the
+  soap is always at the cap. The cap goes through a hole in the floor and
   hangs right over the sponge: open it, squeeze the bottle against the back
-  and the soap lands on the sponge.
-- **Lower piece**: a slatted cradle where the sponge dries, over a tray that
-  slopes forward and spills into the sink.
+  and the soap lands on the sponge. It drops into the frame from the top and
+  lifts out.
+- **Tray**: a slatted cradle where the sponge dries, over a floor that slopes
+  forward and spills into the sink. It slides out to the front.
 
-Sized by default for the Bosque Verde 600 ml bottle and the Bosque Verde
-scourer with nail guard (90 × 65 × 45 mm), both from Mercadona. Every size is
-a parameter: measure your bottle and adjust before printing.
+Sized by default for the Bosque Verde 600 ml bottle (90 mm at its widest,
+50 mm deep, 210 mm tall) and the Bosque Verde scourer with nail guard
+(90 × 65 × 45 mm), both from Mercadona. Every size is a parameter: measure
+yours and adjust before printing.
 
 ![Soap caddy](renders/soap-caddy-hero.webp)
 
@@ -22,105 +27,112 @@ a parameter: measure your bottle and adjust before printing.
 make project                                   # -> soap-caddy-p1s.3mf (Bambu Studio, ready to print)
 make report                                    # rebuild it, slice it, print time and filament per plate
 make                                           # -> one STL per part
-make project DEFS='-D bottle_w=80 -D bottle_d=54 -D neck_d=32'   # your bottle
+make project DEFS='-D bottle_w=86 -D bottle_d=54 -D neck_d=32'   # your bottle
 make render                                    # -> renders/*.webp, studio views with Blender
 make help                                      # every target
 ```
+
+| On the wall | Taken apart |
+|---|---|
+| ![On the wall, with the bottle and the sponge](renders/soap-caddy-wall-hero.webp) | ![The tray slid out and the box lifted out of the frame](renders/soap-caddy-apart-hero.webp) |
 
 ## How it hangs
 
 ![Section through the upper keyholes, on the wall](renders/soap-caddy-section-front.webp)
 
-Four suction cups (Ø 50 mm with an M4 × 10 stud, e.g. DIYexpert on Amazon)
-stick to the wall: the upper pair one above the other, `cup_pitch` (55 mm)
-apart, centred over the sink; the lower pair side by side,
-`lower_cup_span` (56 mm) apart, which keeps the tray piece only 40 mm tall. A printed
-**button** screws onto each stud: a flange that rests on the cup, a shank and
-a cone head. Each piece has two **keyholes**: push it onto its two buttons
-through the round entries and let it drop `drop` (12 mm). The cone heads seat
-in 45° countersinks and pull the piece tight against the flanges.
+Four suction cups (Ø 50 mm with an M4 stud, e.g. DIYexpert on Amazon) stick
+to the wall: two side by side low down, `lower_cup_span` (56 mm) apart, and
+two one above the other behind the box, `cup_pitch` (55 mm) apart, centred
+over the sink. They are where the earlier two-piece caddy had them, so the
+cups already on the wall stay put. A printed **button** screws onto each
+stud: a flange that rests on the cup, a shank and a cone head. The frame has
+four **keyholes**: push it onto the buttons through the round entries and
+let it drop `drop` (12 mm). The cone heads seat in 45° countersinks and pull
+the frame tight against the flanges.
 
-The upper pair, one above the other, takes the bottle's turning moment. The
-lower pair, side by side, only stops the tray swinging sideways; two printed
-**pegs**, pushed into the bottom corners of its back plate from behind,
-rest on the wall and stop it nodding forward when you press on the sponge.
+One frame on all four cups takes the turning moment of the bottle and of a
+hand pressing the sponge: the top cups pull, the bottom ones press. Nothing
+else rests on the wall, so the earlier caddy's stand-off pegs are gone.
 
-![Section through a lower keyhole: button, peg on the wall, tray](renders/soap-caddy-section-lower-front.webp)
+![Section through a lower keyhole: button, tray and box on their ledges](renders/soap-caddy-section-lower-front.webp)
 
-The pegs are the two orange posts in the bottom corners of the tray piece's
-back plate. Push each one into its hole from behind, thin end first, until
-its shoulder sits on the back plate: four crush ribs on the thin end grip the
-hole, and once the piece hangs, the wall only pushes the peg further in. Its
-flat end, 17 mm behind the piece, rests on the wall. At 0.4 mm of ribs over
-the hole they fell out, so `peg_grip` is 0.8 now, and plate 3 has a fit
-test: two pegs at each of `peg_grip` − 0.2, `peg_grip` and + 0.2, marked
-with 1, 2 and 3 grooves along the body. Keep the pair that holds without
-forcing, and set `peg_grip` to it.
-
-| From behind | Cut through a peg, on the wall |
-|---|---|
-| ![The tray piece from behind, with its two pegs](renders/soap-caddy-pegs-back.webp) | ![Section through a peg: shoulder on the back plate, end on the wall](renders/soap-caddy-section-peg-front.webp) |
-
-To clean, lift the upper piece 12 mm and pull it off, then the lower one.
-There is room under the box to lift the tray piece off on its own.
-
-- The bottle drops in from the top, cap first. The box is open at the front
-  (where you squeeze the bottle); its sides round into 10 mm returns that
-  keep it from tipping forward. Box top + bottle height must fit under the wall cabinet: the
-  console prints the margin (431 of 460 mm by default).
+- **Box**: it stands on two ledges inside the side walls. Lift it straight
+  up to take it out (with the bottle out first). The bottle drops in from the
+  top, cap first; the box is open at the front, where you squeeze the bottle,
+  and its sides round into 10 mm returns that keep it from tipping forward.
+  Inside it is 94 × 53 mm: the box is as wide as the tray below it, so a
+  narrower bottle has room to spare. Frame top + bottle height must fit under
+  the wall cabinet: the console prints the margin (430 of 460 mm by default).
+- **Tray**: it rests on ledges that follow its sloping underside. Lift its
+  front 2 mm over the bumps at their ends (`ledge_stop`) and slide it out to
+  the front, under the box. The sponge sits on level slats, between the side
+  walls and with nothing at the front, so it slides in and out freely. Water
+  drips through onto the floor, which slopes 6° forward and spills 10 mm past
+  the edge of the sink (`sink_dist` + `drip_over` from the wall).
 - The cap tip hangs `tip_gap` (15 mm) over the sponge. The push-pull cap
   comes out ~5 mm when open, so it still clears the sponge.
-- The sponge sits on level slats, between the side walls and with nothing
-  at the front, so it slides in and out freely. Water drips through onto a
-  tray sloping 6° forward. Its front edge reaches 10 mm past the edge of the
-  sink (`sink_dist` + `drip_over` from the wall).
-- Seen from the side the tray piece is a plain rectangle: the side walls run
-  at full height out to the front edge and hide the slope inside.
-- Style: a straight back against the wall, front corners rounded in plan
-  (`corner_r`), close rounded slots in the walls and rounded floor windows
-  round a round collar. 4-line walls keep it under 90 g. The style, the
-  keyholes, the buttons and the pegs come from the shared library
-  ([`tools/scad/`](../../tools/scad/)), for the next kitchen pieces.
+- Style: a straight back against the wall, side walls deep round the tray
+  and as deep as the box above it with a rounded step between them, front
+  corners rounded in plan (`corner_r`), close rounded slots in the walls and
+  rounded floor windows round a round collar. The style, the keyholes and the
+  buttons come from the shared library ([`tools/scad/`](../../tools/scad/)).
 
 ## Installing
 
-1. Clean the tile with isopropyl alcohol. On tile that is not quite smooth,
+1. Print plate 3 first (below) and check the fits.
+2. Clean the tile with isopropyl alcohol. On tile that is not quite smooth,
    a very thin film of petroleum jelly on each cup rim seals much better.
-2. Screw a button onto each cup by turning the cup: the M4 stud taps its own
-   thread into the ≈3.45 mm hole (3.7 as modelled). Push the two pegs into the
-   holes at the bottom of the tray piece, from behind (see "How it hangs").
-3. Hang both pieces on their buttons on the table, then press the whole
-   assembly against the wall, pushing over each cup.
-4. Lift the pieces off and on again to check they slide freely.
+3. Screw a button onto each cup by turning the cup: the M4 stud taps its own
+   thread into the ≈3.45 mm hole (3.7 as modelled), which goes right through
+   the button, until the flange sits on the cup.
+4. Hang the frame on its buttons on the table, then press it against the
+   wall, pushing over each cup. Lift it off and on again to check it slides.
+5. Slide the tray in and drop the box in.
 
-Measure `cup_h` (wall to the hub face of a pressed cup) once the cups are on
-the wall: it sets how far the tray reaches.
+Measure `cup_h` (wall to the hub face of a pressed cup) and `stud_len` (the
+stud, from the hub face) before printing: they set how far the frame stands
+off the wall and how long the buttons are.
 
 ## Parts
 
 | Part | Size (mm) | Notes |
 |---|---|---|
-| `upper` | 88 × 66 × 90 | Bottle box; printed standing on its floor |
-| `lower` | 97 × 108 × 40 | Sponge cradle and tray; printed lying on its back |
+| `frame` | 102 × 109 × 209 | Back plate with four keyholes, side walls with the ledges; printed lying on its back |
+| `tray` | 97 × 100 × 20 | Sloping floor, slats, rims; printed lying on its back |
+| `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
 | `button` | Ø 16 × 13 | One per cup (4); the stud goes right through; printed on its flange |
-| `peg` | Ø 10 × 21 | Two; pushed into the tray piece from behind, crush ribs, end on the wall; printed standing on its wall end |
 | `test_keyhole` | 22 × 30 × 4.2 | Fit test: one keyhole pad, printed flat |
+| `test_width` | 102 × 40 × 4 | Fit test: a strip of the frame and a bar as wide as the tray and the box, printed flat |
+
+## Fit tests (plate 3)
+
+25 minutes and 6 g, before the 6 hours of the big plates:
+
+- **Button on the cup**: screw the test button onto a cup. The flange must
+  reach the cup's hub; if the stud stops it short, measure the stud and raise
+  `stud_len`. Too hard to turn: raise `stud_hole` by 0.1.
+- **Keyhole**: push the button (on its cup) through the pad's entry and slide
+  it up the slot. It should slide freely and seat with no play. Too tight:
+  raise `keyhole_play`; loose front to back: lower `shank_play`.
+- **Width**: the bar must slide between the strip's side walls with a little
+  play: the tray and the box fit the frame the same way. Too tight: raise
+  `tray_play` and `box_play`; sloppy: lower them.
 
 ## Parameters
 
 All lengths in mm. Override any of them with `make DEFS='-D name=value'` (also
-`make project`, `make report` and `make render`). The console prints the piece
+`make project`, `make report` and `make render`). The console prints the
 sizes, the cup heights and the cabinet margin; asserts stop the build if the
-cups do not fit their pieces.
+pieces do not fit.
 
 | Parameter | Default | What it does |
 |---|---|---|
 | **Bottle** | | |
-| `bottle_w`, `bottle_d` | 82, 55 | Bottle body, along the wall and front to back |
+| `bottle_w`, `bottle_d` | 90, 50 | Bottle at its widest, along the wall and front to back |
 | `bottle_h` | 210 | Total height with the cap (cabinet check) |
 | `neck_d` | 34 | Widest part that goes through the floor hole (cap, neck ring) |
 | `seat_to_tip` | 35 | How far the cap tip hangs below the floor |
-| `bottle_play` | 1.5 | Clearance round the bottle, per side |
+| `bottle_play` | 1.5 | Clearance round the bottle, per side, at least |
 | **Sponge** | | |
 | `sponge_w`, `sponge_d`, `sponge_h` | 90, 65, 45 | Sponge size |
 | `sponge_play` | 2 | Clearance round the sponge |
@@ -128,7 +140,7 @@ cups do not fit their pieces.
 | **Kitchen** | | |
 | `sink_dist` | 115 | Wall to the inner edge of the sink bowl |
 | `drip_over` | 10 | How far the tray reaches past the sink edge |
-| `counter_gap` | 15 | Counter to the bottom of the tray |
+| `counter_gap` | 15 | Counter to the tray's front bottom edge |
 | `cabinet_h` | 460 | Counter to the wall cabinet |
 | **Suction cups** | | |
 | `cup_d`, `cup_h` | 50, 12 | Cup diameter; wall to the hub face, pressed on |
@@ -139,21 +151,25 @@ cups do not fit their pieces.
 | `shank_d`, `head_d`, `flange_d` | 7, 12, 16 | Button sizes |
 | `keyhole_play` | 0.3 | Radial clearance in the keyhole |
 | `shank_play` | 0.2 | Axial clearance between pad and head |
-| `drop` | 12 | How far a piece drops onto its buttons |
+| `drop` | 12 | How far the frame drops onto its buttons |
 | `pad_t`, `pad_w` | 4.2, 22 | Pad round each keyhole |
-| **Upper piece** | | |
-| `frame_h` | 90 | Box height |
-| `wall_t`, `back_t` | 1.68, 1.68 | Side walls and returns; back plates of both pieces |
-| `floor_t`, `collar_t` | 2, 4 | Box floor; collar round the hole |
+| **Frame** | | |
+| `back_t`, `side_t` | 1.68, 1.68 | Back plate and side walls |
+| `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray and the box; the bump at the front of the tray's |
+| `sponge_rim` | 12 | The side walls' deep part, above the slats |
+| `step_r` | 10 | Radius of the step in the side walls |
+| **Tray** | | |
+| `tray_play` | 0.4 | Clearance in the frame, per side |
+| `tray_slope` | 6 | Floor slope, degrees |
+| `tray_t`, `tray_wall` | 1.26, 1.68 | Floor and rims |
+| `slat_w`, `slat_h`, `slat_pitch`, `slat_clear` | 2.1, 5, 9, 3 | Slats |
+| **Box** | | |
+| `box_play` | 0.4 | Clearance in the frame, per side |
+| `box_h` | 90 | Box height (and the top of the frame) |
+| `wall_t`, `floor_t`, `collar_t` | 1.68, 2, 4 | Walls, floor, collar round the hole |
 | `return_w` | 10 | Front returns, rounding into the sides |
-| **Lower piece** | | |
-| `tray_slope` | 6 | Tray slope, degrees |
-| `tray_t`, `side_t` | 1.26, 1.68 | Tray floor and side walls |
-| `slat_w`, `slat_h`, `slat_pitch` | 2.1, 5, 9 | Slats |
-| `sponge_rim` | 12 | Side walls above the slats (they run at that height out to the front) |
-| `peg_d`, `peg_fit`, `peg_grip`, `peg_inset` | 6, 0.1, 0.8, 10 | Pegs; extra on their holes; the crush ribs over the hole; axis in from each side |
 | **Style** | | |
-| `corner_r` | 14 | Front corners, rounded in plan (the back stays straight) |
+| `corner_r` | 14 | Front corners of the tray and box, rounded in plan |
 | `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded vertical slots in the walls |
 
 ## Strength and orientation
@@ -164,22 +180,12 @@ pressing the sponge (≈30 N).
 
 | Part | Load | Printed | Across the layers? | Margin |
 |---|---|---|---|---|
-| `upper` | bottle on the floor, hung from the back wall; its pitch pulls the top button head out with ≈6 N (bottle 52 mm from the wall, cups 55 mm apart) | standing on its floor | yes: walls in tension along Z | > 100× (≈0.05 MPa in the walls) |
-| `lower` slats | the hand on the sponge: ≈4.3 N per slat (7 slats), simply supported over ≈38 mm (back plate, middle tie) | on its back, slats along Z | yes: they bend across the layers | ≈4× (≈4.7 MPa against ≈19). Raise `slat_h` if needed: the stress drops with its square |
-| `lower` tray | dripping water | on its back | yes | no real load |
-| `button` | shear on the shank and pull on the head, ≤6 N | standing on its flange | yes | > 50× (≈0.2 MPa on a 7 mm shank) |
-| `peg` | pushes on the wall along its axis | standing on its wall end | no: compression | — |
-
-Lying on its side would put the slats in XY, but the side wall would
-then be a 108 × 40 mm roof in the air. With a 4× margin, the back is the
-better trade.
-
-## Keyhole fit test
-
-**Plate 2** (19 min, 3 g): one keyhole pad and one button. Push the button
-through the entry and slide it up the slot. It should slide freely and seat
-with no play. Too tight: raise `keyhole_play`; loose front to back: lower
-`shank_play`.
+| `frame` keyholes | ≈2 N·m of turning moment (hand on the sponge ≈60 mm out, the bottle ≈30 mm out) over cups ≈120 mm apart in height: ≈8 N pull on each upper button head | on its back: the slot lips in XY | no | > 20× |
+| `frame` side walls | the hand on the sponge through the tray ledges, cantilevered from the back plate (≈15 N per wall, 60 mm out) | on its back: bending along Z | yes | ≈7× (≈2.6 MPa against ≈20) |
+| `frame` box ledges | the bottle and the box, ≈7 N on two ledges | on its back: each layer is a short ledge loaded in XY | no | > 50× |
+| `tray` slats | the hand on the sponge: ≈4.3 N per slat, over ≈35 mm (back rim, middle tie) | on its back, slats along Z | yes | ≈4×. Raise `slat_h` if needed: the stress drops with its square |
+| `box` | the bottle on its floor, standing on the ledges | standing on its floor | floor in XY | > 50× |
+| `button` | shear on the shank and pull on the head, ≤8 N | standing on its flange | yes | > 50× (≈0.2 MPa on a 7 mm shank) |
 
 ## Printing (Bambu P1S)
 
@@ -187,25 +193,26 @@ with no play. Too tight: raise `keyhole_play`; loose front to back: lower
 nozzle, *0.20mm Standard* with gyroid infill, the seam at the back, scarf seam
 and precise outer walls. Black Bambu PETG Basic in slot 1. PETG takes warm
 soapy water and the top rack of the dishwasher, where PLA softens and creeps.
-No supports: the upper piece stands on its floor and the lower one lies on
-its back, so the sloping tray, the slats and the side walls all print as
-upright walls. With the default parameters:
+No supports: the frame and the tray lie on their backs, so the side walls,
+ledges, sloping floor and slats all print as upright walls; the box stands on
+its floor. With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 58 min | 86 g |
-| 2 · Keyhole fit test | keyhole pad, button | 21 min | 3 g |
-| 3 · Buttons and peg test | 4 buttons, and pegs at three grips, to reprint them on their own | 47 min | 11 g |
+| 1 · Frame | frame | 3 h 13 min | 70 g |
+| 2 · Tray, box and buttons | tray, box, 4 buttons | 3 h 12 min | 68 g |
+| 3 · Fit tests | keyhole pad, button, width strip and bar | 25 min | 6 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
 
 ## Renders
 
-`make render` builds the project and renders the caddy, a section through
-its middle on the wall (`-D section="upper"`, `"lower"` through a lower keyhole and `"peg"` through a peg: the bottle,
-sponge, cups and counter are cut with it) and the print plate with Blender
-(`../../tools/render_studio.py`), in the filament colour and with
+`make render` builds the project and renders the caddy (bare, on the wall
+with the bottle and sponge, and taken apart with `-D explode=1`), two
+sections on the wall (`-D section="upper"` through the upper keyholes and
+`"lower"` through a lower one; buttons in orange) and the print plates with
+Blender (`../../tools/render_studio.py`), in the filament colour and with
 layer lines at the project's layer height. 2400 × 1800 WebP; add
 `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 
@@ -213,4 +220,4 @@ layer lines at the project's layer height. 2400 × 1800 WebP; add
 |---|---|---|---|---|
 | ![](renders/soap-caddy-hero.webp) | ![](renders/soap-caddy-front.webp) | ![](renders/soap-caddy-side.webp) | ![](renders/soap-caddy-top.webp) | ![](renders/soap-caddy-back.webp) |
 
-Print plate: ![](renders/soap-caddy-parts-hero.webp)
+Plates: ![](renders/soap-caddy-frame-plate-hero.webp) ![](renders/soap-caddy-parts-hero.webp) ![](renders/soap-caddy-tests-top.webp)

@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Build a ready-to-print Bambu Studio project for the soap caddy.
 
-Plate 1: the upper piece standing on its floor, the lower piece lying on its
-back (the sloping tray, slats and side walls become upright walls, so nothing
-needs support), the four buttons on their flanges and the two pegs on their collars. Black PETG Basic on
-0.20mm Standard with gyroid infill, the seam at the back, a scarf seam and
-precise walls: it hangs in plain sight.
+Plate 1: the frame, lying on its back (side walls and ledges become upright
+walls, so nothing needs support).
+Plate 2: the tray lying on its back, the box standing on its floor and the
+four buttons on their flanges.
+Plate 3: fit tests, minutes and a few grams before the big plates: a keyhole
+pad with a button (screw it onto a cup first), and a strip of the frame with
+a bar as wide as the tray and the box.
 
-Plate 2: a keyhole fit test, one pad and one button.
+Black PETG Basic on 0.20mm Standard with gyroid infill, the seam at the back,
+a scarf seam and precise walls: it hangs in plain sight.
 
     python3 bambu_project.py [-o soap-caddy-p1s.3mf] [-D var=val ...]
 """
@@ -42,24 +45,20 @@ def main():
     def part(name, **kw):
         return load_scad(SCAD, name, args.defs, colour=False, **kw)
 
-    plate = proj.plate("Soap caddy")
-    plate.add("Lower (sponge tray)", part("lower", rotate=(-90, 0, 0)), 72, 150)
-    plate.add("Upper (bottle box)", part("upper"), 186, 150)
+    frame = proj.plate("Frame")
+    frame.add("Frame", part("frame", rotate=(-90, 0, 0)), 128, 140)
+
+    parts = proj.plate("Tray, box and buttons")
+    parts.add("Tray", part("tray", rotate=(-90, 0, 0)), 128, 95)
+    parts.add("Bottle box", part("box"), 128, 175)
     button = part("button")
-    for i, x in enumerate((78, 102, 126, 150)):
-        plate.add(f"Button {i + 1}", button, x, 60)
-    peg = part("peg")
-    for i, x in enumerate((176, 196)):
-        plate.add(f"Peg {i + 1}", peg, x, 60)
+    for i, x in enumerate((92, 116, 140, 164)):
+        parts.add(f"Button {i + 1}", button, x, 40)
 
-    test = proj.plate("Keyhole fit test")
-    test.add("Keyhole pad", part("test_keyhole", rotate=(-90, 0, 0)), 115, 128)
-    test.add("Test button", button, 148, 128)
-
-    spares = proj.plate("Buttons and peg test")   # reprint them on their own
-    for i, x in enumerate((88, 112, 136, 160)):
-        spares.add(f"Button {i + 1}", button, x, 145)
-    spares.add("Peg fit test (1 to 3 grooves, looser to tighter)", part("peg_test"), 124, 110)
+    test = proj.plate("Fit tests")
+    test.add("Width test", part("test_width"), 128, 150)
+    test.add("Keyhole pad", part("test_keyhole", rotate=(-90, 0, 0)), 112, 95)
+    test.add("Test button", button, 146, 95)
     proj.write(args.output)
 
 
