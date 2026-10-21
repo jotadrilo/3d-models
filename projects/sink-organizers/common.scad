@@ -210,7 +210,10 @@ module test_keyhole() difference() {
 // A strip of plate with one housing, printed flat like the plate, and a
 // strip of side wall with its tail, printed standing like the body: the tail
 // must slide all the way down with a little play and not pull out forward.
-test_dt_h = 40;
+// 20 mm long: every layer of the standing strip is tiny and waits out the
+// filament's minimum layer time (12 s in PETG), so length is print time. The
+// strip ends in a return, so it stands without a brim.
+test_dt_h = 20;
 module test_dovetail_housing() rotate([-90, 0, 0]) {
     translate([-house_hw - 4, 0, -dt_cap]) cube([2 * house_hw + 8, back_t, test_dt_h + dt_cap]);
     dovetail_housing(test_dt_h, side_t, dt_w, dt_d, dt_play, dt_floor, dt_lip, dt_side, dt_cap);
@@ -218,6 +221,7 @@ module test_dovetail_housing() rotate([-90, 0, 0]) {
 module test_dovetail_tail() {
     dovetail_tail(test_dt_h, side_t, dt_w, dt_d, dt_floor, dt_lip);
     translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([side_t, 20, test_dt_h]);
+    translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([10, side_t, test_dt_h]);
 }
 
 // ---------------------------------------------------------------- assembly helpers

@@ -156,7 +156,7 @@ the front wall.
 
 ## Fit tests (plate 5)
 
-About 1 h 30 min and 30 g, before the big plates. Each piece tests the real
+About 1 h 10 min and 28 g, before the big plates (the dovetail pair alone: 27 min, 2.6 g). Each piece tests the real
 thing, printed the way the real part prints.
 
 - **Button on the cup**: screw the test button onto a cup. The flange must
@@ -166,7 +166,7 @@ thing, printed the way the real part prints.
   it up the slot. It should slide freely and seat with no play. Too tight:
   raise `keyhole_play`; loose front to back: lower `shank_play`.
 - **Dovetail**: a strip of plate with a housing (flat) and a strip of wall
-  with its tail (standing), 40 mm long. The tail must slide all the way down
+  with its tail (standing), 20 mm long. The tail must slide all the way down
   with a little play and must not pull out forward. Too tight: raise
   `dt_play` by 0.05; sloppy: lower it. The real ones are 100–210 mm long, so
   a fit that is only just free here may bind there.
@@ -230,7 +230,7 @@ With the default parameters:
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 10 min | 68 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 5 h 29 min | 119 g |
 | 4 · Cutlery drainer: tray, bins, handle and buttons | tray, 3 bins, handle, 4 buttons | 7 h 46 min | 151 g |
-| 5 · Fit tests | keyhole pad, button, dovetail housing and tail, box width, handle pins | 1 h 29 min | 30 g |
+| 5 · Fit tests | keyhole pad, button, dovetail housing and tail, box width, handle pins | 1 h 09 min | 28 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
