@@ -24,7 +24,7 @@
 // back (see bambu_project.py). Every wall is a multiple of the 0.42 mm line.
 
 /* [Part] */
-part = "assembly";   // [assembly, upper, lower, button, peg, test_keyhole, lower_pegs]  lower_pegs: the tray piece with its pegs in orange (render)
+part = "assembly";   // [assembly, upper, lower, button, peg, peg_test, test_keyhole, lower_pegs]  lower_pegs: the tray piece with its pegs in orange (render)
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower, peg] cut the assembly through the upper keyholes (x = 0), a lower one or a peg, for the section renders
 
@@ -54,7 +54,7 @@ cup_d = 50;          // suction cup diameter [30:1:80]
 cup_h = 12;          // wall to the cup's hub face, cup pressed on [5:0.5:30]
 cup_pitch = 55;      // vertical distance between the upper piece's two cups [50:1:90]
 lower_cup_span = 56; // horizontal distance between the lower piece's two cups [50:1:90]
-stud_len = 10;       // length of the cup's threaded stud [5:0.5:20]
+stud_len = 12;       // the cup's threaded stud, from the hub face (measure it: the button needs to be longer) [5:0.5:20]
 stud_hole = 3.7;     // pilot hole for the M4 stud as modelled (prints ~3.45); the stud taps its own thread [3:0.1:4.2]
 
 /* [Keyhole] */
@@ -87,7 +87,7 @@ slat_clear = 3;      // gap between the slats and the tray floor, at the back [2
 sponge_rim = 12;     // side walls rise this much above the slats [0:1:40]
 peg_d = 6;           // pegs that rest the bottom of the lower piece on the wall [4:0.5:10]
 peg_fit = 0.1;       // added to the peg holes, which print ~0.2 small [-0.1:0.05:0.4]
-peg_grip = 0.4;      // the peg's crush ribs, over the hole: how hard it grips [0:0.05:0.8]
+peg_grip = 0.8;      // the peg's crush ribs, over the hole: how hard it grips (0.4 fell out) [0:0.05:1.5]
 peg_inset = 10;      // peg axis, in from each side of the lower piece [6:1:30]
 
 /* [Style] */
@@ -287,7 +287,17 @@ module lower() {
 
 // Peg, in print orientation: its wall end on the bed. It pushes into its boss
 // from behind, its shoulder on the back face, and its crush ribs hold it there.
-module peg() standoff_peg(peg_d + peg_fit, pad_t, peg_len, peg_collar, rib_d = peg_d + peg_fit + peg_grip, chamfer = chamfer);
+module peg(grip = peg_grip) standoff_peg(peg_d + peg_fit, pad_t, peg_len, peg_collar, rib_d = peg_d + peg_fit + grip, chamfer = chamfer);
+
+// Peg fit test: two pegs at each of three grips, 0.2 apart round peg_grip,
+// marked with 1, 2 and 3 grooves along the body (1 = loosest). Push one of
+// each into the piece and keep the pair that holds without forcing.
+peg_test_grips = [peg_grip - 0.2, peg_grip, peg_grip + 0.2];
+module peg_test()
+    for (i = [0:2], j = [0:1]) translate([(i - 1) * 14, (j - 0.5) * 14, 0]) difference() {
+        peg(peg_test_grips[i]);
+        for (k = [0:i]) rotate(90 + (k - i / 2) * 40) translate([peg_collar / 2, 0, 2]) cylinder(d = 1.6, h = peg_len - 4, $fn = 12);
+    }
 module peg_placed(s) translate([s * peg_x, wall_gap, peg_z]) rotate([90, 0, 0]) peg();
 
 // Fit test: a flat pad with one keyhole, for a button.
@@ -347,6 +357,7 @@ if (part == "upper") upper();
 else if (part == "lower") lower();
 else if (part == "button") button();
 else if (part == "peg") peg();
+else if (part == "peg_test") peg_test();
 else if (part == "test_keyhole") test_keyhole();
 else if (part == "lower_pegs") {
     color(piece_colour) lower();

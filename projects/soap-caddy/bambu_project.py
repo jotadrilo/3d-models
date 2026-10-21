@@ -56,11 +56,10 @@ def main():
     test.add("Keyhole pad", part("test_keyhole", rotate=(-90, 0, 0)), 115, 128)
     test.add("Test button", button, 148, 128)
 
-    spares = proj.plate("Buttons and pegs")   # reprint them on their own
+    spares = proj.plate("Buttons and peg test")   # reprint them on their own
     for i, x in enumerate((88, 112, 136, 160)):
-        spares.add(f"Button {i + 1}", button, x, 140)
-    for i, x in enumerate((112, 136)):
-        spares.add(f"Peg {i + 1}", peg, x, 112)
+        spares.add(f"Button {i + 1}", button, x, 145)
+    spares.add("Peg fit test (1 to 3 grooves, looser to tighter)", part("peg_test"), 124, 110)
     proj.write(args.output)
 
 

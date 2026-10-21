@@ -42,23 +42,25 @@ module keyhole_cut(t, drop, shank_d, head_d, play = 0.3, cone = true) {
 
 // Button for a keyhole_cut(cone = true), in print orientation: flange on the
 // bed, head on top. A threaded stud (a suction cup's M4, a screw) taps into
-// the blind pilot hole from the flange side.
+// the pilot hole from the flange side. The hole goes right through, so a stud
+// longer than expected never bottoms out before the flange reaches the cup.
 //   pad_t       thickness of the pad it hangs through
 //   axial_play  clearance between pad and head, front to back
 //   head_cyl    straight band on top of the cone
-//   stud_len    stud length; the flange grows so the hole fits it
+//   stud_len    stud length, from the hub face; the flange grows so the button
+//               is at least 1 mm longer, and the stud stays inside the head
 //   stud_hole   pilot hole as modelled (3.7 for M4 tapping into PETG/PLA: a
 //               polyhole that prints ~3.45, with a lead-in at its mouth)
 function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.2) =
     pad_t - (head_d - shank_d) / 2 + axial_play;
-function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 10, min_flange = 3) =
+function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 12, min_flange = 3) =
     max(min_flange, stud_len + 1 - (keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl));
-function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 10, min_flange = 3) =
+function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.2, head_cyl = 1, stud_len = 12, min_flange = 3) =
     keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange)
     + keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl;
 
 module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play = 0.2, head_cyl = 1,
-                      stud_len = 10, stud_hole = 3.7, min_flange = 3, chamfer = 0.6) {
+                      stud_len = 12, stud_hole = 3.7, min_flange = 3, chamfer = 0.6) {
     sl = keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play);
     ft = keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange);
     hc = (head_d - shank_d) / 2;
@@ -70,7 +72,7 @@ module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play
             translate([0, 0, ft + sl]) cylinder(d1 = shank_d, d2 = head_d, h = hc);
             translate([0, 0, ft + sl + hc - e]) cylinder(d = head_d, h = head_cyl + e);
         }
-        translate([0, 0, -e]) polyhole(stud_hole, stud_len + 0.3 + e);
+        translate([0, 0, -e]) polyhole(stud_hole, ft + sl + hc + head_cyl + 2 * e);
         translate([0, 0, -e]) cylinder(d1 = stud_hole + 1, d2 = stud_hole, h = 0.5 + e);
     }
 }

@@ -51,8 +51,11 @@ The pegs are the two orange posts in the bottom corners of the tray piece's
 back plate. Push each one into its hole from behind, thin end first, until
 its shoulder sits on the back plate: four crush ribs on the thin end grip the
 hole, and once the piece hangs, the wall only pushes the peg further in. Its
-flat end, 17 mm behind the piece, rests on the wall. Too loose or too tight:
-`peg_grip` (0.4 mm of ribs over the hole) and print the pegs again.
+flat end, 17 mm behind the piece, rests on the wall. At 0.4 mm of ribs over
+the hole they fell out, so `peg_grip` is 0.8 now, and plate 3 has a fit
+test: two pegs at each of `peg_grip` − 0.2, `peg_grip` and + 0.2, marked
+with 1, 2 and 3 grooves along the body. Keep the pair that holds without
+forcing, and set `peg_grip` to it.
 
 | From behind | Cut through a peg, on the wall |
 |---|---|
@@ -99,7 +102,7 @@ the wall: it sets how far the tray reaches.
 |---|---|---|
 | `upper` | 88 × 66 × 90 | Bottle box; printed standing on its floor |
 | `lower` | 97 × 108 × 40 | Sponge cradle and tray; printed lying on its back |
-| `button` | Ø 16 × 11 | One per cup (4); printed on its flange |
+| `button` | Ø 16 × 13 | One per cup (4); the stud goes right through; printed on its flange |
 | `peg` | Ø 10 × 21 | Two; pushed into the tray piece from behind, crush ribs, end on the wall; printed standing on its wall end |
 | `test_keyhole` | 22 × 30 × 4.2 | Fit test: one keyhole pad, printed flat |
 
@@ -131,7 +134,7 @@ cups do not fit their pieces.
 | `cup_d`, `cup_h` | 50, 12 | Cup diameter; wall to the hub face, pressed on |
 | `cup_pitch` | 55 | Vertical distance between the upper cups |
 | `lower_cup_span` | 56 | Horizontal distance between the lower cups |
-| `stud_len`, `stud_hole` | 10, 3.7 | Stud length; pilot hole the stud taps into, as modelled (it prints ≈0.25 smaller) |
+| `stud_len`, `stud_hole` | 12, 3.7 | Stud length, from the hub face (measure yours); pilot hole the stud taps into, right through the button, as modelled (it prints ≈0.25 smaller) |
 | **Keyhole** | | |
 | `shank_d`, `head_d`, `flange_d` | 7, 12, 16 | Button sizes |
 | `keyhole_play` | 0.3 | Radial clearance in the keyhole |
@@ -148,7 +151,7 @@ cups do not fit their pieces.
 | `tray_t`, `side_t` | 1.26, 1.68 | Tray floor and side walls |
 | `slat_w`, `slat_h`, `slat_pitch` | 2.1, 5, 9 | Slats |
 | `sponge_rim` | 12 | Side walls above the slats (they run at that height out to the front) |
-| `peg_d`, `peg_fit`, `peg_grip`, `peg_inset` | 6, 0.1, 0.4, 10 | Pegs; extra on their holes; the crush ribs over the hole; axis in from each side |
+| `peg_d`, `peg_fit`, `peg_grip`, `peg_inset` | 6, 0.1, 0.8, 10 | Pegs; extra on their holes; the crush ribs over the hole; axis in from each side |
 | **Style** | | |
 | `corner_r` | 14 | Front corners, rounded in plan (the back stays straight) |
 | `slot_w`, `slot_rib`, `slot_margin` | 4, 2.6, 6 | Rounded vertical slots in the walls |
@@ -191,8 +194,8 @@ upright walls. With the default parameters:
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
 | 1 · Soap caddy | upper, lower, 4 buttons, 2 pegs | 3 h 58 min | 86 g |
-| 2 · Keyhole fit test | keyhole pad, button | 19 min | 3 g |
-| 3 · Buttons and pegs | 4 buttons, 2 pegs, to reprint them on their own | 36 min | 6 g |
+| 2 · Keyhole fit test | keyhole pad, button | 21 min | 3 g |
+| 3 · Buttons and peg test | 4 buttons, and pegs at three grips, to reprint them on their own | 47 min | 11 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.

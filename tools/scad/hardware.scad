@@ -4,7 +4,7 @@
 
 // Suction cup with a threaded stud (DIYexpert Ø50, M4 × 10): the cup's rim on
 // z = 0 (the wall), the hub face at z = h, the stud on +z.
-module suction_cup(d = 50, h = 12, hub_d = 16, stud_d = 4, stud_len = 10) {
+module suction_cup(d = 50, h = 12, hub_d = 16, stud_d = 4, stud_len = 12) {
     hull() {
         cylinder(d = d, h = 0.8);
         translate([0, 0, h - 0.01]) cylinder(d = hub_d, h = 0.01);

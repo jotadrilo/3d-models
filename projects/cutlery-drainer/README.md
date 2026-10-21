@@ -43,8 +43,8 @@ the wall. Lift the frame 12 mm (`drop`) to take it off.
   knives stand out of it. Every wall and the floor are slotted, so the
   cutlery airs and drips through.
 - **Tray**: the bins stand on slats; the water drips through onto a floor
-  that slopes 6° forward and spills over the front edge, 124 mm from the
-  wall, 9 mm past the edge of the sink (`sink_dist`; `front_lip` moves it). A tie across the
+  that slopes 6° forward and spills over the front edge, 126 mm from the
+  wall, 11 mm past the edge of the sink (`sink_dist`; `front_lip` moves it). A tie across the
   front of the slats keeps the bins in place. The back and side rims keep
   the water off the frame.
 - **Taking it apart**: lift the bins out; lift the front of the tray 2 mm
@@ -97,14 +97,14 @@ the wall: it sets how far the tray reaches.
 | `tray` | 206 × 98 × 28 | Sloping floor, slats, rims; printed lying on its back |
 | `bin` | 67 × 90 × 80 | Three; printed standing on their floors |
 | `handle` | 239 × 39 × 10 | The U with its two diamond pins; printed flat |
-| `button` | Ø 16 × 11 | One per cup (4); printed on its flange |
+| `button` | Ø 16 × 13 | One per cup (4); the stud goes right through; printed on its flange |
 | `test_pin` | 45 × 51 × 16 | Fit test: a block with a socket on each side and a small handle |
 
 ## Strength and orientation
 
 Each loaded part checked against its load, derating PETG to 40 % across the
 layers (CLAUDE.md §2.3). Loads: 1 kg of wet cutlery, bins and tray (≈10 N,
-≈77 mm from the wall) and a wet towel (≈3 N, 148 mm from the wall).
+≈77 mm from the wall) and a wet towel (≈3 N, 150 mm from the wall).
 
 | Part | Load | Printed | Across the layers? | Margin |
 |---|---|---|---|---|
@@ -162,7 +162,7 @@ lies flat. With the default parameters:
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
 | 1 · Frame | frame | 3 h 05 min | 63 g |
-| 2 · Tray, bins and handle | tray, 3 bins, handle, 4 buttons | 7 h 42 min | 144 g |
+| 2 · Tray, bins and handle | tray, 3 bins, handle, 4 buttons | 7 h 45 min | 145 g |
 | 3 · Handle fit test | block and small handle | 28 min | 8 g |
 
 The keyhole fit test is the soap caddy's (same keyholes and buttons). PETG

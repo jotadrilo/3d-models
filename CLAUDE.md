@@ -381,8 +381,11 @@ Research behind each component in `tools/scad/`, one entry per component.
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. The button self-taps onto an M4 stud
   through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45). A plain
-  Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. Print the pad flat (the slot in XY) and the button standing; the
-  loads are small and stay in compression or shear (soap-caddy README, "Strength and orientation").
+  Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. The
+  hole goes right through the button: a blind hole sized to the nominal stud stopped the
+  flange ≈3 mm short of the cup. Measure the stud from the hub face (`stud_len`, 12 by
+  default). Print the pad flat (the slot in XY) and the button standing; the loads are small
+  and stay in compression or shear (soap-caddy README, "Strength and orientation").
 - **Stand-off peg** (`mounts.scad`): a post that rests on the wall in compression. It stops a
   piece hung on two side-by-side mounts from nodding forward. It goes into a through hole
   **from behind**, its shoulder on the piece's back face, so the wall only pushes it further in.
@@ -547,6 +550,10 @@ Research behind each component in `tools/scad/`, one entry per component.
 - [ ] Functional components from `tools/scad/`; a new one researched, recorded (§4.7) and added there first (§4.6).
 - [ ] Parametric `.scad`: Customizer sections, `part` selector, `echo` of the size, clearances as
       parameters.
+- [ ] Every interface with bought hardware or with another printed part has a fit test plate
+      that tests the real thing (the button on the cup's stud, the peg in the piece's hole),
+      designed against measured hardware, not its nominal size. Check how each part goes in,
+      along its whole path, not only where it ends up.
 - [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README.
 - [ ] Designed to print without supports: overhangs ≤45°, chamfered base, teardrops and sacrificial
       layers where needed.
