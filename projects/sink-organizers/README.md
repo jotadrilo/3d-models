@@ -56,7 +56,7 @@ the wall; on the table, slide the body up off the plate.
 The dovetails are `dovetail_tail` and `dovetail_housing` from
 [tools/scad](../../tools/scad/) (CLAUDE.md §4.7):
 
-- **Shape**: 45° flanks, `dt_play` (0.1 until the fit test says) per side and
+- **Shape**: 45° flanks, `dt_play` (0.05 until the second ladder says) per side and
   0.2 at the floor. The tail is the 1.68 mm side wall widening 1.68 per side,
   4 mm deep. There is a lead-in on the tail's tip and the housing's mouth.
 - **First test**: 0.25 per side and 0.35 at the floor were loose in PETG, and
@@ -169,8 +169,9 @@ thing, printed the way the real part prints.
   raise `keyhole_play`; loose front to back: lower `shank_play`.
 - **Dovetail**: a strip of plate with four housings (flat) and a strip of
   wall with its tail (standing), 20 mm long.
-  - **The ladder**: the housings have 0.05, 0.10, 0.15 and 0.20 mm of play
+  - **The ladder**: the housings have −0.025, 0, 0.025 and 0.05 mm of play
     per side, marked by 1 to 4 notches in the strip's edge past their mouths.
+    The first ladder (0.05–0.20) was loose all the way: 0.05 rocked a little.
   - **Picking the play**: use the tightest housing the tail slides all the
     way down without forcing and without rocking, with `-D dt_play=…`.
     Then rebuild the project.
@@ -256,7 +257,7 @@ pieces do not fit.
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |
-| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.1, 0.2, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks and at the floor, housing lip and side, closed bottom |
+| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.05, 0.2, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks and at the floor, housing lip and side, closed bottom |
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope` | 0.25, 1.26, 1.68, 6 | Tray: clearance in the body, floor, rims, slope |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |
 | `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 45, 30 | Style: front corners, slots, 45° in the side walls, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |

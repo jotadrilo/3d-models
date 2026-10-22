@@ -119,12 +119,13 @@ function sprung_handle_strain(span, reach, s, spread) =
 //   w           how far the tail widens on each side, at 45°
 //   d           tail depth, from its wide face to the neck
 //   play        per side on the flanks; play_floor between the tail and the plate
+//               (tested values: tools/README.md, "Tested fits")
 //   lip         housing in front of the flanks; side: housing beside the tail
 //   cap         the housing's closed bottom, below z = 0
 //   lead        45° lead-in on the tail's tip and the housing's mouth (also takes up elephant foot)
 //   layer       height of the steps the lead-ins are built of (the print layer)
 
-function dovetail_housing_w(t = 1.68, w = 1.68, play = 0.1, side = 1.68) = t + 2 * (w + play + side);
+function dovetail_housing_w(t = 1.68, w = 1.68, play = 0.05, side = 1.68) = t + 2 * (w + play + side);
 function dovetail_housing_d(d = 4, play_floor = 0.2, lip = 1.26) = play_floor + d + lip;
 
 // The tail in plan: its wide face on y = 0, the neck at y = -d, and the wall
@@ -152,7 +153,7 @@ module dovetail_tail(h, t = 1.68, w = 1.68, d = 4, play_floor = 0.2, lip = 1.26,
 
 // The housing: a block on the plate's face with the tail's cavity, the play
 // all round, closed below z = 0 by cap and open at z = h with a lead-in.
-module dovetail_housing(h, t = 1.68, w = 1.68, d = 4, play = 0.1, play_floor = 0.2, lip = 1.26, side = 1.68, cap = 2,
+module dovetail_housing(h, t = 1.68, w = 1.68, d = 4, play = 0.05, play_floor = 0.2, lip = 1.26, side = 1.68, cap = 2,
                         lead = 0.8, layer = 0.2) {
     hw = dovetail_housing_w(t, w, play, side) / 2;
     hd = dovetail_housing_d(d, play_floor, lip);
@@ -161,7 +162,7 @@ module dovetail_housing(h, t = 1.68, w = 1.68, d = 4, play = 0.1, play_floor = 0
         stepped_chamfer(0, h + 0.01, -lead, layer) dovetail_cavity(t, w, d, play, play_floor, lip);
     }
 }
-module dovetail_cavity(t = 1.68, w = 1.68, d = 4, play = 0.1, play_floor = 0.2, lip = 1.26) {
+module dovetail_cavity(t = 1.68, w = 1.68, d = 4, play = 0.05, play_floor = 0.2, lip = 1.26) {
     translate([0, -play_floor]) dovetail_profile(t, w, d, lip + 1, play);
     translate([-t / 2 - w - play, -play_floor]) square([t + 2 * (w + play), play_floor + 0.01]);
 }

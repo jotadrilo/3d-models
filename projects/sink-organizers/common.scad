@@ -51,7 +51,7 @@ ledge_stop = 2;      // bump at the front of each ledge: lift the tray this much
 /* [Dovetail] */
 dt_w = 1.68;         // how far the tails widen on each side, at 45° (4 lines: 1.26 printed round, standing) [0.84:0.42:2.52]
 dt_d = 4;            // tail depth, from its wide face to the neck [2:0.5:6]
-dt_play = 0.1;       // clearance on the flanks, per side (0.25 was loose in PETG: pick it from the fit test) [0:0.05:0.5]
+dt_play = 0.05;      // clearance on the flanks, per side (0.05 rocked a little in PETG, 0.1 and up more: pick it from the fit test) [-0.05:0.025:0.5]
 dt_floor = 0.2;      // clearance between the tails and the plate (0.35 let them rock) [0.1:0.05:0.6]
 dt_lip = 1.26;       // housing in front of the flanks (3 lines) [0.84:0.42:2.52]
 dt_side = 1.68;      // housing beside the tails (4 lines) [1.26:0.42:3.36]
@@ -215,7 +215,7 @@ module test_keyhole() difference() {
 // filament's minimum layer time (12 s in PETG), so length is print time. The
 // strip ends in a return, so it stands without a brim.
 test_dt_h = 20;
-test_dt_plays = [0.05, 0.1, 0.15, 0.2];
+test_dt_plays = [-0.025, 0, 0.025, 0.05];
 module test_dovetail_housing() {
     n = len(test_dt_plays);
     hw = dovetail_housing_w(side_t, dt_w, max(test_dt_plays), dt_side) / 2;

@@ -148,6 +148,30 @@ Where each piece comes from and was printed: keyholes, buttons, pegs and the hou
 chamfers in `desk-hanger-rail`, the sprung handle and the sliding dovetail in `sink-organizers`. Clearances are defaults, not promises: keep the project's fit test
 (`test_keyhole`, `test_socket`, `test_anchor_*`) and print it before the real part.
 
+### Tested fits
+
+Values a printed fit test has settled, so the next project can take them as they are. A value
+marked **pending** is still being tested; the defaults in the `.scad` files follow this table.
+Add a row whenever a fit test settles or rules out a value (CLAUDE.md §4.6).
+
+| Component | Parameter | Value | Result | Printed in | Project, date |
+|---|---|---|---|---|---|
+| `keyhole_cut` | `play` (entry and slot, per side) | 0.3 | Works: the button slides in and up freely | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| `keyhole_button` | `axial_play` | **0.1** | Works, seated with no play | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| | | 0.2 | Loose front to back | | |
+| `keyhole_button` | `stud_hole` (M4 stud, modelled polyhole) | **3.7** | Works: turns on by hand, prints ≈3.45 | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| | | 3.4 (plain cylinder) | Too tight: prints ≈3.15, went on 1 mm | | |
+| `standoff_peg` | `rib_d` over the hole | **+0.8** | Works, holds in the hole | PETG Basic, P1S, 0.20 | soap-caddy, 2026-10 |
+| | | +0.4 | Fell out | | |
+| `diamond_socket` | `play` (per side) | **0.15** | Slip fit | PLA, P1S | |
+| | | 0.05 | Press fit | | |
+| Sliding part between printed walls | play per side | 0.25 | Slides | PETG Basic, P1S, 0.20 | soap-caddy |
+| | | 0.4 | Measured ≈0.5: loose | | |
+| `dovetail_housing` | `play` (flanks, per side), `play_floor` 0.2, head `w` 1.68 × `d` 4 | 0.05 | Rocks slightly | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| | | 0.10, 0.15, 0.20 | Loose | | |
+| | | −0.025, 0, 0.025 | **Pending** (second ladder) | | |
+| `dovetail_housing` | the same, head `w` 1.26 × `d` 3 | 0.25 flanks, 0.35 floor | Loose, and the head printed round | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+
 When a new project invents a mount or joint another project could use, move it here, make its
 sizes arguments, give it its mate, add both and a demo to `catalog.scad`, and check that the projects using it export the same
 geometry as before (same volume and triangle count per part).
