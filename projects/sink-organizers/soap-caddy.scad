@@ -25,7 +25,7 @@
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, box, button, test_keyhole, test_dovetail_housing, test_dovetail_tail, test_width]
+part = "assembly";   // [assembly, plate, body, tray, box, button, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
@@ -264,6 +264,7 @@ else if (part == "tray") soap_tray();
 else if (part == "box") bottle_box();
 else if (part == "button") button();
 else if (part == "test_keyhole") test_keyhole();
+else if (part == "test_buttons") test_buttons();
 else if (part == "test_dovetail_housing") test_dovetail_housing();
 else if (part == "test_dovetail_tail") test_dovetail_tail();
 else if (part == "test_width") test_width();

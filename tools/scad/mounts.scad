@@ -49,8 +49,9 @@ module keyhole_cut(t, drop, shank_d, head_d, play = 0.3, cone = true) {
 //   head_cyl    straight band on top of the cone
 //   stud_len    stud length, from the hub face; the flange grows so the button
 //               is at least 1 mm longer, and the stud stays inside the head
-//   stud_hole   pilot hole as modelled (3.7 for M4 tapping into PETG/PLA: a
-//               polyhole that prints ~3.45, with a lead-in at its mouth)
+//   stud_hole   pilot hole as modelled, a polyhole with a lead-in at its
+//               mouth (3.7 for an M4 stud prints ~3.45 and taps, but is hard
+//               to turn by hand: tested values in tools/README.md, "Tested fits")
 function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.1) =
     pad_t - (head_d - shank_d) / 2 + axial_play;
 function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.1, head_cyl = 1, stud_len = 12, min_flange = 3) =

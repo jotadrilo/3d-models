@@ -129,7 +129,7 @@ module ledges() for (s = [-1, 1]) yz_prism(s > 0 ? ix - ledge_w : -ix - eps, s >
 
 // Button, in print orientation: flange on the bed, head on top. The cup's
 // M4 stud screws into the hole from the flange side.
-module button() keyhole_button(pad_t, shank_d, head_d, flange_d, shank_play, head_cyl, stud_len, stud_hole, 3, chamfer);
+module button(hole = stud_hole) keyhole_button(pad_t, shank_d, head_d, flange_d, shank_play, head_cyl, stud_len, hole, 3, chamfer);
 
 // ---------------------------------------------------------------- wall plate
 
@@ -207,24 +207,37 @@ module test_keyhole() difference() {
     translate([0, pad_t, 0]) pad_at(0, 0);
     translate([0, pad_t, 0]) keyhole_at(0, 0);
 }
-// A strip of plate with a housing for each play in test_dt_plays, printed
-// flat like the plate (k notches in its edge past the mouths mark the k-th), and a strip of
-// side wall with its tail, printed standing like the body: the play to use is
-// the tightest housing the tail slides all the way down with no rocking.
+// A button for each pilot hole in test_stud_holes, k notches in the k-th
+// one's flange: use the one that screws onto the cup's stud easily by hand
+// and does not come loose when the cup is turned.
+test_stud_holes = [3.8, 3.9, 4.0];
+module test_buttons() {
+    n = len(test_stud_holes);
+    for (i = [0 : n - 1]) translate([(i - (n - 1) / 2) * (flange_d + 4), 0, 0]) difference() {
+        button(test_stud_holes[i]);
+        for (k = [0 : i]) rotate([0, 0, 90 + (k - i / 2) * 20]) translate([flange_d / 2 - 1, -0.5, -1]) cube([2, 1, flange_t + 1]);
+    }
+}
+// A strip of plate with a housing for each [flank play, floor play] in
+// test_dt_cases, printed flat like the plate (k notches in its edge past the
+// mouths mark the k-th), and a strip of side wall with its tail, printed
+// standing like the body: use the tightest housing the tail slides all the
+// way down with no rocking. The floor play lets the tail come off its flanks
+// and tilt, so the floor is tested too (0 or a whole layer).
 // 20 mm long: every layer of the standing strip is tiny and waits out the
 // filament's minimum layer time (12 s in PETG), so length is print time. The
 // strip ends in a return, so it stands without a brim.
 test_dt_h = 20;
-test_dt_plays = [-0.025, 0, 0.025, 0.05];
+test_dt_cases = [[0, 0], [0.025, 0], [0.05, 0], [0.05, 0.2]];
 module test_dovetail_housing() {
-    n = len(test_dt_plays);
-    hw = dovetail_housing_w(side_t, dt_w, max(test_dt_plays), dt_side) / 2;
+    n = len(test_dt_cases);
+    hw = dovetail_housing_w(side_t, dt_w, max([for (c = test_dt_cases) c[0]]), dt_side) / 2;
     pitch = 2 * hw + 3;
     rotate([-90, 0, 0]) difference() {
         union() {
             translate([-n * pitch / 2, 0, -dt_cap]) cube([n * pitch, back_t, test_dt_h + dt_cap + 4]);
             for (i = [0 : n - 1]) translate([(i - (n - 1) / 2) * pitch, 0, 0])
-                dovetail_housing(test_dt_h, side_t, dt_w, dt_d, test_dt_plays[i], dt_floor, dt_lip, dt_side, dt_cap);
+                dovetail_housing(test_dt_h, side_t, dt_w, dt_d, test_dt_cases[i][0], test_dt_cases[i][1], dt_lip, dt_side, dt_cap);
         }
         for (i = [0 : n - 1], k = [0 : i]) translate([(i - (n - 1) / 2) * pitch + (k - i / 2) * 2 - 0.5, -1, test_dt_h + 2])
             cube([1, back_t + 2, 3]);

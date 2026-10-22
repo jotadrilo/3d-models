@@ -415,8 +415,11 @@ Research behind each component in `tools/scad/`, one entry per component.
   - **Play**: 0.25 per side on the flanks (0.2–0.3 in Sovol's and Hubs' guides) and 0.35 at
     the floor came out **loose** in PETG (sink-organizers fit test, 2026-10): the tail rocked.
     With 0.2 at the floor and the bigger head below, a ladder of 0.05–0.20 on the flanks: 0.05
-    still rocked a little, the rest more. A second ladder tests −0.025, 0, 0.025 and 0.05;
-    the default is 0.05 until it is printed (tools/README.md, "Tested fits").
+    still rocked a little, the rest more. **The floor play counts too**: the head's straight sides
+    keep the sideways play to the flank play, but the floor play lets the tail move towards the
+    plate, off its flanks, and tilt there. The floor is the flat plate's top face: 0 or a whole layer. A second ladder tests
+    flanks 0, 0.025 and 0.05 with no floor play; the default is 0.05 / 0.2 until it is printed
+    (tools/README.md, "Tested fits").
   - **Head**: widening 1.26 per side, 3 deep, printed standing, came out round (outer and
     inner perimeters meet, the 45° corners fill in), so it caught little of the lip. Now 1.68
     per side (4 lines), 4 deep. Neck = the wall (1.68); lip in front of the flanks ≥1.26,
@@ -435,7 +438,8 @@ Research behind each component in `tools/scad/`, one entry per component.
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left
   the seated piece a little loose front to back in PETG. The button self-taps onto an M4 stud
-  through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45). A plain
+  through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45; it taps
+  but is hard to turn by hand, so a ladder of 3.8–4.0 is being tested). A plain
   Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. The
   hole goes right through the button: a blind hole sized to the nominal stud stopped the
   flange ≈3 mm short of the cup. Measure the stud from the hub face (`stud_len`, 12 by

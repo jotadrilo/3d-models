@@ -159,8 +159,9 @@ Add a row whenever a fit test settles or rules out a value (CLAUDE.md §4.6).
 | `keyhole_cut` | `play` (entry and slot, per side) | 0.3 | Works: the button slides in and up freely | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 | `keyhole_button` | `axial_play` | **0.1** | Works, seated with no play | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 | | | 0.2 | Loose front to back | | |
-| `keyhole_button` | `stud_hole` (M4 stud, modelled polyhole) | **3.7** | Works: turns on by hand, prints ≈3.45 | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| `keyhole_button` | `stud_hole` (M4 stud, modelled polyhole) | 3.7 | Taps and holds, but hard to turn by hand (prints ≈3.45) | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 | | | 3.4 (plain cylinder) | Too tight: prints ≈3.15, went on 1 mm | | |
+| | | 3.8, 3.9, 4.0 | **Pending** (button ladder) | | |
 | `standoff_peg` | `rib_d` over the hole | **+0.8** | Works, holds in the hole | PETG Basic, P1S, 0.20 | soap-caddy, 2026-10 |
 | | | +0.4 | Fell out | | |
 | `diamond_socket` | `play` (per side) | **0.15** | Slip fit | PLA, P1S | |
@@ -169,7 +170,7 @@ Add a row whenever a fit test settles or rules out a value (CLAUDE.md §4.6).
 | | | 0.4 | Measured ≈0.5: loose | | |
 | `dovetail_housing` | `play` (flanks, per side), `play_floor` 0.2, head `w` 1.68 × `d` 4 | 0.05 | Rocks slightly | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 | | | 0.10, 0.15, 0.20 | Loose | | |
-| | | −0.025, 0, 0.025 | **Pending** (second ladder) | | |
+| | | 0, 0.025, 0.05 with `play_floor` 0 | **Pending** (second ladder: the floor play lets the tail come off its flanks and tilt) | | |
 | `dovetail_housing` | the same, head `w` 1.26 × `d` 3 | 0.25 flanks, 0.35 floor | Loose, and the head printed round | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 
 When a new project invents a mount or joint another project could use, move it here, make its

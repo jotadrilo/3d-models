@@ -161,20 +161,29 @@ the front wall.
 About 1 h 15 min and 32 g, before the big plates (the dovetail ladder alone: 32 min, 6.6 g). Each piece tests the real
 thing, printed the way the real part prints.
 
-- **Button on the cup**: screw the test button onto a cup. The flange must
-  reach the cup's hub; if the stud stops it short, measure the stud and raise
-  `stud_len`. Too hard to turn: raise `stud_hole` by 0.1.
+- **Buttons on the cup**: three buttons with pilot holes of 3.8, 3.9 and
+  4.0 mm as modelled (≈3.55, 3.65 and 3.75 printed), marked by 1 to 3
+  notches in the flange. 3.7 tapped but was hard to turn by hand. Use the
+  one that screws on easily and does not come loose when the cup is turned,
+  with `-D stud_hole=…`. The flange must reach the cup's hub; if the stud
+  stops it short, measure the stud and raise `stud_len`.
 - **Keyhole**: push the button (on its cup) through the pad's entry and slide
   it up the slot. It should slide freely and seat with no play. Too tight:
   raise `keyhole_play`; loose front to back: lower `shank_play`.
 - **Dovetail**: a strip of plate with four housings (flat) and a strip of
   wall with its tail (standing), 20 mm long.
-  - **The ladder**: the housings have −0.025, 0, 0.025 and 0.05 mm of play
-    per side, marked by 1 to 4 notches in the strip's edge past their mouths.
-    The first ladder (0.05–0.20) was loose all the way: 0.05 rocked a little.
+  - **The ladder**: the housings have 0, 0.025 and 0.05 mm of play per side
+    on the flanks with none at the floor, and 0.05 with 0.2 at the floor
+    (the fit that rocked), marked by 1 to 4 notches in the strip's edge past
+    their mouths.
+  - **Why the floor**: the first ladder (0.05–0.20 on the flanks, 0.2 at
+    the floor) was loose all the way. The head's straight sides keep the
+    sideways play to the flank play, but the floor play lets the tail move
+    0.2 towards the plate, off its flanks, and tilt there. The floor is the
+    plate's top face, printed flat, so it takes 0 or a whole layer.
   - **Picking the play**: use the tightest housing the tail slides all the
-    way down without forcing and without rocking, with `-D dt_play=…`.
-    Then rebuild the project.
+    way down without forcing and without rocking, with `-D dt_play=…` and
+    `-D dt_floor=…`. Then rebuild the project.
   - **Margin**: the real joints are 100–210 mm long, so a fit that is only
     just free here may bind there. If in doubt, take the next one up.
 - **Box width**: the top 12 mm of the soap caddy's body and the bottom 12 mm
@@ -237,7 +246,7 @@ With the default parameters:
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 10 min | 68 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 5 h 33 min | 121 g |
 | 4 · Cutlery drainer: tray, bins, handle and buttons | tray, 3 bins, handle, 4 buttons | 7 h 46 min | 151 g |
-| 5 · Fit tests | keyhole pad, button, dovetail ladder and tail, box width, handle pins | 1 h 16 min | 32 g |
+| 5 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 16 min | 32 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.

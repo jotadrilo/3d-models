@@ -83,7 +83,7 @@ def main():
 
     p = proj.plate("Fit tests")
     p.add("Keyhole pad", soap("test_keyhole", rotate=FLAT), 45, 60)
-    p.add("Test button", button, 75, 60)
+    p.add("Test buttons", soap("test_buttons"), 215, 120)
     p.add("Dovetail housing", soap("test_dovetail_housing"), 110, 60)
     p.add("Dovetail tail", soap("test_dovetail_tail"), 140, 60)
     p.add("Handle pin test", drainer("test_pin"), 200, 60)
