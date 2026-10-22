@@ -15,16 +15,16 @@ pad with a button (screw it onto a cup first), a strip of plate with a
 dovetail housing and a strip of wall with its tail, a slice of the soap
 caddy's body with the bottom of its box, and the handle's pins in a block.
 
-Black PETG Basic on 0.20mm Standard with gyroid infill, the seam at the back,
+Black PETG (Basic, or HF with --hf) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
 
-    python3 bambu_project.py [-o sink-organizers-p1s.3mf] [-D var=val ...]
+    python3 bambu_project.py [-o sink-organizers-p1s.3mf] [--hf] [-D var=val ...]
 """
 import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
-from bambu3mf import PETG_BASIC, Filament, Project, load_scad  # noqa: E402
+from bambu3mf import PETG_BASIC, PETG_HF, Filament, Project, load_scad  # noqa: E402
 
 SOAP = os.path.join(HERE, "soap-caddy.scad")
 DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
@@ -34,13 +34,14 @@ FLAT = (-90, 0, 0)   # the plates and trays on their backs
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default=os.path.join(HERE, "sink-organizers-p1s.3mf"))
+    ap.add_argument("--hf", action="store_true", help="PETG HF instead of PETG Basic")
     ap.add_argument("-D", dest="defs", action="append", default=[], help="OpenSCAD override")
     args = ap.parse_args()
 
     proj = Project(
-        "Sink organizers",
+        "Sink organizers (PETG HF)" if args.hf else "Sink organizers",
         process="0.20mm Standard @BBL X1C",
-        filaments=[Filament(PETG_BASIC, "#000000")],
+        filaments=[Filament(PETG_HF if args.hf else PETG_BASIC, "#000000")],
         process_overrides={
             "sparse_infill_pattern": "gyroid",
             "seam_position": "back",

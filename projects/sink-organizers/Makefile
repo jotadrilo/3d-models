@@ -13,6 +13,7 @@ BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 PROJECT        := sink-organizers-p1s.3mf
+PROJECT_HF     := sink-organizers-p1s-hf.3mf
 
 .DEFAULT_GOAL := all
 .PHONY: all stl project report render clean help
@@ -29,11 +30,13 @@ stl: ## Export each part of both pieces as an STL, soap-caddy-<part>.stl and cut
 		$(SCAD) -D "part=\"$$p\"" -o cutlery-drainer-$$p.stl cutlery-drainer.scad; \
 	done
 
-project: ## Build sink-organizers-p1s.3mf, the ready-to-print Bambu Studio project (one plate per piece and kind, and the fit tests)
+project: ## Build the ready-to-print Bambu Studio projects, sink-organizers-p1s.3mf (PETG Basic) and sink-organizers-p1s-hf.3mf (PETG HF): one plate per piece and kind, and the fit tests
 	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o $(PROJECT) $(DEFS)
+	OPENSCAD=$(OPENSCAD) python3 bambu_project.py --hf -o $(PROJECT_HF) $(DEFS)
 
-report: project ## Rebuild the project, slice it and print time and filament per plate
+report: project ## Rebuild both projects, slice them and print time and filament per plate
 	python3 ../../tools/bambu3mf.py report $(PROJECT)
+	python3 ../../tools/bambu3mf.py report $(PROJECT_HF)
 
 render: project ## Render both pieces (bare, on the wall, taken apart, sections) and the print plates into renders/ with Blender
 	mkdir -p renders
