@@ -50,8 +50,8 @@ module keyhole_cut(t, drop, shank_d, head_d, play = 0.3, cone = true) {
 //   stud_len    stud length, from the hub face; the flange grows so the button
 //               is at least 1 mm longer, and the stud stays inside the head
 //   stud_hole   pilot hole as modelled, a polyhole with a lead-in at its
-//               mouth (3.7 for an M4 stud prints ~3.45 and taps, but is hard
-//               to turn by hand: tested values in tools/README.md, "Tested fits")
+//               mouth (3.9 for an M4 stud prints ~3.65 and taps easily by
+//               hand; 3.8 holds harder: tested values in tools/README.md, "Tested fits")
 function keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play = 0.1) =
     pad_t - (head_d - shank_d) / 2 + axial_play;
 function keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play = 0.1, head_cyl = 1, stud_len = 12, min_flange = 3) =
@@ -61,7 +61,7 @@ function keyhole_button_h(pad_t, shank_d, head_d, axial_play = 0.1, head_cyl = 1
     + keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play) + (head_d - shank_d) / 2 + head_cyl;
 
 module keyhole_button(pad_t, shank_d = 7, head_d = 12, flange_d = 16, axial_play = 0.1, head_cyl = 1,
-                      stud_len = 12, stud_hole = 3.7, min_flange = 3, chamfer = 0.6) {
+                      stud_len = 12, stud_hole = 3.9, min_flange = 3, chamfer = 0.6) {
     sl = keyhole_button_shank_len(pad_t, shank_d, head_d, axial_play);
     ft = keyhole_button_flange_t(pad_t, shank_d, head_d, axial_play, head_cyl, stud_len, min_flange);
     hc = (head_d - shank_d) / 2;

@@ -417,8 +417,9 @@ Research behind each component in `tools/scad/`, one entry per component.
     With 0.2 at the floor and the bigger head below, a ladder of 0.05–0.20 on the flanks: 0.05
     still rocked a little, the rest more. **The floor play counts too**: the head's straight sides
     keep the sideways play to the flank play, but the floor play lets the tail move towards the
-    plate, off its flanks, and tilt there. The floor is the flat plate's top face: 0 or a whole layer. A second ladder tests
-    flanks 0, 0.025 and 0.05 with no floor play; the default is 0.05 / 0.2 until it is printed
+    plate, off its flanks, and tilt there. The floor is the flat plate's top face: 0 or a whole layer. A second ladder with no
+    floor play: **0.025 on the flanks and 0 at the floor slides smoothly with almost no play**
+    (the default); 0 / 0 works but rubs, too tight for joints 100–200 mm long
     (tools/README.md, "Tested fits").
   - **Head**: widening 1.26 per side, 3 deep, printed standing, came out round (outer and
     inner perimeters meet, the 45° corners fill in), so it caught little of the lip. Now 1.68
@@ -439,7 +440,8 @@ Research behind each component in `tools/scad/`, one entry per component.
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left
   the seated piece a little loose front to back in PETG. The button self-taps onto an M4 stud
   through a pilot hole modelled Ø3.7 as a polyhole, with a lead-in (it prints ≈3.45; it taps
-  but is hard to turn by hand, so a ladder of 3.8–4.0 is being tested). A plain
+  but is hard to turn by hand). **3.9 is the default** (taps with little effort and holds);
+  3.8 also works, harder to turn and stronger, for a heavier piece. A plain
   Ø3.4 cylinder printed ≈3.15 and the stud, turned by hand with the cup, went in only 1 mm. The
   hole goes right through the button: a blind hole sized to the nominal stud stopped the
   flange ≈3 mm short of the cup. Measure the stud from the hub face (`stud_len`, 12 by

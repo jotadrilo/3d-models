@@ -56,11 +56,14 @@ the wall; on the table, slide the body up off the plate.
 The dovetails are `dovetail_tail` and `dovetail_housing` from
 [tools/scad](../../tools/scad/) (CLAUDE.md §4.7):
 
-- **Shape**: 45° flanks, `dt_play` (0.05 until the second ladder says) per side and
-  0.2 at the floor. The tail is the 1.68 mm side wall widening 1.68 per side,
+- **Shape**: 45° flanks, `dt_play` 0.025 per side and
+  none at the floor (`dt_floor` 0): the tail slides on the plate's face. The tail is the 1.68 mm side wall widening 1.68 per side,
   4 mm deep. There is a lead-in on the tail's tip and the housing's mouth.
 - **First test**: 0.25 per side and 0.35 at the floor were loose in PETG, and
   a head widening only 1.26 per side, printed standing, came out round.
+  With the bigger head, 0.05 on the flanks and 0.2 at the floor still
+  rocked; 0.025 and 0 slides smoothly with almost no play (two play
+  ladders, tools/README.md "Tested fits").
 - **Holding**: the tail cannot pull forward out of the housing (the head is
   wider than the neck) or move sideways. It slides only along the wall's
   height and stops on the housing's 2 mm bottom (`dt_cap`).
@@ -158,14 +161,17 @@ the front wall.
 
 ## Fit tests (plate 5)
 
-About 1 h 15 min and 32 g, before the big plates (the dovetail ladder alone: 32 min, 6.6 g). Each piece tests the real
-thing, printed the way the real part prints.
+Each piece tests the real thing, printed the way the real part prints. The
+button hole and the dovetail are settled for black PETG Basic on the P1S
+(tools/README.md, "Tested fits"): print their ladders again only with
+another filament or printer.
 
 - **Buttons on the cup**: three buttons with pilot holes of 3.8, 3.9 and
   4.0 mm as modelled (≈3.55, 3.65 and 3.75 printed), marked by 1 to 3
   notches in the flange. 3.7 tapped but was hard to turn by hand. Use the
   one that screws on easily and does not come loose when the cup is turned,
-  with `-D stud_hole=…`. The flange must reach the cup's hub; if the stud
+  with `-D stud_hole=…`. Tested: 3.9 (the default) taps with little effort
+  and holds; 3.8 is harder to turn and holds harder. The flange must reach the cup's hub; if the stud
   stops it short, measure the stud and raise `stud_len`.
 - **Keyhole**: push the button (on its cup) through the pad's entry and slide
   it up the slot. It should slide freely and seat with no play. Too tight:
@@ -183,7 +189,8 @@ thing, printed the way the real part prints.
     plate's top face, printed flat, so it takes 0 or a whole layer.
   - **Picking the play**: use the tightest housing the tail slides all the
     way down without forcing and without rocking, with `-D dt_play=…` and
-    `-D dt_floor=…`. Then rebuild the project.
+    `-D dt_floor=…`. Then rebuild the project. Tested: 0.025 / 0 (2
+    notches, the default) slides smoothly; 0 / 0 rubs.
   - **Margin**: the real joints are 100–210 mm long, so a fit that is only
     just free here may bind there. If in doubt, take the next one up.
 - **Box width**: the top 12 mm of the soap caddy's body and the bottom 12 mm
@@ -242,11 +249,11 @@ With the default parameters:
 
 | Plate | Contents | Time | Filament |
 |---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 06 min | 114 g |
-| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 10 min | 68 g |
+| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 06 min | 113 g |
+| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 09 min | 68 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 5 h 33 min | 121 g |
 | 4 · Cutlery drainer: tray, bins, handle and buttons | tray, 3 bins, handle, 4 buttons | 7 h 46 min | 151 g |
-| 5 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 16 min | 32 g |
+| 5 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 24 min | 34 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
@@ -261,12 +268,12 @@ pieces do not fit.
 | Parameter | Default | What it does |
 |---|---|---|
 | **Shared** ([common.scad](common.scad)) | | |
-| `cup_d`, `cup_h`, `stud_len`, `stud_hole` | 50, 12, 12, 3.7 | Suction cups: diameter, wall to the hub face, stud length (measure yours), pilot hole for the stud |
+| `cup_d`, `cup_h`, `stud_len`, `stud_hole` | 50, 12, 12, 3.9 | Suction cups: diameter, wall to the hub face, stud length (measure yours), pilot hole for the stud |
 | `shank_d`, `head_d`, `flange_d`, `keyhole_play`, `shank_play`, `drop`, `pad_t`, `pad_w` | 7, 12, 16, 0.3, 0.1, 12, 4.2, 22 | Buttons and keyholes |
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |
-| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.05, 0.2, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks and at the floor, housing lip and side, closed bottom |
+| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.025, 0, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks and at the floor, housing lip and side, closed bottom |
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope` | 0.25, 1.26, 1.68, 6 | Tray: clearance in the body, floor, rims, slope |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |
 | `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 45, 30 | Style: front corners, slots, 45° in the side walls, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |

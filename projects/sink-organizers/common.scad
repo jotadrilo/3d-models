@@ -26,7 +26,7 @@ use <../../tools/scad/joints.scad>
 cup_d = 50;          // suction cup diameter [30:1:80]
 cup_h = 12;          // wall to the cup's hub face, cup pressed on [5:0.5:30]
 stud_len = 12;       // the cup's threaded stud, from the hub face (measure it: the button needs to be longer) [5:0.5:20]
-stud_hole = 3.7;     // pilot hole for the M4 stud as modelled (prints ~3.45); the stud taps its own thread [3:0.1:4.2]
+stud_hole = 3.9;     // pilot hole for the M4 stud as modelled (prints ~3.65; 3.8 also works, harder to turn); the stud taps its own thread [3:0.1:4.2]
 
 /* [Keyhole] */
 shank_d = 7;         // button shank diameter [5:0.5:10]
@@ -51,8 +51,8 @@ ledge_stop = 2;      // bump at the front of each ledge: lift the tray this much
 /* [Dovetail] */
 dt_w = 1.68;         // how far the tails widen on each side, at 45° (4 lines: 1.26 printed round, standing) [0.84:0.42:2.52]
 dt_d = 4;            // tail depth, from its wide face to the neck [2:0.5:6]
-dt_play = 0.05;      // clearance on the flanks, per side (0.05 rocked a little in PETG, 0.1 and up more: pick it from the fit test) [-0.05:0.025:0.5]
-dt_floor = 0.2;      // clearance between the tails and the plate (0.35 let them rock) [0.1:0.05:0.6]
+dt_play = 0.025;     // clearance on the flanks, per side (tested in PETG: 0 rubs, 0.025 slides, 0.05 rocks) [0:0.025:0.5]
+dt_floor = 0;        // clearance between the tails and the plate: 0 or whole layers (0.2 let them rock) [0:0.2:0.6]
 dt_lip = 1.26;       // housing in front of the flanks (3 lines) [0.84:0.42:2.52]
 dt_side = 1.68;      // housing beside the tails (4 lines) [1.26:0.42:3.36]
 dt_cap = 2;          // the housings' closed bottoms, under the body: it rests on them [1:0.2:4]
