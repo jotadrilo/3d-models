@@ -285,11 +285,11 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF |
 |---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 08 min, 115 g | 5 h 27 min, 118 g |
+| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 08 min, 115 g | 5 h 27 min, 117 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 5 h 15 min, 105 g | 4 h 52 min, 107 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 52 min, 104 g | 4 h 29 min, 107 g |
 | 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 34 min, 87 g | 3 h 14 min, 89 g |
-| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 33 min, 80 g |
+| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g |
 | 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
