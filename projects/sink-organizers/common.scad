@@ -22,6 +22,10 @@ use <../../tools/scad/style.scad>
 use <../../tools/scad/mounts.scad>
 use <../../tools/scad/joints.scad>
 
+/* [Kitchen] */
+sink_dist = 120;     // wall to the inner edge of the sink bowl, where the pieces hang [40:1:250]
+drip_over = 10;      // how far the trays' front edges reach past the sink edge [2:1:40]
+
 /* [Suction cups] */
 cup_d = 50;          // suction cup diameter [30:1:80]
 cup_h = 12;          // wall to the cup's hub face, cup pressed on [5:0.5:30]
@@ -65,6 +69,7 @@ tray_slope = 6;      // floor slope towards the sink, degrees [3:0.5:15]
 slat_w = 2.1;        // slat thickness (5 lines) [1.26:0.42:4.2]
 slat_h = 5;          // slat height [3:0.5:12]
 slat_clear = 3;      // gap between the slats and the tray floor, at the back [2:0.5:10]
+drip_lip = 1.5;      // drip edge under the tray's front edge: the drops hang on it and fall instead of running back under the floor [0:0.5:3]
 
 /* [Style] */
 corner_r = 14;       // radius of the front corners in plan (the back stays straight) [0:1:40]
@@ -174,12 +179,18 @@ module body_floor() difference() {
 // sloping to the front edge, back and side rims (the side rims round into
 // the front corners, the front stays open for the water), slats at
 // slat_pitch from the back rim to a tie across their front ends at tie_y,
-// which stands tie_up above the slats, and a tie under their middle.
-module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0) {
+// which stands tie_up above the slats, and a tie under their middle. With
+// slats = false, just the floor and the rims, z_s high. A drip lip hangs
+// under the straight part of the front edge, clear of the ledges: 45° behind
+// it, so it prints with the tray on its back.
+module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0, slats = true) {
     iw = hw - tray_wall;
     d = y0 - tray_y1;
     slat_xs = [for (k = [-30:30]) let(x = k * slat_pitch) if (abs(x) + slat_w / 2 <= iw - 1) x];
     union() {
+        if (drip_lip > 0) yz_prism(-hw + corner_r, hw - corner_r)
+            polygon([[tray_y1, tray_bottom(tray_y1) + 0.1], [tray_y1, tray_bottom(tray_y1) - drip_lip],
+                     [tray_y1 + drip_lip, tray_bottom(tray_y1 + drip_lip) + 0.1]]);
         intersection() {
             yz_prism(-hw, hw) polygon([[y0, tray_bottom(y0)], [y0, tray_top(y0)], [tray_y1, tray_top(tray_y1)], [tray_y1, tray_bottom(tray_y1)]]);
             translate([0, y0, 0]) linear_extrude(z_s + tie_up + 1) plan(2 * hw, d);
@@ -194,9 +205,11 @@ module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0) {
                 box([iw - corner_r, y0 + 1, 0], [hw + 1, tray_y1 - 1, z_s]);
             }
         }
-        for (x = slat_xs) box([x - slat_w / 2, y0 - tray_wall + eps, z_s - slat_h], [x + slat_w / 2, tie_y, z_s]);
-        box([-iw - eps, tie_y, z_s - slat_h], [iw + eps, tie_y - slat_w, z_s + tie_up]);
-        box([-iw - eps, (y0 + tie_y) / 2 - slat_w / 2, z_s - slat_h], [iw + eps, (y0 + tie_y) / 2 + slat_w / 2, z_s - slat_h + 2.5]);
+        if (slats) {
+            for (x = slat_xs) box([x - slat_w / 2, y0 - tray_wall + eps, z_s - slat_h], [x + slat_w / 2, tie_y, z_s]);
+            box([-iw - eps, tie_y, z_s - slat_h], [iw + eps, tie_y - slat_w, z_s + tie_up]);
+            box([-iw - eps, (y0 + tie_y) / 2 - slat_w / 2, z_s - slat_h], [iw + eps, (y0 + tie_y) / 2 + slat_w / 2, z_s - slat_h + 2.5]);
+        }
     }
 }
 

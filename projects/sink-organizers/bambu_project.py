@@ -7,10 +7,11 @@ housings' flanks in XY).
 Plate 2: the soap caddy's tray on its back, the box on its floor and the four
 buttons on their flanges.
 Plate 3: the cutlery drainer's body standing and its wall plate flat.
-Plate 4: the cutlery drainer's tray on its back, the three bins on their
-floors, the towel handle flat (the towel's weight bends it along XY) and the
-four buttons.
-Plate 5: fit tests, minutes and a few grams before the big plates: a keyhole
+Plate 4: the cutlery drainer's tray on its back, the rack on its floor, the
+towel handle flat (the towel's weight bends it along XY) and the four
+buttons.
+Plate 5: the cutlery drainer's three bins on their floors.
+Plate 6: fit tests, minutes and a few grams before the big plates: a keyhole
 pad with a button (screw it onto a cup first), a strip of plate with a
 dovetail housing and a strip of wall with its tail, a slice of the soap
 caddy's body with the bottom of its box, and the handle's pins in a block.
@@ -73,14 +74,17 @@ def main():
     p.add("Cutlery drainer body", drainer("body"), 128, 74)
     p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), 128, 190)
 
-    p = proj.plate("Cutlery drainer - tray, bins, handle and buttons")
-    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 215)
-    bin_ = drainer("bin")
-    for i, x in enumerate((55, 128, 201)):
-        p.add(f"Cutlery drainer bin {i + 1}", bin_, x, 125)
-    p.add("Towel handle", drainer("handle"), 128, 50)
+    p = proj.plate("Cutlery drainer - tray, rack, handle and buttons")
+    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 218)
+    p.add("Cutlery drainer rack", drainer("rack"), 128, 140)
+    p.add("Towel handle", drainer("handle"), 128, 60)
     for i, x in enumerate((30, 48, 208, 226)):
         p.add(f"Cutlery drainer button {i + 1}", button, x, 22)
+
+    p = proj.plate("Cutlery drainer - bins")
+    bin_ = drainer("bin")
+    for i, x in enumerate((55, 128, 201)):
+        p.add(f"Cutlery drainer bin {i + 1}", bin_, x, 128)
 
     p = proj.plate("Fit tests")
     p.add("Keyhole pad", soap("test_keyhole", rotate=FLAT), 45, 60)

@@ -355,6 +355,9 @@ Use bold sans-serif fonts (`"Liberation Sans:style=Bold"`) with `halign/valign =
   Makefile passes `-D 'part="lid"'`.
 - **Multi-colour**: each colour must be a separate **top-level object** with its own `color()`, not
   wrapped in a shared transform, so `lazy-union` exports them separately.
+- **`lazy-union` also splits a bare `for()` that is the first child of a `difference()`**: its
+  first iteration is kept and the others are subtracted from it. Wrap it in `union()`. The
+  cutlery drainer's right wall came out with no slots this way (the export, not the preview).
 - **Performance**: avoid 3D `minkowski()`. For rounded boxes use 2D `offset()` plus
   `linear_extrude()`, or `hull()` of cylinders. With Manifold renders take seconds.
 - Use `offset(delta = clearance)` on the 2D profile of the mating part.

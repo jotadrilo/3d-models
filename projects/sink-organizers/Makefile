@@ -6,7 +6,7 @@ OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
 SOAP_PARTS     ?= plate body tray box button test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width
-DRAINER_PARTS  ?= plate body tray bin handle test_pin
+DRAINER_PARTS  ?= plate body tray rack bin handle test_pin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'
 BLENDER        ?= blender
@@ -52,7 +52,7 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/soap-caddy-section-lower --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
 	$(COLOUR) -D 'show_items=false' -o assembly.3mf cutlery-drainer.scad
 	$(RENDER) $(PROJECT) renders/cutlery-drainer --model assembly.3mf $(RENDER_FLAGS)
-	$(COLOUR) -D 'show_items=false' -D 'body_lift=130' -o assembly.3mf cutlery-drainer.scad
+	$(COLOUR) -D 'show_items=false' -D 'explode=1' -o assembly.3mf cutlery-drainer.scad
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-apart --model assembly.3mf --views hero $(RENDER_FLAGS)
 	$(COLOUR) -D 'section="keyhole"' -o assembly.3mf cutlery-drainer.scad
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-section-keyhole --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
@@ -62,7 +62,8 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/soap-caddy-plate2 --plate 2 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate3 --plate 3 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate4 --plate 4 --views hero $(RENDER_FLAGS)
-	$(RENDER) $(PROJECT) renders/fit-tests --plate 5 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate5 --plate 5 --views hero $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/fit-tests --plate 6 --views top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
 clean: ## Remove exported files (the committed Bambu project and renders are kept)

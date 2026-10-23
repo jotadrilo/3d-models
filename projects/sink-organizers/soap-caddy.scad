@@ -47,8 +47,6 @@ sponge_play = 2;     // clearance around the sponge, per side [0.5:0.5:6]
 tip_gap = 15;        // gap between the closed cap tip and the sponge top [5:1:40]
 
 /* [Kitchen] */
-sink_dist = 115;     // wall to the inner edge of the sink bowl [40:1:250]
-drip_over = 10;      // how far the tray edge reaches past the sink edge [0:1:40]
 counter_gap = 12;    // counter to the bottom of the body (preview and checks) [3:1:100]
 cabinet_h = 460;     // counter to the wall cabinet: the bottle must go in from the top [250:1:900]
 
