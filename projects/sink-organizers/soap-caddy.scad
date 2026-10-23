@@ -172,6 +172,10 @@ module body() difference() {
             translate([-ix - eps, z_seat - ledge_h - ledge_w]) square([2 * (ix + eps), top - z_seat + ledge_h + ledge_w]);
             polygon([[-open_hw, z_seat - ledge_h - ledge_w - 1], [open_hw, z_seat - ledge_h - ledge_w - 1], [open_hw, top - bar_h - chf],
                      [open_hw - chf, top - bar_h], [-open_hw + chf, top - bar_h], [-open_hw, top - bar_h - chf]]);
+            // the returns' bottom edges rise at 45° from the side walls: level,
+            // they would stick out of the walls with nothing under them
+            for (s = [-1, 1]) let(zb = z_seat - ledge_h - ledge_w)
+                polygon([[s * ix, zb - 1], [s * ix, zb], [s * open_hw, zb + ix - open_hw], [s * open_hw, zb - 1]]);
         }
     }
     // side walls: 45° slots along the box, and between the sponge and the box ledges

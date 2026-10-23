@@ -143,12 +143,15 @@ echo(str("handle: ", span + 2 * handle_s, " x ", handle_reach + 1.5 * handle_s, 
 module plate() wall_plate(top, cups, [[slot_margin, top - slot_margin]]);
 
 // The side walls seen from the side: deep at the bottom round the tray, as
-// deep as the rack above it, a rounded step between them.
+// deep as the rack above it, a rounded step between them. The deep part's
+// front corner is rounded no more than half its height, so it stays above
+// the bed.
 module side_profile() {
+    fr = min(step_r, lower_top / 2);
     translate([-ud, 0]) square([ud - body_back, top]);
     hull() {
-        translate([-reach_f, 0]) square([reach_f - body_back, lower_top - step_r]);
-        translate([-reach_f + step_r, lower_top - step_r]) circle(r = step_r);
+        translate([-reach_f, 0]) square([reach_f - body_back, lower_top - fr]);
+        translate([-reach_f + fr, lower_top - fr]) circle(r = fr);
         translate([-ud, lower_top - 1]) square([ud - body_back, 1]);
     }
     translate([-ud - step_r, lower_top - eps]) difference() {   // fillet in the step
@@ -184,12 +187,17 @@ module body() difference() {
     for (m = [0, 1]) mirror([m, 0, 0]) translate([hx + boss_t, pin_y, arm_z]) sprung_handle_socket(pin_s, boss_t + side_t + 1, pin_play);
     // side walls: 45° slots along the bins, clear of the bosses. The union
     // matters: with lazy-union a bare for() here would be split, and the
-    // right wall's slots subtracted from the left's.
+    // right wall's slots subtracted from the left's. The slots stop under
+    // the bosses along a 45° line across them: a level cut would leave each
+    // slot a flat roof, a bridge with a loose end where it meets the next.
     difference() {
         union() for (s = [-1, 1])
             slots_tilted(s * (hx - side_t / 2), -ud + slot_margin, -(body_back + slot_rib), z_r + slot_margin, top - slot_margin, "x", side_t);
-        for (m = [0, 1]) mirror([m, 0, 0])
-            box([ix - 1, pin_y - boss_w / 2 - slot_rib, arm_z - boss_w / 2 - boss_t - slot_rib], [hx + 1, pin_y + boss_w / 2 + slot_rib, arm_z + boss_w / 2 + slot_rib]);
+        yb = pin_y + boss_w / 2 + slot_rib;               // behind the bosses
+        yf = pin_y - boss_w / 2 - slot_rib;               // in front of them
+        zb = arm_z - boss_w / 2 - boss_t - slot_rib;      // under them
+        for (m = [0, 1]) mirror([m, 0, 0]) translate([ix - 1, 0, 0]) yz_prism(0, side_t + boss_t + 2)
+            polygon([[yb, zb + yf - yb], [yb, top + 10], [yf - 50, top + 10], [yf - 50, zb + 50]]);
     }
 }
 

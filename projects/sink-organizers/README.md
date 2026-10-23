@@ -98,7 +98,9 @@ underneath because the body prints standing.
 
 - **In front of it:** the body has two returns in line with the box's own
   and a bar across the top, so the box cannot slide out. The opening's top
-  corners are at 45°, so the bar is a 10 mm bridge.
+  corners are at 45°, so the bar is a 10 mm bridge, and the returns' bottom
+  edges rise at 45° from the side walls: level, they stuck out 11.6 mm with
+  nothing under them, and the slicer flagged a floating cantilever.
 - **The bottle** drops in cap first; you squeeze it through the open front.
   Its cap goes through a hole in the floor and hangs `tip_gap` (15 mm) over
   the sponge.
@@ -185,7 +187,9 @@ front; the rack only rests between them.
   Seated, the arms carry no preload, so the PETG does not creep. Putting it
   on strains the bar 0.5 %, under the 1 % allowed; the console prints it.
 - **Printing:** the bosses taper at 45° underneath, because the body prints
-  standing.
+  standing. The side wall slots stop under them along a 45° line: cut
+  level, each slot got a flat roof with a loose end, which the slicer
+  flagged as a floating cantilever.
 
 ## Fit tests (plate 6)
 
