@@ -41,6 +41,7 @@ PLA_BASIC = "Bambu PLA Basic @BBL P1S 0.4 nozzle"
 PLA_MATTE = "Bambu PLA Matte @BBL P1S 0.4 nozzle"
 PETG_HF = "Bambu PETG HF @BBL P1S 0.4 nozzle"
 PETG_BASIC = "Bambu PETG Basic @BBL X1C"      # also the P1S 0.4 preset (no P1S-specific one)
+PETG_MATTE = "Bambu PETG Matte @BBL P1P 0.4 nozzle"  # also the P1S 0.4 preset
 
 
 @dataclass(frozen=True)

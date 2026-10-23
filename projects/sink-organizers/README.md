@@ -15,7 +15,7 @@ every piece that gets wet comes out on its own, to wash it or reprint it.
 ![Soap caddy](renders/soap-caddy-hero.webp) ![Cutlery drainer](renders/cutlery-drainer-hero.webp)
 
 ```sh
-make project                       # -> sink-organizers-p1s.3mf (PETG Basic) and sink-organizers-p1s-hf.3mf (PETG HF)
+make project                       # -> sink-organizers-p1s.3mf (PETG Basic), -p1s-hf.3mf (PETG HF) and -p1s-matte.3mf (PETG Matte)
 make report                        # rebuild them, slice them, print time and filament per plate
 make                               # -> one STL per part, soap-caddy-<part>.stl and cutlery-drainer-<part>.stl
 make project DEFS='-D bottle_w=86 -D bottle_d=54 -D neck_d=32'   # your bottle
@@ -195,8 +195,11 @@ front; the rack only rests between them.
 
 Each piece tests the real thing, printed the way the real part prints. The
 button hole and the dovetail were settled in black PETG Basic on the P1S
-(tools/README.md, "Tested fits"); with PETG HF, print
-the ladders once in HF before the big plates.
+(tools/README.md, "Tested fits"); with PETG HF or PETG Matte, print
+the ladders once in that filament before the big plates. PETG Matte is
+filled, about 20 % stiffer and a sixth weaker in tension than PETG Basic (Bambu's
+data sheets), so check above all that the button taps onto the stud
+without cracking.
 
 - **Buttons on the cup**: three buttons with pilot holes of 3.8, 3.9 and
   4.0 mm as modelled (≈3.55, 3.65 and 3.75 printed), marked by 1 to 3
@@ -270,12 +273,14 @@ pressing the sponge (≈30 N), wet cutlery and a towel (≈10 N).
 
 ## Printing (Bambu P1S)
 
-`make project` builds the two projects on a Textured PEI plate:
+`make project` builds the three projects on a Textured PEI plate:
 - **Settings:** P1S 0.4 nozzle, *0.20mm Standard* with gyroid infill, the
   seam at the back, scarf seam and precise outer walls.
 - **Filament:** black Bambu PETG in slot 1: `sink-organizers-p1s.3mf` for
-  PETG Basic, `sink-organizers-p1s-hf.3mf` for PETG HF (the same plates, with
-  the HF preset). PETG takes warm soapy water
+  PETG Basic, `sink-organizers-p1s-hf.3mf` for PETG HF and
+  `sink-organizers-p1s-matte.3mf` for PETG Matte (the same plates, with
+  their presets). The matte surface hides layer lines but holds soap and
+  limescale more than glossy PETG does, so it takes a brush to clean. PETG takes warm soapy water
   and the top rack of the dishwasher, where PLA softens and creeps.
 - **Supports:** none. The plates lie on their backs, the bodies stand, the
   trays lie on their backs, the box, rack and bins stand on their floors,
@@ -283,14 +288,14 @@ pressing the sponge (≈30 N), wet cutlery and a towel (≈10 N).
 
 With the default parameters:
 
-| Plate | Contents | PETG Basic | PETG HF |
-|---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 08 min, 115 g | 5 h 27 min, 117 g |
-| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 52 min, 104 g | 4 h 29 min, 107 g |
-| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 34 min, 87 g | 3 h 14 min, 89 g |
-| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g |
-| 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g |
+| Plate | Contents | PETG Basic | PETG HF | PETG Matte |
+|---|---|---|---|---|
+| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 08 min, 115 g | 5 h 27 min, 117 g | 6 h 08 min, 126 g |
+| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g | 3 h 15 min, 75 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 52 min, 104 g | 4 h 29 min, 107 g | 4 h 52 min, 114 g |
+| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 34 min, 87 g | 3 h 14 min, 89 g | 3 h 34 min, 95 g |
+| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g | 4 h 54 min, 86 g |
+| 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g | 1 h 24 min, 38 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.

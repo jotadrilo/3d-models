@@ -59,7 +59,7 @@ Main pieces:
 | `plate.add(name, mesh, x, y, settings={...})` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides |
 | `proj.write(path)` | Checks the layout and names and writes the 3MF |
 | `Project(..., printer=X2D)`, `PRINTERS` | Target printer: `P1S` (default) or `X2D`. `printer.preset(kind, base)` finds the system preset made for it, e.g. `X2D.preset("filament", "Bambu PLA Matte")` |
-| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC` | Filament preset names for the P1S 0.4 |
+| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC`, `PETG_MATTE` | Filament preset names for the P1S 0.4 |
 
 Run as a script to slice every plate and print time and grams per plate and slot (the figures in
 each README):
