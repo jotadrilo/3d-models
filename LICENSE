@@ -4,8 +4,8 @@ The models — everything under projects/ (OpenSCAD sources, Bambu Studio
 projects, renders, documentation) and the OpenSCAD library under tools/scad/ —
 are licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
 4.0 International licence (CC BY-NC-SA 4.0): no commercial use, including
-selling prints or files, without the author's permission. See
-LICENSE-CC-BY-NC-SA-4.0.txt or https://creativecommons.org/licenses/by-nc-sa/4.0/.
+selling prints or files, without the author's permission. The licence's legal
+code: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 The code — the Python, shell and Makefile tooling under tools/ (outside
 tools/scad/) and the scripts in each project (bambu_project.py, fea/) — is
