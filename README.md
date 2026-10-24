@@ -19,6 +19,7 @@ as a sample. See [tools/README.md](tools/README.md).
 ## License
 
 The models (`projects/` and the OpenSCAD library in `tools/scad/`) are
-[CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0.txt): use, print, remix and share them, also commercially,
-crediting this repository and sharing remixes under the same licence. The code (the Python and
-build tooling) is [MIT](LICENSE). Details in [LICENSE](LICENSE).
+[CC BY-NC-SA 4.0](LICENSE-CC-BY-NC-SA-4.0.txt): use, print, remix and share them, crediting this
+repository and sharing remixes under the same licence, but **not commercially**: selling them,
+their prints or their files needs the author's permission. The code (the Python and build tooling)
+is [MIT](LICENSE). Details in [LICENSE](LICENSE).
