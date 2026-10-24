@@ -11,3 +11,4 @@
 
 # Local-only projects, never committed
 private/
+__pycache__/

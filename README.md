@@ -14,7 +14,8 @@ The models live in [`projects/`](projects/), one folder each. Everything they sh
 (`make project`, `make report`), `render_studio.py` renders it in Blender (`make render`), and
 [`tools/scad/`](tools/scad/) is the OpenSCAD library of functional components (mounts, joints,
 holes, the house style), each one researched, documented in [CLAUDE.md](CLAUDE.md) and printable
-as a sample. See [tools/README.md](tools/README.md).
+as a sample. [`tools/fea/`](tools/fea/) is the load analysis (gmsh + CalculiX) for parts that
+carry a load, and the design-study workflow that tunes them. See [tools/README.md](tools/README.md).
 
 ## License
 

@@ -9,6 +9,7 @@ in Bambu Studio (plates, filaments, orientation, settings) and photographed by h
 | [`bambu3mf.py`](bambu3mf.py) | `make project`, `make report` | Builds the ready-to-print Bambu Studio project `<project>-p1s.3mf` from the OpenSCAD model, and slices it to report time and grams |
 | [`render_studio.py`](render_studio.py) | `make render` | Photoreal "as printed" studio renders of that project in Blender Cycles |
 | [`scad/`](scad/) | the `.scad` models | OpenSCAD library of the mounts, joints, FDM shapes and house style the projects share |
+| [`fea/`](fea/) | a project's `fea/` scripts (optional) | Load analysis with gmsh + CalculiX: method, modelling choices, case studies, and viewers for the results (ParaView, Blender) |
 
 Requirements: Python 3, OpenSCAD, Bambu Studio and Blender (versions and paths in
 [CLAUDE.md](../CLAUDE.md#local-environment-verified)).

@@ -158,6 +158,16 @@ When the strong orientation fights printability:
 Every functional project's README says, per loaded part, which load it carries, how the part is
 oriented for it, and the margin when the load crosses the layers.
 
+**Optional load analysis (FEA).** When a margin comes out under ~5× by hand, or the load path is
+too tangled to work out by hand, offer the user an FEA with gmsh + CalculiX. The same goes when the
+question is how an assembly shares its load (each suction cup's pull on the wall). Method,
+modelling choices, cost and past results are in [tools/fea](tools/fea/README.md). The scripts go in
+`projects/<project>/fea/`.
+To improve a loaded part, follow its **design study** workflow. The aim, unless the user says
+otherwise, is the least material and the least bending under the real load cases. Change one
+variable per variant, show the previews and the results side by side, and let the user pick from a
+top 3 before anything becomes a default.
+
 ---
 
 ## 3. The Bambu Studio project (`make project`)
@@ -619,7 +629,8 @@ Research behind each component in `tools/scad/`, one entry per component.
       that tests the real thing (the button on the cup's stud, the peg in the piece's hole),
       designed against measured hardware, not its nominal size. Check how each part goes in,
       along its whole path, not only where it ends up.
-- [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README.
+- [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README; FEA
+      offered when a margin is under ~5× or the load path is unclear (tools/fea).
 - [ ] Designed to print without supports: overhangs ≤45°, chamfered base, teardrops and sacrificial
       layers where needed.
 - [ ] Walls in multiples of 0.42 mm; heights and inlays in multiples of 0.2 mm.
