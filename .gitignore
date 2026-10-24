@@ -8,3 +8,6 @@
 .fseventsd
 .TemporaryItems
 .DocumentRevisions-V100
+
+# Local-only projects, never committed
+private/
