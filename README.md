@@ -15,3 +15,10 @@ The models live in [`projects/`](projects/), one folder each. Everything they sh
 [`tools/scad/`](tools/scad/) is the OpenSCAD library of functional components (mounts, joints,
 holes, the house style), each one researched, documented in [CLAUDE.md](CLAUDE.md) and printable
 as a sample. See [tools/README.md](tools/README.md).
+
+## License
+
+The models (`projects/` and the OpenSCAD library in `tools/scad/`) are
+[CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0.txt): use, print, remix and share them, also commercially,
+crediting this repository and sharing remixes under the same licence. The code (the Python and
+build tooling) is [MIT](LICENSE). Details in [LICENSE](LICENSE).
