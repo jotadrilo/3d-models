@@ -93,6 +93,17 @@ apart. They are where the earlier caddies had them, so the cups already on
 the wall stay put. The top cups pull and the bottom ones press, which takes
 the turning moment of the bottle and of a hand on the sponge.
 
+**Wall plate.** Where the drainer's plate has slots, the caddy's has windows
+(`plate_window`, `plate_window_inset`): one below the box, and one each side
+of the upper keyholes with 20 mm solid bands above and below.
+- **Why:** the body, nodding forward, pulls the housings at the plate's edges
+  while the upper cups hold it in the middle, so the plate bends across, and
+  the solid horizontal bands are what resist that.
+- **Against the old slots:** an FEA design study ([fea/README.md](fea/README.md))
+  compared 13 variants, one change at a time. The windows take 7.4 % less
+  plastic, bend 29 % less in daily use and under the bottle alone, and halve
+  the stress.
+
 **Box.** It drops in from the top onto two ledges, which are chamfered at 45°
 underneath because the body prints standing.
 
@@ -239,7 +250,7 @@ without cracking.
 
 | Part | Size (mm) | Notes |
 |---|---|---|
-| soap caddy `plate` | 108 × 211 × 6 | Wall plate: four keyholes, two housings; printed flat on its back |
+| soap caddy `plate` | 108 × 211 × 6 | Wall plate: four keyholes, two housings, three windows; printed flat on its back |
 | soap caddy `body` | 101 × 114 × 209 | Side walls with the tails, floor, ledges, the box's returns and bar; printed standing |
 | soap caddy `tray` | 97 × 103 × 24 | Sloping floor, slats, rims; printed on its back |
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
@@ -256,7 +267,15 @@ without cracking.
 
 Each loaded part is checked against its load, derating PETG to 40 % across
 the layers (CLAUDE.md §2.3). Loads: a full 600 ml bottle (≈6.5 N), a hand
-pressing the sponge (≈30 N), wet cutlery and a towel (≈10 N).
+pressing the sponge (≈30 N), wet cutlery and a towel (≈10 N), and squeezing
+the bottle towards the wall (≈30 N).
+
+The soap caddy was also checked by FEA (gmsh + CalculiX, [fea/README.md](fea/README.md)):
+the tray alone, then the whole caddy on its cups.
+- **Daily use:** the upper cups pull off the wall with ≈5 N each and the lower ones press
+  and carry the weight. Under the bottle alone the pull drops to ≈1 N.
+- **Squeezing the bottle:** the box's back wall closes its 1.9 mm gap and rests on the
+  upper buttons' heads.
 
 | Part | Load | Printed | Across the layers? | Margin |
 |---|---|---|---|---|
@@ -267,7 +286,10 @@ pressing the sponge (≈30 N), wet cutlery and a towel (≈10 N).
 | body floor and front | tension across when the walls are pushed apart (a few N) | standing: in XY | no | > 50× |
 | ledges | the box, the trays and the rack | standing, chamfered underneath | no | > 50× |
 | drainer `rack` | 1 kg of cutlery over a 206 mm span: ≈1.7 MPa in the fences | on its floor: the fences bend within their layers | no | ≈30× |
-| tray slats | the hand on the sponge: ≈4.3 N per slat over ≈35 mm | on its back, slats along Z | yes | ≈4×. Raise `slat_h` if needed: the stress drops with its square |
+| tray slats | the hand on the sponge: ≈4.3 N per slat over ≈35 mm | on its back, slats along Z | yes | ≈5× (FEA: 3.9 MPa across the layers) |
+| tray front tie | carries the slats' front ends across the 94 mm between the side rims; sags ≈2 mm (FEA) | on its back, the tie along X | no | ≈4.7× (FEA: 10 MPa) |
+| soap caddy `plate` | bends across, held by the upper cups in the middle, pulled by the housings at its edges | flat | no | > 10× (FEA: 3.9 MPa peak, 9.3 with the old slots) |
+| soap caddy `box` back wall | squeezing the bottle: 30 N towards the wall, onto the upper buttons' heads | standing: the wall bends across its layers | yes | ≈1.4× at the head, ≈2.5× around it (FEA: 13.7 / p99 7.7 MPa). Squeeze gently |
 | `handle` | the towel on a 230 mm bar: ≈0.1 N·m at mid-span | flat: the U in XY | no | > 50× |
 | `button` | shear on the shank and pull on the head, ≤10 N | standing on its flange | yes | > 50× |
 
@@ -290,11 +312,11 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 6 h 08 min, 115 g | 5 h 27 min, 117 g | 6 h 08 min, 126 g |
+| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 5 h 48 min, 111 g | 5 h 07 min, 114 g | 5 h 48 min, 122 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g | 3 h 15 min, 75 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 52 min, 104 g | 4 h 29 min, 107 g | 4 h 52 min, 114 g |
 | 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 34 min, 87 g | 3 h 14 min, 89 g | 3 h 34 min, 95 g |
-| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g | 4 h 54 min, 86 g |
+| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 33 min, 80 g | 4 h 54 min, 86 g |
 | 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g | 1 h 24 min, 38 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
@@ -320,6 +342,8 @@ pieces do not fit.
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope`, `drip_lip` | 0.25, 1.26, 1.68, 6, 1.5 | Tray: clearance in the body, floor, rims, slope, the drip lip under its front edge |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |
 | `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 45, 30 | Style: front corners, slots, 45° in the side walls, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |
+| `plate_window`, `plate_window_r`, `plate_window_inset` | [], 5, 0 | Wall plate: the slot zones (0 = the lowest) that get one window per field of slots instead, the windows' corner radius, and the solid bands above and below them (one value, or one per zone). The soap caddy sets [0, 1] and [0, 20] |
+| `plate_slot_clear`, `plate_bridge`, `plate_slot_max_len` | 0, 0, 0 | Wall plate slots: extra clearance from the pads, wider bridges between segments, a shorter longest slot (0: `slot_max_len`). Variants of the FEA study, off by default |
 | **Soap caddy** | | |
 | `bottle_w`, `bottle_d`, `bottle_h`, `neck_d`, `seat_to_tip`, `bottle_play` | 90, 50, 210, 34, 35, 1.5 | The bottle |
 | `sponge_w`, `sponge_d`, `sponge_h`, `sponge_play`, `tip_gap` | 90, 65, 45, 2, 15 | The sponge; closed cap tip to sponge top |

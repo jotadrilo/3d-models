@@ -72,6 +72,13 @@ return_w = 10;       // front returns that keep the bottle from tipping forward;
 
 include <common.scad>
 
+// The wall plate's slot fields as windows, the upper ones with 20 mm solid
+// bands above and below: 7.4 % less plate, 29 % less bending and a third of
+// the stress, in daily use and under the bottle alone (fea/README.md).
+// After the include, so they win over common.scad's defaults; -D still wins.
+plate_window = [0, 1];
+plate_window_inset = [0, 20];
+
 // Heights, from the bottom of the body
 reach = sink_dist + drip_over - wall_gap;      // tray front edge, from the plate's back face
 tray_y1 = -reach;

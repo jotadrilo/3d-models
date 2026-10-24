@@ -51,6 +51,12 @@ drip_clear = 5;      // the floor stops this far behind the tray's front edge, s
 ledge_w = 3.36;      // ledges inside the side walls that carry the tray (8 lines) [2.1:0.42:6]
 ledge_h = 4;         // ledge height, at the front [2:0.5:10]
 ledge_stop = 2;      // bump at the front of each ledge: lift the tray this much to slide it out [1:0.5:4]
+plate_slot_clear = 0; // extra solid band beside the pads, clear of the plate's slots (the plate bends across them there) [0:0.1:15]
+plate_bridge = 0;    // extra width of the bridges between the segments of a plate slot column [0:0.2:4]
+plate_slot_max_len = 0; // longest plate slot; 0: slot_max_len [0:1:80]
+plate_window = [];   // plate slot zones (0 = the lowest) that get one window per field of slots instead of the slots (the soap caddy: [0, 1], see fea/README.md)
+plate_window_r = 5;  // the windows' corner radius [2:0.5:15]
+plate_window_inset = 0; // solid band left above and below each window, inside its zone: one value, or one per zone [0:1:30]
 
 /* [Dovetail] */
 dt_w = 1.68;         // how far the tails widen on each side, at 45° (4 lines: 1.26 printed round, standing) [0.84:0.42:2.52]
@@ -150,12 +156,30 @@ module wall_plate(h, cups, zones) {
                 dovetail_housing(h, side_t, dt_w, dt_d, dt_play, dt_floor, dt_lip, dt_side, dt_cap);
         }
         for (c = cups) keyhole_at(c[1], c[0]);
-        for (zn = zones, x = slot_xs(-sx, sx))
-            if (min([for (c = cups) zn[0] < c[1] + pad_hi + slot_margin && zn[1] > c[1] - pad_lo - slot_margin
-                     ? abs(x - c[0]) : 1e9]) >= pad_w / 2 + slot_rib + slot_w / 2)
-                slot(x, 0, zn[0], zn[1], "y");
+        for (iz = [0 : len(zones) - 1]) let(zn = zones[iz]) {
+            // the columns of slots this zone keeps: clear of the pads that reach into it
+            xs = [for (x = slot_xs(-sx, sx))
+                  if (min([for (c = cups) zn[0] < c[1] + pad_hi + slot_margin && zn[1] > c[1] - pad_lo - slot_margin
+                           ? abs(x - c[0]) : 1e9]) >= pad_w / 2 + slot_rib + slot_w / 2 + plate_slot_clear) x];
+            if (len([for (w = plate_window) if (w == iz) w]) > 0) {
+                // one window over each run of neighbouring columns
+                pitch = slot_w + slot_rib;
+                starts = [for (i = [0 : len(xs) - 1]) if (i == 0 || xs[i] - xs[i - 1] > pitch * 1.5) i];
+                inset = is_list(plate_window_inset) ? plate_window_inset[iz] : plate_window_inset;
+                for (k = [0 : len(starts) - 1]) let(i0 = starts[k], i1 = k + 1 < len(starts) ? starts[k + 1] - 1 : len(xs) - 1)
+                    plate_window_cut(xs[i0] - slot_w / 2, xs[i1] + slot_w / 2, zn[0] + inset, zn[1] - inset);
+            } else
+                for (x = xs)
+                    wall_slot(x, 0, zn[0], zn[1], "y", slot_w, 20, slot_rib + plate_bridge,
+                              plate_slot_max_len > 0 ? plate_slot_max_len : slot_max_len);
+        }
     }
 }
+
+// A window through the plate from x0 to x1, z0 to z1, its corners rounded.
+module plate_window_cut(x0, x1, z0, z1) let(r = min(plate_window_r, (x1 - x0) / 2, (z1 - z0) / 2))
+    hull() for (x = [x0 + r, x1 - r], z = [z0 + r, z1 - r])
+        translate([x, 10, z]) rotate([90, 0, 0]) cylinder(r = r, h = 20);
 
 // ---------------------------------------------------------------- body
 

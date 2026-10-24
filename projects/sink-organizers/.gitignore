@@ -1,2 +1,4 @@
 *.stl
 assembly.3mf
+fea/run*/
+fea/*.step
