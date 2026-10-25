@@ -2,6 +2,7 @@
 
 | | Project |
 |---|---|
+| <a href="projects/onigiri-rice-scoop/"><img src="projects/onigiri-rice-scoop/renders/onigiri-rice-scoop-hero.webp" width="240" alt="Onigiri rice scoop"></a> | [onigiri-rice-scoop](projects/onigiri-rice-scoop/) — a kawaii onigiri scoop that holds 100 g of rice levelled off, one per rice (basmati, brown), face and nori as multi-colour inlays, PLA Pure for food contact (OpenSCAD) |
 | <a href="projects/sink-organizers/"><img src="projects/sink-organizers/renders/soap-caddy-hero.webp" width="240" alt="Sink organizers"></a> | [sink-organizers](projects/sink-organizers/) — a soap caddy and a cutlery drainer for either side of the tap, on one pattern: a wall plate on suction cups and a body slid onto it on dovetails, with lift-out boxes and bins over drip trays that drain into the sink (OpenSCAD) |
 | <a href="projects/desk-hanger-rail/"><img src="projects/desk-hanger-rail/renders/desk-hanger-rail-hero.webp" width="240" alt="Desk hanger rail"></a> | [desk-hanger-rail](projects/desk-hanger-rail/) — clip-on rail under the desk edge for coat hangers, two C brackets and a bar (OpenSCAD) |
 | <a href="projects/lattice-bowl/"><img src="projects/lattice-bowl/renders/lattice-bowl-hero.webp" width="240" alt="Lattice bowl"></a> | [lattice-bowl](projects/lattice-bowl/) — parametric lattice bowl (OpenSCAD) |
@@ -15,7 +16,8 @@ The models live in [`projects/`](projects/), one folder each. Everything they sh
 [`tools/scad/`](tools/scad/) is the OpenSCAD library of functional components (mounts, joints,
 holes, the house style), each one researched, documented in [CLAUDE.md](CLAUDE.md) and printable
 as a sample. [`tools/fea/`](tools/fea/) is the load analysis (gmsh + CalculiX) for parts that
-carry a load, and the design-study workflow that tunes them. See [tools/README.md](tools/README.md).
+carry a load, and the design-study workflow that tunes them; [`tools/materials/`](tools/materials/)
+holds the filaments' data sheets. See [tools/README.md](tools/README.md).
 
 ## License
 
