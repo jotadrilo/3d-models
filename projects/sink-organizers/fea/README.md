@@ -206,7 +206,12 @@ rerun:
 - **The plate:** about 4.7× within its layers against 48 MPa, peaking by the top keyhole.
 - **The cups:** the top one carries nearly all the upper row's pull, 2.8 N all day and 14 N with a
   hand on the sponge. That is moderate for a 50 mm cup.
-- **The squeeze** (section 3) predates this correction. It is being rerun with the hinged cups.
+- **The squeeze** (section 3), rerun with the hinged cups, is unchanged:
+  - the box's back wall moves 3.11 mm and the heads take 15.5 N;
+  - the box works at 7.7 / 13.7 MPa (p99 / peak);
+  - the plate moves 1.18 mm.
+
+  The box rests on the button heads, so the cups' tilt hardly enters.
 
 
 ## Cutlery drainer
