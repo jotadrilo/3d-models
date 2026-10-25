@@ -23,6 +23,7 @@ E, NU, RHO = 1460.0, 0.38, 1.27e-9
 PARTS = ('plate', 'body', 'tray', 'box')
 TOL = 2e-3
 LEDGE_H, BOX_FRONT_Y = 4.0, -63.8
+TOP, WALL_GAP = 209.099, 19.5
 tb = lambda y: LEDGE_H + (y - TRAY_Y1) * TAN
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -176,7 +177,10 @@ class Model:
             'TRAY_LEDGES': self.faces('body', lambda p: abs(p[2] - tb(p[1])) < TOL and on_ledge(p)),
             'BOX_BOTTOM': self.faces('box', lambda p: abs(p[2] - Z_SEAT) < TOL and abs(p[0]) >= IX - LEDGE_W - 1.0),
             'BOX_LEDGES': self.faces('body', lambda p: abs(p[2] - Z_SEAT) < TOL and on_ledge(p)),
-            'TAILS': self.faces('body', lambda p: abs(abs(p[0]) - HOUSE_X) <= CAV_X1 + TOL and p[1] >= -BACK_T - DT_D - TOL),
+            # the tails, but not the stepped lead-ins at their ends: their steps stand up to a few
+            # tenths off the housing, and a tie across that gap does not carry the moment through
+            'TAILS': self.faces('body', lambda p: abs(abs(p[0]) - HOUSE_X) <= CAV_X1 + TOL and p[1] >= -BACK_T - DT_D - TOL
+                                and (abs(p[2]) < 0.05 or 1.0 < p[2] < TOP - 1.0)),
             'HOUSINGS': self.faces('plate', lambda p: abs(abs(p[0]) - HOUSE_X) <= CAV_X1 + TOL
                                    and -BACK_T - HOUSE_D - TOL <= p[1] <= -BACK_T + TOL and p[2] >= -TOL),
             # the box's back corners, 0.5 mm in front of the housings' lips
@@ -209,7 +213,12 @@ class Model:
         for k, v in list(self.surf.items()) + list(self.loads.items()):
             print('surface %-15s %6d faces %8.1f mm2' % (k, len(v), self.area(v)), flush=True)
 
-        # the wall: per cup, the shank on the top of the slot, the flange and head round it
+        # the wall: per cup, the button clamps its pad between the flange and the head, so the
+        # button is a rigid body on the shank's bearing (the top of the slot) and the flange's
+        # disc on the plate's back face, with the stud and the cup's hub out to the wall. The cup
+        # holds it where it meets the wall, in every direction, but lets it tilt: a suction cup
+        # hardly resists a turn, it peels. (Holding those nodes fixed let each cup take a
+        # moment and understated the pull on the upper cups.)
         self.cups = []
         for cx, cz in CUPS:
             shank, flange = [], []
@@ -220,7 +229,9 @@ class Model:
                     shank.append(int(t))
                 if abs(p[1]) < TOL and SHANK_R - TOL <= r <= FLANGE_R:
                     flange.append(int(t))
-            self.cups.append((shank, flange))
+            self.cups.append((shank, sorted(set(flange) | set(shank))))
+        n0 = max(X)
+        self.refs = [(n0 + 2 * i + 1, n0 + 2 * i + 2, (cx, WALL_GAP, cz)) for i, (cx, cz) in enumerate(CUPS)]
 
     def faces(self, part, pred):
         out = []
@@ -250,12 +261,17 @@ class Model:
                 f.write('%d, S%d\n' % (e, fc))
         for i, (shank, flange) in enumerate(self.cups):
             f.write('*NSET, NSET=SHANK%d\n%s\n' % (i + 1, '\n'.join(map(str, shank))))
-            f.write('*NSET, NSET=FLANGE%d\n%s\n' % (i + 1, '\n'.join(map(str, flange))))
+            f.write('*NSET, NSET=RING%d\n%s\n' % (i + 1, '\n'.join(map(str, flange))))
+        f.write('*NODE\n')
+        for a, b, c in self.refs:
+            f.write('%d, %.6f, %.6f, %.6f\n%d, %.6f, %.6f, %.6f\n' % (a, *c, b, *c))
+        for i, (a, b, c) in enumerate(self.refs):
+            f.write('*NSET, NSET=FLANGE%d\n%d\n*RIGID BODY, NSET=RING%d, REF NODE=%d, ROT NODE=%d\n' % (i + 1, a, i + 1, a, b))
         f.write('*MATERIAL, NAME=PETG\n*ELASTIC\n%g, %g\n*DENSITY\n%g\n' % (E, NU, RHO))
         f.write('*SOLID SECTION, ELSET=EALL, MATERIAL=PETG\n')
         f.write('*BOUNDARY\n')
         for i in range(len(self.cups)):
-            f.write('SHANK%d, 1, 1\nSHANK%d, 3, 3\nFLANGE%d, 2, 2\n' % (i + 1, i + 1, i + 1))
+            f.write('FLANGE%d, 1, 3\n' % (i + 1))
 
     def write_loads(self, f, loads):
         """*DLOAD lines: own weight and {surface: (vertical or total force, cone)}."""
@@ -268,7 +284,7 @@ class Model:
 
     def write_output(self, f):
         for i in range(len(self.cups)):
-            f.write('*NODE PRINT, NSET=SHANK%d, TOTALS=ONLY\nRF\n*NODE PRINT, NSET=FLANGE%d, TOTALS=ONLY\nRF\n' % (i + 1, i + 1))
+            f.write('*NODE PRINT, NSET=FLANGE%d, TOTALS=ONLY\nRF\n' % (i + 1))
         f.write('*NODE FILE\nU\n*EL FILE\nS\n')
 
 
@@ -287,9 +303,9 @@ def cup_reactions(dat):
 def print_cups(tot):
     print('reaction at each cup (the wall on the plate, N); y < 0: presses on the wall, y > 0: pulls off it')
     for i, n in enumerate(CUP_NAMES):
-        s, fl = tot['SHANK%d' % (i + 1)], tot['FLANGE%d' % (i + 1)]
-        print('  %-17s down %6.2f  sideways %6.2f  y %7.2f' % (n, s[2], s[0], fl[1]))
-    print('  total down %.2f N' % sum(tot['SHANK%d' % (i + 1)][2] for i in range(4)))
+        r = tot['FLANGE%d' % (i + 1)]
+        print('  %-17s down %6.2f  sideways %6.2f  y %7.2f' % (n, r[2], r[0], r[1]))
+    print('  total down %.2f N' % sum(tot['FLANGE%d' % (i + 1)][2] for i in range(4)))
 
 
 def read_frd(path):

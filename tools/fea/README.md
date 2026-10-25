@@ -50,6 +50,18 @@ under its load cases, with a comfortable stress margin.
 Each variant that changes one part costs 1–2 min (mesh cache, linear bonded run), so a dozen
 variants take under half an hour. Keep the contact model for the cases that need it.
 
+**Where the part is held comes first.** Before thickening or ribbing anything, put the supports
+under the load path.
+- **The drainer:** moving its cups from 120 to 175 mm apart, under the dovetails that carry the
+  body, cut the bending by 91 % and used less plastic.
+- **The alternative cost more for less:** a 25 % thicker plate gave a third of that gain for
+  16.5 % more plastic.
+- **Once the supports are right, a lot of material stops working:** the drainer's plate then lost
+  a quarter of its plastic to one big window with no change in stiffness.
+
+So vary the supports (cup positions, row distance) in the first round. The row distance also
+sets what the cups pull.
+
 ## Toolchain
 
 | Program | Role | Where |
@@ -158,6 +170,26 @@ The soap caddy's, agreed with the user:
 Discarded: pushing the bottle down onto its seat (it goes in gently) and squeezing it against the
 collar (it is squeezed towards the wall).
 
+The cutlery drainer's. The weights come from product sheets: a teaspoon 20–30 g, a fork 35–46 g, a
+spoon 50–60 g, a table knife 75–92 g, a chef's knife 170–260 g, a paring knife 20–60 g. A meal for
+four with the kitchen knives comes to about 1050 g.
+
+| Case | Loads | For |
+|---|---|---|
+| 1. Daily use, permanent | 350 g in each of the three bins (on the rack, under each bin's footprint), a soaked towel of 300 g over the bar, own weight | Stiffness, what the cups hold all day, creep |
+| 2. One end bin | 600 g in one end bin (all the knives), the others empty, the towel | Asymmetry. It came out milder than case 1, so the study left it out |
+| 3. Towel pulled | case 1 + 20 N on the bar, down and forward at 45°, in the middle or at one end | The handle's pins, the plate, the cups' peak pull |
+
+Discarded: leaning a hand on a bin (nobody does).
+
+**Mark which case is permanent.** On the soap caddy, the hand is momentary and only the bottle
+stays. On the drainer, the cutlery and the towel hang for hours, so the daily case is also the
+permanent one.
+
+Bins that only rest on a part are not meshed: their weight and what they hold become a pressure
+on their footprint. That is the pessimistic end for the part under them. A bin is a stiff box,
+so in reality its walls carry much of the load to its edges.
+
 A load on a cone (the bottle's shoulder on a 45° seat) is a pressure normal to the cone, which is
 how a frictionless shoulder pushes. For a vertical resultant F, p = F / (A·cos 45°). The horizontal
 components cancel overall, but they load the collar in hoop, which a vertical load on the box floor
@@ -210,13 +242,40 @@ A bonded joint also carries tension and shear that the real joint cannot. So aft
 nothing; tension somewhere means that joint needs contact.
 
 **The wall** is a boundary condition, not a part. For a keyhole on a button on a suction cup:
-- the shank bears on the top of the slot (x and z held on those nodes);
-- the flange and the cone head hold the plate front and back (y held on the back face round the
-  button).
+- the button clamps its pad between its flange and its cone head, so the button and the pad move
+  together: one `*RIGID BODY` per cup, made of the nodes where the shank bears on the top of the
+  slot and the back-face nodes under the flange;
+- its reference node sits **where the cup meets the wall** (`wall_gap` behind the plate: the stud
+  and the hub are part of the rigid body), held in x, y and z;
+- its rotations are left **free**. A suction cup hardly resists a turn: tilted, it peels off.
 
-The reaction on each of these node sets (the force of the wall on the plate) is the load on that
+The reaction at each reference node (the force of the wall on the plate) is the load on that
 cup: − y means the plate presses on the wall, + y means it pulls off it, which loads the cup in
-tension. Compare that pull with what a cup holds.
+tension. Compare that pull with what a cup holds, and remember the sideways shear too.
+
+**Why the hinge matters.** The first models held every node of the shank and the flange fixed.
+That clamps the plate at each cup, and each cup took a share of the piece's turning moment as a
+local bending moment, which a suction cup cannot carry:
+- the totals of the node sets hid it, because the fixed nodes push and pull against each other
+  in pairs that cancel out;
+- the soap caddy's top cup came out at 5.3 N in daily use, against 13.8 N with the hinge;
+- the drainer's upper cups came out at 4.6 N, against 12.6 N.
+
+With hinges, what the cups pull is statics: the turning moment of the loads about the lower
+row, divided by the distance between the rows. The plate's stiffness only shifts it between
+cups. So check it by hand (see [Reading the results](#reading-the-results)).
+
+**Ties across a gap lose moment.** A `*TIE` makes each slave node move with the point of the
+master surface it is tied to. When the two are apart, the force passes from one to the other
+without the moment of that offset, so the model is no longer in balance.
+- **The drainer's case:** with `POSITION TOLERANCE=0.6`, the stepped lead-ins at the tails' ends
+  (0.2 mm steps, up to a few tenths off the housing) were tied, and about 30 N per node went
+  through them. The cups lost a third of the turning moment.
+- **The fix:**
+  - tolerance 0.25 mm, which still covers the STL meshes' 0.1 mm envelope and the fits' plays;
+  - leave the lead-in zones (and anything else that only nearly touches) out of the slave
+    surface.
+- **Check:** the cup forces against the statics. The drainer went from 34 % off to 4 %.
 
 Contact settings used: `SURFACE TO SURFACE`, linear pressure-overclosure with slope 5000 N/mm³,
 friction μ = 0.3 (stick slope 2000), `ADJUST=0.05` to close the tested 0.025 mm plays. Weak springs
@@ -286,6 +345,14 @@ caddy, bonded: daily use, none; squeeze, the box's back wall up to 1.9 mm into t
   compare the one across the layers with the derated allowable. Von Mises alone hides this.
 - **Margin** = allowable / converged stress for that direction. A margin of 4–5× is comfortable for
   occasional loads on PETG. Constant loads also creep (PETG, warm water), so keep more margin there.
+- **Check the balance by hand** before trusting the reactions.
+  - **The loads:** add up every load's force and its moment, from the `.inp`: own weight per
+    element at its centroid, pressures per face.
+  - **The reactions:** compare that with the reactions at their nodes. The total force always
+    matches; the moment does not when something in the model takes moment it should not (a
+    clamped support, a tie across a gap).
+  - **Cups:** for cups in two rows, the upper row's total pull is (the loads' moment about the
+    lower row) / (row distance). If the model gives less, find where the rest went.
 
 ## Viewing
 
@@ -546,6 +613,20 @@ stress. The windows move a little of the pull onto the top cup (4.5 → 5.3 N da
 permanent): still small for a 50 mm cup. Top 3 offered: WH0i20, WH0, WH0i11. The squeeze case is
 still to do, with contact on the button heads.
 
+**Corrected 2026-10-25.** The cup figures in cases 3 and 4 came from the clamped cups and the
+0.6 mm ties (see [Assembly](#assembly)). The same plates, rerun with hinged cups and the tighter
+ties:
+
+| | Slots (V0) | Windows (WH0i20, chosen) |
+|---|---|---|
+| Plate moves, daily | 2.32 mm | 1.51 mm (−35 %) |
+| Plate peak / p99, daily | 16.9 / 9.5 MPa | 10.2 / 5.2 MPa |
+| Top cup pull, daily / bottle only | 13.5 / 2.75 N | 13.8 / 2.8 N |
+
+The ranking held, and the windows win by more. The top cup carries almost all the pull: the
+upper cups stand one above the other, and the one further from the lower row takes nearly all of
+it.
+
 **Meshing lessons from this run:**
 - fTetWild's optimisation must be capped (`stop_energy=30, num_opt_iter=20`): uncapped, the
   plate ran over 40 min on one core; capped, 1.5 min.
@@ -553,3 +634,37 @@ still to do, with contact on the button heads.
   ("nonpositive jacobian"). They are left out by shape (volume / longest edge³ < 1e-4; a regular
   tetrahedron is 0.118): about 0.02 mm³ in all.
 - With the meshes cached, a variant that changes only the plate takes 1–2 min.
+
+### 5. Cutlery drainer on the wall, its supports and plate (2026-10-25)
+
+[`projects/sink-organizers/fea/drainer_fea.py`](../../projects/sink-organizers/fea/drainer_fea.py),
+with the model in [`drainer_model.py`](../../projects/sink-organizers/fea/drainer_model.py). The
+project's record, with the images, is in
+[projects/sink-organizers/fea/README.md](../../projects/sink-organizers/fea/README.md#cutlery-drainer).
+
+**Model:**
+- **Parts:** plate, body, tray, rack and towel handle, from the OpenSCAD STLs (fTetWild, h 2.5 mm,
+  the plate and the handle 1.5 mm).
+- **Joints, bonded:** the tray and the rack on their ledges, the tails in their housings, and the
+  handle's pins in their sockets (0.15 mm play).
+- **Bins:** a pressure on their footprint on the rack.
+- **Cups:** rigid buttons hinged at the wall.
+- **Cost:** 670 k nodes, about 1 min per load case.
+
+**What it found:**
+- **The supports were in the wrong place.** The dovetails that carry the body are at x = ±104,
+  the cups at ±60. In between, 44 mm of slotted 1.68 mm plate twisted: the whole body nodded
+  forward about 2° and the towel bar dropped 9 mm under its daily load.
+- **The supports beat material:**
+  - cups 175 mm apart (−3.1 % plastic): bar 0.8 mm (−91 %), plate stress a seventh;
+  - a 2.1 mm plate (+16.5 %): −34 %.
+- **Row distance sets the cups' pull:** 55 → 80 mm cut the upper cups' permanent pull from
+  13.2 to 9.1 N each.
+- **With the cups under the dovetails, the plate's middle does nothing.** One window with 4 mm
+  bands took 25 % of its plastic with no loss of stiffness.
+- **Next weak point, the rack:**
+  - 2.3–2.9 mm of sag in the middle of its 1.6 mm slotted floor, between fences that sag only
+    0.5 mm;
+  - 5.4 MPa (p99.9) within its layers.
+- **The bonded towel pull is overstated where the body nods a lot:** the body's floor then closes
+  its 3 mm gap onto the lower keyhole pads (found by `penetration.py`).

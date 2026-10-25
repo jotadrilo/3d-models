@@ -30,3 +30,4 @@ echo("FEA", "PAD_T", pad_t);
 echo("FEA", "CONE", (head_d - shank_d) / 2);
 echo("FEA", "FLANGE_R", flange_d / 2);
 echo("FEA", "TOP", top);
+echo("FEA", "WALL_GAP", wall_gap);

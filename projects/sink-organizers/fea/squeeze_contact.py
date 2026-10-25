@@ -88,7 +88,7 @@ def main():
             f.write('*MATERIAL, NAME=RIGID\n*ELASTIC\n200000., 0.3\n*SOLID SECTION, ELSET=HEADS, MATERIAL=RIGID\n')
             f.write('*BOUNDARY\nHEADN, 1, 3\n')
             for i, (slave, master) in enumerate(TIES):
-                f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.6, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
+                f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.25, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
             f.write('*SURFACE INTERACTION, NAME=SI\n*SURFACE BEHAVIOR, PRESSURE-OVERCLOSURE=LINEAR\n5000.\n')
             f.write('*CONTACT PAIR, INTERACTION=SI, TYPE=SURFACE TO SURFACE\nBOX_BACK_ALL, WALL_SIDE\n')
             f.write('*STEP, INC=100\n*STATIC\n0.25, 1.0, 1e-4, 0.25\n')

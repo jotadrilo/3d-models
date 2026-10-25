@@ -10,6 +10,7 @@ import caddy_model as cm
 
 VARIANTS = {                      # one change per experiment from the variant named in the comment
     'V0 as is': [],
+    'S0 the slotted plate (as it was before WH0i20)': ['plate_window=[]', 'plate_window_inset=0'],
     'W upper windows, 50 mm tall': ['plate_window=[1]', 'plate_window_inset=14'],                     # H1
     'T1 plate 1.26 mm': ['back_t=1.26'],                                                              # V0
     'T2 plate 2.1 mm': ['back_t=2.1'],                                                                # V0
@@ -56,7 +57,7 @@ def main():
             with open(os.path.join(d, case + '.inp'), 'w') as f:
                 model.write_mesh(f)
                 for i, (slave, master) in enumerate(TIES):
-                    f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.6, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
+                    f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.25, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
                 f.write('*STEP\n*STATIC\n')
                 model.write_loads(f, loads)
                 model.write_output(f)

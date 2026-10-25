@@ -47,7 +47,7 @@ for case in cases:
     with open(os.path.join(out, case + '.inp'), 'w') as f:
         model.write_mesh(f)
         for i, (slave, master) in enumerate(ties):
-            f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.6, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
+            f.write('*TIE, NAME=T%d, POSITION TOLERANCE=0.25, ADJUST=NO\n%s, %s\n' % (i + 1, slave, master))
         f.write('*STEP\n*STATIC\n')
         model.write_loads(f, LOADS[case])
         model.write_output(f)
