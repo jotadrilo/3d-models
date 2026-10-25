@@ -668,3 +668,20 @@ project's record, with the images, is in
   - 5.4 MPa (p99.9) within its layers.
 - **The bonded towel pull is overstated where the body nods a lot:** the body's floor then closes
   its 3 mm gap onto the lower keyhole pads (found by `penetration.py`).
+- **Bracketing a load you cannot model well.** How the bins load the rack decides its sag by a
+  factor of ten, so each rack was solved under three assumptions:
+  - an even pressure on each bin's footprint (pessimistic);
+  - the load under each bin's walls, as a stiff box (realistic);
+  - the bins meshed and bonded (far too optimistic: a box girder that resting bins are not).
+
+  Resting bins with frictional contact did not converge in 1.5 hours: two slotted floors on each
+  other open and close thousands of contact patches. Bracket instead of waiting.
+- **Slot direction is a free stiffness variable.** The rack's floor slots turned to run front to
+  back, so its strips span the short way between the fences: −29 % sag for +0.4 % plastic. With
+  a 2.4 mm floor, the same plastic sags 35 % less than with the slots the other way.
+- **Chosen by the user:** cups at the plate's corners and 80 mm between the rows, one window in
+  the plate, the rack at 2.4 mm with its slots turned. Results:
+  - the bar drops 0.7 mm instead of 8.8;
+  - each upper cup pulls 9 N all day instead of 13;
+  - the plate's plastic is −25 % and the rack's +31 %, about the same in all.
+  - nothing closes under any case, so the bonded linear model holds.

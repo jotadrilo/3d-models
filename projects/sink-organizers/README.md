@@ -137,10 +137,22 @@ wall with the sink 120 mm out (`sink_dist`, shared by both pieces).
 
 ![Section through a keyhole, on the wall](renders/cutlery-drainer-section-keyhole-front.webp)
 
-**Cups.** Four suction cups (Ø 50 mm, M4 stud) in two rows of two,
-`cup_span` (120 mm) apart and `cup_pitch` (55 mm) one above the other. The
+**Cups.** Four suction cups (Ø 50 mm, M4 stud), one at each corner of the
+plate: `cup_span` (175 mm) apart, under the dovetails that carry the body,
+and `cup_pitch` (80 mm, the most the plate fits) one above the other. The
 cutlery and the towel hang well in front of the wall, and the two rows take
 that turning moment.
+- **Why the corners:** an FEA design study ([fea/README.md](fea/README.md#cutlery-drainer))
+  found the first layout, with the cups 120 mm apart, let the plate twist between them and
+  the dovetails. The whole drainer nodded forward about 2° and the towel bar dropped 9 mm.
+  Under the dovetails it drops 0.7 mm.
+- **Why 80 mm between the rows:** the upper cups pull the turning moment over that distance,
+  9 N each all day against 13 N at 55 mm.
+
+**Wall plate.** With the cups at its corners, the middle of the plate
+carries nothing: one window (`plate_window`, `plate_window_inset`) with 4 mm
+bands above and below takes a quarter of its plastic and changes neither its
+stiffness nor its stress.
 
 It is laid out like the soap caddy: the bins stand on a rack over the tray,
 and the tray slides out under the rack with the bins in place.
@@ -160,8 +172,14 @@ drips.
 the body prints standing.
 
 - **Fences:** at its front and back. They hold the bins' feet and stiffen
-  the 206 mm span: they sag about 0.5 mm under 1 kg of cutlery, but the
-  slotted floor between them sags up to 2.9 mm (FEA, [fea/README.md](fea/README.md#the-rack)).
+  the 206 mm span: they sag about 0.5 mm under 1 kg of cutlery.
+- **Floor:** 2.4 mm (`rack_t`), its slots running front to back
+  (`rack_slots_across`), so its strips span the 90 mm between the fences,
+  the short way.
+  - **The first floor** was 1.6 mm with the slots running side to side, and sagged 1.8–2.7 mm
+    under the cutlery.
+  - **Now:** 0.7–0.85 mm (FEA, [fea/README.md](fea/README.md#the-rack)).
+  - **The alternative:** the same thicker floor with the slots side to side sags 35 % more.
 - **Stops:** a 2 mm bump on each ledge in front of it (`rack_stop`) keeps it
   from sliding forward. With the bins out, lift it straight up.
 - **Height:** its ledges sit over the tray's side rims, high enough for the
@@ -255,10 +273,10 @@ without cracking.
 | soap caddy `body` | 101 × 114 × 209 | Side walls with the tails, floor, ledges, the box's returns and bar; printed standing |
 | soap caddy `tray` | 97 × 103 × 24 | Sloping floor, slats, rims; printed on its back |
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
-| cutlery drainer `plate` | 217 × 115 × 6 | Wall plate: four keyholes, two housings; printed flat on its back |
-| cutlery drainer `body` | 218 × 114 × 113 | Side walls with the tails, floor, ledges for the tray and the rack, the handle's bosses; printed standing |
+| cutlery drainer `plate` | 217 × 116 × 6 | Wall plate: four keyholes at its corners, two housings, one window; printed flat on its back |
+| cutlery drainer `body` | 218 × 114 × 114 | Side walls with the tails, floor, ledges for the tray and the rack, the handle's bosses; printed standing |
 | cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and a drip lip; printed on its back |
-| cutlery drainer `rack` | 206 × 94 × 17 | Slotted shelf with a fence at the front and back; printed on its floor |
+| cutlery drainer `rack` | 206 × 94 × 17 | Shelf, 2.4 mm, slotted front to back, with a fence at the front and back; printed on its floor |
 | cutlery drainer `bin` | 68 × 90 × 80 | Three; printed standing on their floors |
 | cutlery drainer `handle` | 239 × 49 × 10 | The U with its two diamond pins; printed flat |
 | `button` | Ø 16 × 13 | One per cup (8); the stud goes right through; printed on its flange |
@@ -278,11 +296,11 @@ soap caddy's tray alone, then each piece whole on its cups.
   lower ones press and carry the weight.
 - **Squeezing the bottle:** the box's back wall closes its 1.9 mm gap and rests on the
   upper buttons' heads.
-- **Cutlery drainer, as it is:** with 1 kg of cutlery and a wet towel, the whole body nods
-  forward about 2° and the towel bar drops ≈9 mm. Its cups (±60 mm) stand well inside the
-  dovetails (±104 mm) that carry the body, and the plate between them twists. Each upper cup
-  pulls ≈13 N all day. A design study moving the cups and opening the plate is in
-  [fea/README.md](fea/README.md#cutlery-drainer); its result is not the default yet.
+- **Cutlery drainer, daily use:** with 1 kg of cutlery and a wet towel the towel bar drops
+  0.7 mm and each upper cup pulls ≈9 N all day. A 20 N pull on the towel at one end takes the
+  worst cup to ≈43 N, and 23 N sideways, for a moment. The first layout (cups 120 mm apart)
+  nodded 2° and dropped the bar 9 mm; [fea/README.md](fea/README.md#cutlery-drainer) has the
+  design study that moved the cups.
 
 | Part | Load | Printed | Across the layers? | Margin |
 |---|---|---|---|---|
@@ -292,7 +310,8 @@ soap caddy's tray alone, then each piece whole on its cups.
 | body side walls | the hand on the sponge or the trays and the rack on the ledges, held by the plate, the floor and the front (the handle on the drainer) | standing: bending within the layers | no | > 20× |
 | body floor and front | tension across when the walls are pushed apart (a few N) | standing: in XY | no | > 50× |
 | ledges | the box, the trays and the rack | standing, chamfered underneath | no | > 50× |
-| drainer `rack` | 1 kg of cutlery over a 206 mm span; its slotted floor spans the 94 mm between the fences | on its floor: it bends within its layers | no | ≈7× (FEA: 5.4 MPa p99.9; the floor sags 2.9 mm) |
+| drainer `rack` | 1 kg of cutlery over a 206 mm span; its floor's strips span the 90 mm between the fences | on its floor: it bends within its layers | no | ≈20× (FEA: 2.2 MPa p99.9; the floor sags 0.7–0.85 mm) |
+| drainer `plate` | the body's moment, held by the cups at its corners, under the dovetails | flat | no | ≈9× (FEA: 5.4 MPa p99.9 with the towel pulled) |
 | tray slats | the hand on the sponge: ≈4.3 N per slat over ≈35 mm | on its back, slats along Z | yes | ≈5× (FEA: 3.9 MPa across the layers) |
 | tray front tie | carries the slats' front ends across the 94 mm between the side rims; sags ≈2 mm (FEA) | on its back, the tie along X | no | ≈4.7× (FEA: 10 MPa) |
 | soap caddy `plate` | bends across, held by the upper cups in the middle, pulled by the housings at its edges | flat | no | ≈4.7× (FEA: 10.2 MPa peak by the top keyhole, 16.9 with the old slots) |
@@ -321,9 +340,9 @@ With the default parameters:
 |---|---|---|---|---|
 | 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 5 h 48 min, 111 g | 5 h 07 min, 114 g | 5 h 48 min, 122 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g | 3 h 15 min, 75 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 52 min, 104 g | 4 h 29 min, 107 g | 4 h 52 min, 114 g |
-| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 34 min, 87 g | 3 h 14 min, 89 g | 3 h 34 min, 95 g |
-| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 33 min, 80 g | 4 h 54 min, 86 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 20 min, 94 g | 3 h 57 min, 96 g | 4 h 20 min, 103 g |
+| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 51 min, 94 g | 3 h 31 min, 96 g | 3 h 51 min, 103 g |
+| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g | 4 h 54 min, 86 g |
 | 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g | 1 h 24 min, 38 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
@@ -349,7 +368,7 @@ pieces do not fit.
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope`, `drip_lip` | 0.25, 1.26, 1.68, 6, 1.5 | Tray: clearance in the body, floor, rims, slope, the drip lip under its front edge |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |
 | `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 45, 30 | Style: front corners, slots, 45° in the side walls, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |
-| `plate_window`, `plate_window_r`, `plate_window_inset` | [], 5, 0 | Wall plate: the slot zones (0 = the lowest) that get one window per field of slots instead, the windows' corner radius, and the solid bands above and below them (one value, or one per zone). The soap caddy sets [0, 1] and [0, 20] |
+| `plate_window`, `plate_window_r`, `plate_window_inset` | [], 5, 0 | Wall plate: the slot zones (0 = the lowest) that get one window per field of slots instead, the windows' corner radius, and the solid bands above and below them (one value, or one per zone). The soap caddy sets [0, 1] and [0, 20], the cutlery drainer [0] and 4 |
 | `plate_slot_clear`, `plate_bridge`, `plate_slot_max_len` | 0, 0, 0 | Wall plate slots: extra clearance from the pads, wider bridges between segments, a shorter longest slot (0: `slot_max_len`). Variants of the FEA study, off by default |
 | **Soap caddy** | | |
 | `bottle_w`, `bottle_d`, `bottle_h`, `neck_d`, `seat_to_tip`, `bottle_play` | 90, 50, 210, 34, 35, 1.5 | The bottle |
@@ -362,10 +381,11 @@ pieces do not fit.
 | **Cutlery drainer** | | |
 | `frame_w`, `bins`, `bin_d`, `bin_h` | 210, 3, 90, 80 | Width along the wall; number of bins, their depth and height |
 | `counter_gap` | 15 | Counter to the body |
-| `cup_span`, `cup_pitch` | 120, 55 | Between the cups of a row, and between the rows |
+| `cup_span`, `cup_pitch` | 175, 80 | Between the cups of a row (under the dovetails), and between the rows |
 | `towel_gap`, `step_r` | 14, 6 | Room for the towel in front of the body; the step between the side walls' deep and shallow parts |
 | `tray_rim` | 5 | The tray's rims above its floor, at the back |
-| `rack_t`, `fence_t`, `fence_h`, `rack_stop` | 1.6, 1.68, 15, 2 | Rack: floor, fences, their height, the bumps in front of it |
+| `rack_t`, `fence_t`, `fence_h`, `rack_stop` | 2.4, 1.68, 15, 2 | Rack: floor, fences, their height, the bumps in front of it |
+| `rack_slots_across` | true | The rack floor's slots run front to back, so its strips span fence to fence |
 | `bin_wall`, `bin_floor`, `bin_r`, `bin_play` | 1.26, 1.6, 5, 0.25 | Bins |
 | `handle_s`, `handle_drop`, `pin_s`, `pin_len`, `pin_play`, `boss_t`, `boss_w`, `handle_play` | 10, 12, 6, 5, 0.15, 4.2, 16, 0.4 | Towel handle, its pins and bosses |
 

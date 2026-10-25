@@ -4,11 +4,12 @@
 // sit on the wall:
 //   openscad -o x.echo [-D ...] drainer_dims.scad
 //   openscad -o handle.stl -D 'fea_part="handle"' [-D ...] drainer_dims.scad
-fea_part = "none";   // [none, handle]
+fea_part = "none";   // [none, handle, bins]
 include <../cutlery-drainer.scad>
 part = "none";       // nothing from the drainer's own part selector
 
 if (fea_part == "handle") handle_placed();
+else if (fea_part == "bins") for (x = bin_xs) translate([x, y_bins, z_b]) bin();
 
 echo("FEA", "HX", hx);
 echo("FEA", "IX", ix);
@@ -29,6 +30,7 @@ echo("FEA", "RACK_T", rack_t);
 echo("FEA", "RACK_Y1", rack_y1);
 echo("FEA", "BIN_XS", bin_xs);
 echo("FEA", "BIN_W", bin_w);
+echo("FEA", "BIN_FLOOR", bin_floor);
 echo("FEA", "BIN_Y0", bin_y0);
 echo("FEA", "BIN_Y1", bin_y1);
 echo("FEA", "CUPS", cups);

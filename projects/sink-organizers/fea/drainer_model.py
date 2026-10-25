@@ -16,6 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SCAD = os.path.join(HERE, '..', 'cutlery-drainer.scad')
 DIMS = os.path.join(HERE, 'drainer_dims.scad')
 PARTS = ('plate', 'body', 'tray', 'rack', 'handle')
+MESH_BINS = False              # mesh the bins too, bonded to the rack: the other bound for the rack (see Model)
+BIN_EDGES = False              # each bin's load only under its walls, as a stiff box would bring it down (see Model)
 CUP_NAMES = ['left, lower', 'left, upper', 'right, lower', 'right, upper']
 TOL = 0.2                      # the STL meshes keep the surface within 0.1 mm
 E, NU, RHO = cm.E, cm.NU, cm.RHO
@@ -37,8 +39,8 @@ def dims(defs=()):
 
 def export(out, defs=()):
     """Every part's STL, in place, into out; and the volume of one bin (mm3)."""
-    jobs = [(p, ['-D', 'part="%s"' % p], SCAD) for p in PARTS if p != 'handle'] + [('handle', ['-D', 'fea_part="handle"'], DIMS),
-                                                                                    ('bin', ['-D', 'part="bin"'], SCAD)]
+    jobs = [(p, ['-D', 'part="%s"' % p], SCAD) for p in PARTS if p not in ('handle', 'bins')] + [
+        ('handle', ['-D', 'fea_part="handle"'], DIMS), ('bins', ['-D', 'fea_part="bins"'], DIMS), ('bin', ['-D', 'part="bin"'], SCAD)]
     procs = [subprocess.Popen(['openscad', '-o', os.path.join(out, p + '.stl')] + a + [x for d in defs for x in ('-D', d)] + [s],
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) for p, a, s in jobs]
     for p in procs:
@@ -53,11 +55,15 @@ def stl_volume(path):
     return abs(np.einsum('ij,ij->i', t[:, 0], np.cross(t[:, 1], t[:, 2])).sum()) / 6
 
 
+def parts():
+    return PARTS + (('bins',) if MESH_BINS else ())
+
+
 def mesh_parts(src, h, threads=4):
     """Mesh every part's STL at once into caddy_model's cache, so Model() only reads them."""
     from concurrent.futures import ProcessPoolExecutor
-    with ProcessPoolExecutor(len(PARTS)) as ex:
-        jobs = [ex.submit(cm.mesh_stl, os.path.join(src, p + '.stl'), h.get(p, h['default']), (0, 0, 0), 0.1, threads) for p in PARTS]
+    with ProcessPoolExecutor(len(parts())) as ex:
+        jobs = [ex.submit(cm.mesh_stl, os.path.join(src, p + '.stl'), h.get(p, h['default']), (0, 0, 0), 0.1, threads) for p in parts()]
         for j in jobs:
             j.result()
 
@@ -69,7 +75,7 @@ class Model:
         D.update(d)
         self.parts, self.X = {}, {}
         nid0 = eid0 = 0
-        for name in PARTS:
+        for name in parts():
             tags, coords, el = cm.mesh_stl(os.path.join(src, name + '.stl'), h.get(name, h['default']))
             tags, el = tags + nid0, el + nid0
             for t, p in zip(tags, coords):
@@ -110,9 +116,21 @@ class Model:
             'PINS': self.faces('handle', lambda p: x_in - d['PIN_LEN'] - T <= abs(p[0]) < x_in - 0.05 and in_socket(p)),
             'SOCKETS': self.faces('body', lambda p: abs(p[0]) >= d['HX'] - d['PIN_LEN'] - 3 and in_socket(p)),
         }
-        self.loads = {'BIN%d' % i: self.faces('rack', lambda p, x=x: abs(p[2] - z_rt) < T and abs(p[0] - x) <= d['BIN_W'] / 2
-                                              and d['BIN_Y1'] <= p[1] <= d['BIN_Y0'])
-                      for i, x in enumerate(d['BIN_XS'])}
+        # each bin's load: on the rack under its footprint; with the bins meshed, on the bin's own
+        # floor, the bin bonded to the rack where it stands. The even pressure on the rack is the
+        # pessimistic bound for the rack, the bonded bin (it stiffens the rack) the optimistic one
+        z_bf = z_rt + d['BIN_FLOOR']
+        foot = lambda p, x: abs(p[0] - x) <= d['BIN_W'] / 2 and d['BIN_Y1'] <= p[1] <= d['BIN_Y0']
+        if MESH_BINS:
+            self.loads = {'BIN%d' % i: self.faces('bins', lambda p, x=x: abs(p[2] - z_bf) < T and foot(p, x)) for i, x in enumerate(d['BIN_XS'])}
+            self.surf['BINS_BOTTOM'] = self.faces('bins', lambda p: abs(p[2] - z_rt) < T)
+            self.surf['RACK_TOP'] = self.faces('rack', lambda p: abs(p[2] - z_rt) < T and d['BIN_Y1'] - 1 <= p[1] <= d['BIN_Y0'] + 1)
+        elif BIN_EDGES:
+            # a band as wide as the bin's wall plus 2 mm, under its perimeter
+            band = lambda p, x: foot(p, x) and (abs(p[0] - x) >= d['BIN_W'] / 2 - 3 or p[1] <= d['BIN_Y1'] + 3 or p[1] >= d['BIN_Y0'] - 3)
+            self.loads = {'BIN%d' % i: self.faces('rack', lambda p, x=x: abs(p[2] - z_rt) < T and band(p, x)) for i, x in enumerate(d['BIN_XS'])}
+        else:
+            self.loads = {'BIN%d' % i: self.faces('rack', lambda p, x=x: abs(p[2] - z_rt) < T and foot(p, x)) for i, x in enumerate(d['BIN_XS'])}
         self.loads.update({
             'TOWEL': self.faces('handle', lambda p: abs(p[2] - z_bt) < T and bar(p) and abs(p[0]) <= 85),
             # a pull on the towel, down and forward: on the bar's top and its back face,
@@ -168,7 +186,7 @@ class Model:
             f.write('*ELEMENT, TYPE=C3D10, ELSET=%s\n' % name.upper())
             for e, row in zip(p['eids'], p['el']):
                 f.write('%d, %s\n' % (e, ', '.join(str(int(n)) for n in row)))
-        f.write('*ELSET, ELSET=EALL\n%s\n' % ', '.join(n.upper() for n in PARTS))
+        f.write('*ELSET, ELSET=EALL\n%s\n' % ', '.join(n.upper() for n in parts()))
         for k, v in list(self.surf.items()) + list(self.loads.items()):
             f.write('*SURFACE, NAME=%s, TYPE=ELEMENT\n' % k)
             for e, fc, _, _ in v:

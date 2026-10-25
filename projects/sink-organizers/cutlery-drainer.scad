@@ -47,8 +47,8 @@ bin_h = 80;          // bin height: low enough to pick teaspoons out [50:1:140]
 counter_gap = 15;    // counter to the bottom of the body (preview and checks) [3:1:100]
 
 /* [Cups] */
-cup_span = 120;      // horizontal distance between the cups of a row [52:1:250]
-cup_pitch = 55;      // vertical distance between the two rows [52:1:90]
+cup_span = 175;      // horizontal distance between the cups of a row: under the dovetails, so the plate does not twist between them (fea/README.md) [52:1:177]
+cup_pitch = 80;      // vertical distance between the two rows: the upper cups pull the turning moment over it [52:1:82]
 
 /* [Body] */
 towel_gap = 14;      // room for the towel between the front of the body and the handle [8:1:30]
@@ -58,10 +58,11 @@ step_r = 6;          // radius of the step between the deep and the shallow part
 tray_rim = 5;        // the tray's rims above its floor, at the back [3:1:15]
 
 /* [Rack] */
-rack_t = 1.6;        // rack floor (8 layers) [1.2:0.2:3]
+rack_t = 2.4;        // rack floor (12 layers): it spans the 90 mm between the fences under the bins (fea/README.md) [1.2:0.2:3]
 fence_t = 1.68;      // fences at the rack's front and back (4 lines) [1.26:0.42:2.52]
 fence_h = 15;        // fences above the rack floor: they hold the bins' feet and stiffen the rack across [8:1:30]
 rack_stop = 2;       // depth of the bumps in front of the rack, on its ledges [1:0.5:4]
+rack_slots_across = true; // the rack floor's slots run front to back, so its strips span the short way, fence to fence (fea/README.md)
 
 /* [Bins] */
 bin_wall = 1.26;     // bin walls (3 lines) [1.26:0.42:2.52]
@@ -80,6 +81,13 @@ boss_w = 16;         // boss height and length [12:1:30]
 handle_play = 0.4;   // clearance between the handle's arms and the bosses, per side [0.2:0.1:1]
 
 include <common.scad>
+
+// The wall plate: with the cups under the dovetails its middle carries
+// nothing, so one window takes it out, with 4 mm bands above and below: a
+// quarter of the plate's plastic for no loss of stiffness (fea/README.md).
+// After the include, so they win over common.scad's defaults; -D still wins.
+plate_window = [0];
+plate_window_inset = 4;
 
 // Plan, back to front: the button heads and housings, the rack's back fence,
 // the bins, its front fence, the bumps (the front of the body above the
@@ -217,9 +225,14 @@ module rack() {
             }
             for (y = [rack_y1, tray_y0 - fence_t]) box([-thx, y, 0], [thx, y + fence_t, rack_t + fence_h]);
         }
-        for (y = slot_xs(bin_y1 + slot_rib, bin_y0 - slot_rib), g = slot_segments(-lx, lx, slot_rib, slot_max_len))
-            translate([0, y, -1]) linear_extrude(rack_t + 2)
-                hull() for (x = [g[0] + slot_w / 2, g[1] - slot_w / 2]) translate([x, 0]) circle(d = slot_w);
+        if (rack_slots_across)
+            for (x = slot_xs(-lx, lx), g = slot_segments(bin_y1 + slot_rib, bin_y0 - slot_rib, slot_rib, slot_max_len))
+                translate([x, 0, -1]) linear_extrude(rack_t + 2)
+                    hull() for (y = [g[0] + slot_w / 2, g[1] - slot_w / 2]) translate([0, y]) circle(d = slot_w);
+        else
+            for (y = slot_xs(bin_y1 + slot_rib, bin_y0 - slot_rib), g = slot_segments(-lx, lx, slot_rib, slot_max_len))
+                translate([0, y, -1]) linear_extrude(rack_t + 2)
+                    hull() for (x = [g[0] + slot_w / 2, g[1] - slot_w / 2]) translate([x, 0]) circle(d = slot_w);
     }
 }
 

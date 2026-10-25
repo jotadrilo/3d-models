@@ -217,7 +217,8 @@ rerun:
 ## Cutlery drainer
 
 `drainer_fea.py`, with the model in `drainer_model.py`. Not printed yet: the study is there to
-avoid printing a drainer the simulation already says will not work.
+avoid printing a drainer the simulation already says will not work. Chosen: SPW4 + RX24
+([Decision](#decision-1)).
 
 ### Load cases
 
@@ -245,7 +246,7 @@ Left out: leaning on a bin (nobody does).
   it (`penetration.py`). In daily use nothing closes. Under the towel pull, on the drainer as it
   is, the body's floor reaches the lower keyhole pads (3 mm gap), so those numbers are overstated.
 
-### The drainer as it is
+### The drainer as it was
 
 ![As it is: daily use and one end bin](img/drainer-round1-side.webp)
 
@@ -297,22 +298,74 @@ Left out: leaning on a bin (nobody does).
 
 ### The rack
 
-With the plate stiff, the rack is the softest part.
-- **How it sags in daily use:** 2.9 mm in the middle of its floor, while its fences sag only
-  0.5–0.6 mm. The 1.6 mm slotted floor spans the 94 mm between the fences.
-- **Strength:** 5.4 MPa (p99.9), 6.9 peak, within its layers: about 7×.
-- **Correction:** the README's hand calculation (0.4 mm) counted only the fences.
-- **Pessimistic:** the bins press as an even pressure here, while a real bin carries much of its
-  load down its walls to its edges.
+With the plate stiff, the rack was the softest part.
+- **How it sagged in daily use:** 2.7 mm in the middle of its floor, while its fences sag only
+  0.5–0.6 mm. The 1.6 mm floor, its slots running side to side, spans the 90 mm between the
+  fences.
+- **Strength:** 5.4 MPa (p99.9) within its layers, about 9×: soft, not weak.
+- **Correction:** the README's hand calculation (0.4 mm) had counted only the fences.
 
-The rack's own study is next: bins meshed as the other bound, then a thicker floor, taller fences,
-ribs under the walls between the bins, and the slots turned.
+**The bins' load is the uncertainty**, so each rack was solved twice:
+- **An even pressure on each bin's footprint:** the pessimistic case.
+- **The load in a band under each bin's walls:** as a stiff box would bring it down.
 
-### Not decided yet
+Two other ways were tried and dropped:
+- **The bins meshed and bonded to the rack:** gave 0.28 mm. Too optimistic, because the bonded
+  bins turn the rack into an 80 mm deep box girder that resting bins are not.
+- **The bins meshed and resting on it (frictional contact):** did not converge in 1.5 hours.
+  The two slotted floors open and close thousands of contact patches.
 
-No variant is the drainer's default yet. The candidates are SPW4, SPW10 and SP80: cups 175 mm and
-80 mm apart, with or without the window. That choice comes after the rack's study, with the
-towel pull rerun with contact.
+Variants from SPW4, one change at a time:
+
+| Rack | Plastic | Sag, even load | Sag, load under the walls | p99.9 |
+|---|---|---|---|---|
+| as it was: 1.6 mm, slots side to side | 26.9 cm³ | 2.74 mm | 1.82 mm | 5.4 MPa |
+| FH25: fences 25 mm | +26 % | 2.43 | — | 5.1 |
+| RX: slots front to back | +0.4 % | 1.95 | 1.54 | 4.2 |
+| RT24: floor 2.4 mm | +31 % | 1.15 | — | 2.9 |
+| RX20: RX + floor 2.0 mm | +16 % | 1.22 | 0.91 | 3.0 |
+| **RX24: RX + floor 2.4 mm** | **+31 %** | **0.85** | **0.69** | **2.2** |
+
+![Rack variants, daily use, from the front, deformation x10](img/drainer-rack.webp)
+
+- **Turning the slots** is nearly free: the floor's strips then span the 90 mm between the fences
+  instead of the 206 mm between the ledges.
+- **A thicker floor works:** the same 2.4 mm floor sags 35 % more with the slots side to side.
+- **Taller fences hardly help:** it is not the fences that sag.
+- **A central partition under the rack** was considered and dropped.
+  - **Why it does not help on its own:** the body's floor under it hangs from the wall and spans
+    the same 206 mm, so the partition only moves the load there.
+  - **What it would take:** to work it needs its own dovetail on the plate (a third, which must
+    slide true with the other two), a solid column in the plate, and the tray split in two.
+
+### Decision
+
+Chosen by the user: **SPW4 + RX24**, the drainer's defaults now. The plate:
+- `cup_span=175`, the cups at the plate's corners, under the dovetails;
+- `cup_pitch=80`;
+- `plate_window=[0]`, `plate_window_inset=4`, set in `cutlery-drainer.scad`.
+
+The rack: `rack_t=2.4`, `rack_slots_across=true`. Solved as `F` in `drainer_fea.py`, all four load
+cases:
+
+| | As it was | Now |
+|---|---|---|
+| The bar drops, daily | 8.8 mm | **0.7 mm** |
+| Rack sag, daily | 1.8–2.7 mm | **0.7–0.85 mm** |
+| Each upper cup pulls, all day | 12.6 N | **9.1 N** |
+| Towel pulled at one end: the bar / the worst cup | 36 mm / 52 N | **3.0 mm / 43 N** (and 23 N sideways) |
+| Plate p99.9, worst case | 48 MPa | **5.4 MPa** |
+| Plastic: plate / rack | 39.2 / 26.9 cm³ | 29.6 (−24.5 %) / 35.4 (+31 %) cm³ |
+| Printing (PETG Basic): plates 3 + 4 | 8 h 26 min, 191 g | 8 h 11 min, 188 g |
+
+![As it was and as it is now, daily use](img/drainer-final-daily.webp)
+
+![As it was and as it is now, towel pulled at one end, true scale](img/drainer-final-pull.webp)
+
+- **Nothing closes:** `penetration.py` finds no part going into another under any case, so the
+  bonded, linear model holds for this design.
+- **Stresses:** everything works under 6 MPa (p99.9) in the worst case.
+- **What is left:** the cups. 9 N all day each, and 43 N for a moment when the towel is yanked.
 
 ## Not checked
 
@@ -324,8 +377,8 @@ towel pull rerun with contact.
   under 2 MPa, where PETG barely creeps.
 - **Contact:** the full contact model of daily use never finished. The comparison rests on its
   first quarter of the load.
-- **The cutlery drainer:** the towel pull with contact (the body's floor on the keyhole pads), and
-  the rack with the bins meshed.
+- **The cutlery drainer:** the bins resting on the rack (the contact model did not converge;
+  the rack is bracketed instead), and the cups' holding force, which no model here knows.
 
 ## Reproduce
 
@@ -336,7 +389,7 @@ micromamba run -n fea python variants.py <out> V0 WH0i20      # plate variants, 
 micromamba run -n fea python squeeze_contact.py <out> WH0i20  # squeeze, with contact
 micromamba run -n fea python assembly_tie.py <step dir> <out> 2.5   # the bonded assembly from STEP files
 micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
-micromamba run -n fea python drainer_fea.py <out> V0 SPW4 --cases=daily,pull_end   # the drainer
+micromamba run -n fea python drainer_fea.py <out> F V0       # the drainer as it is now and as it was, all four cases
 ```
 
 | File | What it is |
