@@ -601,6 +601,7 @@ Research behind each component in `tools/scad/`, one entry per component.
 | Material | Nozzle | Bed (textured) | Door / lid | Use |
 |---|---|---|---|---|
 | PLA Basic / Matte | 220 °C | 55 °C | **Open, or lid raised** (heat creep) | Decorative, indoor, the stiffest; softens at ~55 °C |
+| PLA Pure | 220 °C | 55 °C, **no glue** | Open | Food contact (EU-certified ingredients); strongest PLA in X-Y (51.5 MPa) but brittle (5.6 % elongation); softens at ~55 °C |
 | PLA Silk+ | 230 °C | 55 °C | Open | Glossy decorative; max 12 mm³/s |
 | PETG HF | 245 °C | 70 °C + glue as release | Closed is usually fine | Functional, snap-fits, mild outdoor use, borderline in a dishwasher |
 | ABS / ASA | 270 °C | 90 / 100 °C | **Closed** | Heat (car), UV outdoors (ASA), higher impact |
@@ -608,8 +609,12 @@ Research behind each component in `tools/scad/`, one entry per component.
 
 - **Car interior**: ASA, ABS, PC or PA-CF. PLA and PETG deform.
 - **Food contact**: layer grooves trap bacteria; occasional use only, or with a food-safe coating,
-  and a stainless steel nozzle (the P1S's is).
+  and a stainless steel nozzle (the P1S's is). Use PLA Pure, printed without glue on the plate,
+  and wash by hand (PLA softens at ~55 °C).
 - Drying: PLA 55 °C 8 h · PETG 65–70 °C 8 h · ABS/ASA 80 °C 8 h.
+- **Data sheets**: every filament's Bambu TDS and a table of its key figures (modulus, strength
+  and elongation in X-Y and Z, heat deflection) are in [tools/materials](tools/materials/README.md).
+  Take load-analysis figures from there.
 
 ## 9. Calibration (the P1S has no lidar, so everything is manual)
 - **Flow Dynamics (K)**: Calibration → Manual → Pattern. Save the value per filament and AMS slot.

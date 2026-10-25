@@ -168,8 +168,9 @@ would miss.
 ### Material
 
 PETG Basic, Bambu TDS V2.0 (ISO 527): E = 1460 MPa in X-Y (1120 in Z), tensile strength 48 MPa in
-X-Y (39 in Z), elongation 11 % (5.7 % in Z), density 1.27 g/cm³; ν = 0.38 (typical for PETG, not
+X-Y (39 in Z), elongation 11 % (5.7 % in Z), density 1.25 g/cm³; ν = 0.38 (typical for PETG, not
 in the TDS). The TDS was found only as a reseller's copy: check it against Bambu's download page.
+Every filament's TDS, and a table of their figures, is in [tools/materials](../materials/README.md).
 
 The solver treats the material as **isotropic, with the X-Y modulus**. A printed part is not
 isotropic, so:

@@ -10,6 +10,7 @@ in Bambu Studio (plates, filaments, orientation, settings) and photographed by h
 | [`render_studio.py`](render_studio.py) | `make render` | Photoreal "as printed" studio renders of that project in Blender Cycles |
 | [`scad/`](scad/) | the `.scad` models | OpenSCAD library of the mounts, joints, FDM shapes and house style the projects share |
 | [`fea/`](fea/) | a project's `fea/` scripts (optional) | Load analysis with gmsh + CalculiX: method, modelling choices, case studies, and viewers for the results (ParaView, Blender) |
+| [`materials/`](materials/) | designs, load analyses | Bambu Lab data sheets of the filaments in use, with a table of their key figures |
 
 Requirements: Python 3, OpenSCAD, Bambu Studio and Blender (versions and paths in
 [CLAUDE.md](../CLAUDE.md#local-environment-verified)).
