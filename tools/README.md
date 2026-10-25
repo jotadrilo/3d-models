@@ -10,6 +10,7 @@ in Bambu Studio (plates, filaments, orientation, settings) and photographed by h
 | [`render_studio.py`](render_studio.py) | `make render` | Photoreal "as printed" studio renders of that project in Blender Cycles |
 | [`scad/`](scad/) | the `.scad` models | OpenSCAD library of the mounts, joints, FDM shapes and house style the projects share |
 | [`fea/`](fea/) | a project's `fea/` scripts (optional) | Load analysis with gmsh + CalculiX: method, modelling choices, case studies, and viewers for the results (ParaView, Blender) |
+| [`stability/`](stability/) | a project's `stability/` scripts (optional) | Will a free-standing piece tip over: statics and a MuJoCo rigid-body simulation, when to use them, what to measure, lessons |
 | [`materials/`](materials/) | designs, load analyses | Bambu Lab data sheets of the filaments in use, with a table of their key figures |
 
 Requirements: Python 3, OpenSCAD, Bambu Studio and Blender (versions and paths in
@@ -122,12 +123,13 @@ module with the same name as a library one hides it: wrap library calls under a 
 | [`mounts.scad`](scad/mounts.scad) | How a piece hangs | `keyhole_pad`, `keyhole_cut` (entry + slot + 45° countersink) and its male `keyhole_button` (screws onto a suction cup's M4 stud, or any stud); `standoff_peg` (stops a piece nodding forward; goes in from behind, crush ribs) and its `standoff_peg_hole`; `countersunk_screw` (cutter for a `wood_screw`); size functions `keyhole_*` |
 | [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth), `sprung_handle` / `sprung_handle_socket` (a U snapped onto a part by its diamond pins) and `sprung_handle_strain`, `dovetail_tail` / `dovetail_housing` (a body slid down onto a wall plate, resting on the housing's closed bottom) |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)`, `wall_slots_tilted(at, u0, u1, z0, z1, axis, tilt, w, rib)` (45° slots for walls that print standing with the slots across Z); both take `max_len` to split long slots in a wall that prints standing |
-| [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`: stand-ins for assemblies, renders and clearance checks |
+| [`boards.scad`](scad/boards.scad) | Holding a board upright | `board_bracket` (an "escuadra", used in pairs bolted through the board; print with `board_bracket_print`, on its side), `board_bracket_tip_force(weight, reach, at)`, `bolt_hole_x` |
+| [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`, `hex_bolt`, `hex_nut`, `washer`: stand-ins for assemblies, renders and clearance checks |
 | [`catalog.scad`](scad/catalog.scad) | Samples and demos | `part=`: every component and its mate, printable, in print orientation. `demo=`: each one in use, for the renders |
 
 `tools/scad/` follows the project layout: `make project` (`catalog-p1s.3mf`, every sample and
-its mate on one plate, 1 h 38 min and 48 g of grey PLA Basic: print it to check the fits on a new
-printer or filament) and `make render`, which renders each `demo` assembled and cut through the plane that shows the
+its mate in grey PLA Basic, on two plates: the small samples, 2 h 04 min and 61 g, and the board
+bracket, 28 min and 14 g; print them to check the fits on a new printer or filament) and `make render`, which renders each `demo` assembled and cut through the plane that shows the
 joint seated: the component (grey), its printed mate (orange), the hardware it takes (dark grey)
 and the wall (white).
 
@@ -142,12 +144,13 @@ and the wall (white).
 | **Lead-in plug and socket**: Chamfered tip and mouth find each other; the plug stops short of the bottom | ![](scad/renders/lead_in-section-front.webp) |
 | **Sprung handle**: the arms sprung over the part, the diamond pins seated in their sockets (cut level with the pins, from above) | ![](scad/renders/handle-section-top.webp) |
 | **Sliding dovetail**: the body's side wall slid down into the wall plate's housing, its tail resting on the closed bottom (cut across, from above) | ![](scad/renders/dovetail-section-top.webp) |
+| **Board bracket**: a pair on the two faces of a board, the same bolts through both legs and the board (cut through the bolts) | ![](scad/renders/bracket-section-front.webp) |
 
 Sample plate: ![](scad/renders/catalog-hero.webp)
 
 Where each piece comes from and was printed: keyholes, buttons, pegs and the house style in
 `sink-organizers` (soap caddy), the lead-in socket and stepped
-chamfers in `desk-hanger-rail`, the sprung handle and the sliding dovetail in `sink-organizers`. Clearances are defaults, not promises: keep the project's fit test
+chamfers in `desk-hanger-rail`, the sprung handle and the sliding dovetail in `sink-organizers`, the board bracket in `dog-gate`. Clearances are defaults, not promises: keep the project's fit test
 (`test_keyhole`, `test_socket`, `test_anchor_*`) and print it before the real part.
 
 ### Tested fits

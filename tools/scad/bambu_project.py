@@ -34,6 +34,11 @@ SAMPLES = {
     "dovetail_tail": ("Dovetail tail", 100, 60),
 }
 
+BOARD_SAMPLES = {
+    "board_bracket": ("Board bracket", 128, 128),
+}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default=os.path.join(HERE, "catalog-p1s.3mf"))
@@ -48,6 +53,10 @@ def main():
     )
     plate = proj.plate("Library samples")
     for part, (name, x, y) in SAMPLES.items():
+        plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y)
+    # Board holders: bigger samples, on their own plate
+    plate = proj.plate("Board holders")
+    for part, (name, x, y) in BOARD_SAMPLES.items():
         plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y)
     proj.write(args.output)
 

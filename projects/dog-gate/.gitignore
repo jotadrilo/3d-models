@@ -1,0 +1,4 @@
+*.stl
+assembly.3mf
+stability/*.json
+__pycache__/

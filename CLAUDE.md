@@ -168,6 +168,14 @@ otherwise, is the least material and the least bending under the real load cases
 variable per variant, show the previews and the results side by side, and let the user pick from a
 top 3 before anything becomes a default.
 
+**Optional stability analysis (tipping).** A piece that stands free (nothing screws it down) and can
+be pushed or knocked fails by tipping or sliding, not by breaking, and FEA does not see that. Offer
+the user the analysis in [tools/stability](tools/stability/README.md): statics first (tipping force,
+angle, energy barrier and tap, per direction and variant, in seconds), then a rigid-body simulation
+(MuJoCo) when it gets tapped or knocked, leans on a wall or a step, or could slide; and a luggage
+scale on the real piece to calibrate both. The scripts go in `projects/<project>/stability/`
+(`make stability`, `make sim`).
+
 ---
 
 ## 3. The Bambu Studio project (`make project`)
@@ -490,6 +498,39 @@ Research behind each component in `tools/scad/`, one entry per component.
  a square key turned 45° prints on
   its side with no overhang past 45°. Socket play 0.15 per side is a slip fit and 0.05 a press
   fit in PLA.
+- **Board bracket** (`boards.scad`, from dog-gate): an "escuadra" that stands a board on a floor
+  or a step: in pairs, one on each face, the same M6 bolts through both legs and the board, or
+  on one face only when the board stands against a wall or a riser.
+  - **It holds the board up, not against a push.** Nothing is fixed to the floor, so what keeps
+    the board standing is its weight: it tips at `F = W·reach / h` (`board_bracket_tip_force`).
+    A 3.5 kg board with 140 mm feet tips with ≈5 N at 1 m. More brackets do not change it; only
+    a longer reach, more weight (ballast) or a tie to something fixed does. Against a wall or a
+    riser, brackets on the free face only: the wall stops one way and the feet can take the
+    whole floor depth (dog-gate: 280 mm on a 300 mm tread). With brackets on one face only, a
+    vertical board stands balanced on its foot edge and falls backwards at a touch on a flat
+    floor: lean it over the feet (`lean` < 0 tilts the leg towards the toe). Each degree moves
+    the centre of mass `h/2 · tan` forwards, steadier backwards and easier to tip forwards
+    (dog-gate: 5°, 1.5 N backwards and 8.3 N forwards at the top of a 1 m, 3.5 kg board). On a stair nothing
+    that only rests can be stopped from sliding downhill (treads push up, risers face down), so
+    a gate that must hold a push needs a tie (dog-gate README, "Strength").
+  - **Print on its side**, the triangle on the bed: leg, foot and brace bend within the layers
+    (CLAUDE.md §2.3: a bracket printed flat puts every layer across the corner). The bolt holes
+    are then horizontal teardrops.
+  - **Braced triangle**, every member the same width (8.4 = 20 lines), hollow rounded r 4: the
+    corner sees almost no bending, so the loads are axial. The upper bolt sits where the hollow
+    still leaves room for a washer and a socket (≥ 40 mm from the brace).
+  - **Bolts through the board**: Ø7 drilled for M6, washers on the bracket side (plywood bears
+    ≈30 MPa, far more than a board's own weight asks). The toe ends square so it can bear on a
+    riser; stick anti-slip rubber under the feet.
+  - **Shoe** (`shoe` = board + 2 × play): one-sided brackets hold the board in a U, a 4.2 mm
+    lip on its far face and a floor under it, the bolts squeezing lip and leg onto the board.
+    It grips the board's foot along the whole leg on both faces (stiffer than two bolts alone),
+    and the squeeze takes up the plywood's ±0.5 mm, so 0.3 play per side needs no fit test.
+    The bolt heads on the lip need `lip + 4.2 + 1` mm behind the shoe (dog-gate: 5.2 to the
+    riser). The lip also moves the backward tipping edge 10 mm back.
+  - The loads are the board's weight and the moment that tips it (≈3 N·m per bracket at
+    most), so any orientation-correct print has margins of tens; no fit test needed beyond the
+    board's real thickness for the bolt length.
 
 ---
 
@@ -636,6 +677,8 @@ Research behind each component in `tools/scad/`, one entry per component.
       along its whole path, not only where it ends up.
 - [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README; FEA
       offered when a margin is under ~5× or the load path is unclear (tools/fea).
+- [ ] A piece that stands free: stability analysis offered (tools/stability), the tipping figures
+      per direction in the README.
 - [ ] Designed to print without supports: overhangs ≤45°, chamfered base, teardrops and sacrificial
       layers where needed.
 - [ ] Walls in multiples of 0.42 mm; heights and inlays in multiples of 0.2 mm.

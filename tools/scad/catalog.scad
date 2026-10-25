@@ -16,9 +16,10 @@ use <style.scad>
 use <mounts.scad>
 use <joints.scad>
 use <hardware.scad>
+use <boards.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail]
+part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket]
 assembled = false;
 section = false;
 
@@ -43,6 +44,7 @@ plug_d = 8;  // lead-in plug
 hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
 h_play = 0.4; h_reach = 14;
 dt_h = 30; dt_plate = 2.1; dt_wall = 20;   // sliding dovetail: length, the plate under the housing, the wall behind the tail
+bb_reach = 60; bb_h = 70; bb_w = 20; bb_m = 6.3; bb_bolts = [18, 40]; bb_t = 10;   // a small board bracket, M6, on a 10 mm board
 
 // ---------------------------------------------------------------- printable samples
 
@@ -134,6 +136,8 @@ module house_box_sample() {   // the house style: a small box with a keyhole in 
     }
 }
 
+module board_bracket_sample() board_bracket_print(bb_reach, bb_h, bb_w, bb_m, 6.5, bb_bolts);
+
 module sample(p) {
     if (p == "keyhole_pad") keyhole_pad_sample();
     else if (p == "keyhole_button") keyhole_button_sample();
@@ -152,6 +156,7 @@ module sample(p) {
     else if (p == "dovetail_housing") dovetail_housing_sample();
     else if (p == "dovetail_tail") dovetail_tail_sample();
     else if (p == "house_box") house_box_sample();
+    else if (p == "board_bracket") board_bracket_sample();
 }
 
 // ---------------------------------------------------------------- demos
@@ -171,7 +176,7 @@ X = assembled ? 0 : 1;   // explode factor
 
 // The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
 // +x), "y" keeps y >= 0 (look from -y, the front).
-function cut_plane(name) = name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
+function cut_plane(name) = name == "bracket" ? "x" : name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
 function cut_z(name) = name == "dovetail" ? dt_h / 2 : hb_h / 2;
 module cut(name) {
     if (!section) children();
@@ -269,6 +274,25 @@ module demo_part(name, role) {
             translate([-1.68 / 2, -dovetail_housing_d() - dt_wall, 0]) cube([1.68, dt_wall, dt_h]);
         }
         if (role == "arrow") arrow([8, -dt_plate - 10, dt_h + 40], [8, -dt_plate - 10, dt_h + 6]);
+    }
+    else if (name == "bracket") {
+        // a board standing on the floor, a bracket on each face, the same two
+        // bolts through both legs and the board (cut through the bolts)
+        if (role == "wall") box([-30, -60, -3], [30, 60, 0]);                      // the floor
+        if (role == "mate") difference() {                                       // the board
+            box([-30, -bb_t / 2, 0], [30, bb_t / 2, bb_h + 30]);
+            for (z = bb_bolts) translate([0, 0, z]) rotate([90, 0, 0]) cylinder(d = 7, h = bb_t + 2, center = true);
+        }
+        if (role == "piece") for (s = [0, 1]) mirror([0, s, 0]) translate([0, bb_t / 2 + 12 * X, 0])
+            board_bracket(bb_reach, bb_h, bb_w, bb_m, 6.5, bb_bolts);
+        if (role == "hw") for (z = bb_bolts) {
+            y0 = bb_t / 2 + bb_m + 12 * X;
+            translate([0, -y0 - 1.6 - 16 * X, z]) rotate([-90, 0, 0]) hex_bolt(6, 30);
+            translate([0, -y0, z]) rotate([90, 0, 0]) washer(6);
+            translate([0, y0, z]) rotate([-90, 0, 0]) washer(6);
+            translate([0, y0 + 1.6, z]) rotate([-90, 0, 0]) hex_nut(6);
+        }
+        if (role == "arrow") for (s = [-1, 1]) arrow([0, s * (bb_t / 2 + 40), bb_h + 10], [0, s * (bb_t / 2 + 16), bb_h + 10]);
     }
     else if (name == "handle") {
         // the handle's arms sprung over the block, its pins seated in the sockets
