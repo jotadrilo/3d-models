@@ -1,10 +1,17 @@
-# Soap caddy: load analysis and the wall plate's design study
+# Sink organizers: load analysis and design studies
 
-What was simulated on the soap caddy, the results, and why its wall plate now has windows instead
-of slots. The method (tools, meshing, modelling choices, how to read results) is in
+What was simulated on the soap caddy and the cutlery drainer, the results, and the design
+decisions they led to. The soap caddy's wall plate now has windows instead of slots; the cutlery
+drainer's study is in [Cutlery drainer](#cutlery-drainer). The method (tools, meshing, modelling choices, how to read results) is in
 [tools/fea/README.md](../../../tools/fea/README.md). This page is the project's record.
 
-**In short:**
+**Corrected 2026-10-25:** the cup forces below were first computed with the cups clamped, so each
+cup also resisted the plate turning, which a suction cup cannot do, and with ties that lost part
+of the turning moment (tools/fea/README.md, Assembly). Rerun with hinged cups, the top cup pulls
+13.8 N in daily use and 2.8 N under the bottle alone, not 5.3 and 1.0. See
+[Correction](#correction-hinged-cups). The plate's ranking held.
+
+**Soap caddy, in short:**
 - **Checked:** the caddy holds its loads with comfortable margins everywhere but one place. Squeezing
   the bottle hard bends the box's back wall onto the upper buttons, with about 1.4× margin at
   that point, across the box's layers.
@@ -179,6 +186,129 @@ The aim was the most reliable plate for normal use: the least plastic and the le
 
 The cutlery drainer's plate is unchanged: the new parameters default to the old slots.
 
+### Correction: hinged cups
+
+The figures above (`variants.py`) came from cups held fixed at every node of the shank and the
+flange, and from ties at 0.6 mm tolerance. Both let the model shed part of the caddy's turning
+moment: the clamped cups took it as local bending, and the ties lost it across the tails'
+stepped lead-ins. Now each button is a rigid body hinged where the cup meets the wall, and the
+ties stop at 0.25 mm and skip the lead-ins (tools/fea/README.md, Assembly). The same two plates,
+rerun:
+
+| Daily use | Slots, as it was | Windows (WH0i20) |
+|---|---|---|
+| Plate moves | 2.32 mm | 1.51 mm (−35 %) |
+| Plate peak / p99 | 16.9 / 9.5 MPa | 10.2 / 5.2 MPa |
+| Top cup pull, daily / bottle only | 13.5 / 2.75 N | 13.8 / 2.8 N |
+| The other upper cup | 1.4 / 0.2 N | 0.9 / 0.1 N |
+
+- **The decision holds:** the windows win by more than the first figures said.
+- **The plate:** about 4.7× within its layers against 48 MPa, peaking by the top keyhole.
+- **The cups:** the top one carries nearly all the upper row's pull, 2.8 N all day and 14 N with a
+  hand on the sponge. That is moderate for a 50 mm cup.
+- **The squeeze** (section 3) predates this correction. It is being rerun with the hinged cups.
+
+
+## Cutlery drainer
+
+`drainer_fea.py`, with the model in `drainer_model.py`. Not printed yet: the study is there to
+avoid printing a drainer the simulation already says will not work.
+
+### Load cases
+
+Agreed from how it is used, for a household of four. The weights come from product sheets: a
+teaspoon 20–30 g, a fork 35–46 g, a spoon 50–60 g, a table knife 75–92 g, a chef's knife
+170–260 g, a paring knife 20–60 g.
+
+| Case | Loads (plus the parts' own weight) | For |
+|---|---|---|
+| Daily use | 350 g of cutlery in each bin (≈1050 g, a meal for four with the kitchen knives), a soaked towel of 300 g over the bar | Stiffness, what the cups hold all day, creep: the load is there for hours, so this is also the permanent case |
+| One end bin | 600 g in one end bin (four table knives, a chef's and a paring knife), the others empty, the towel | Asymmetry: milder than daily use, left out of the study |
+| Towel pulled | daily use + 20 N on the bar, down and forward at 45°, in the middle or at the right-hand end | The handle, the plate, the cups' peak pull |
+
+Left out: leaning on a bin (nobody does).
+
+### The model
+
+- **Parts:** plate, body, tray, rack and handle, meshed from the OpenSCAD STLs.
+- **Joints, bonded:** the tray and the rack on their ledges, the tails in their housings, the
+  handle's pins in their sockets.
+- **Bins:** not meshed. They rest on the rack and stiffen nothing, so each bin's weight (30 g)
+  and its cutlery become a pressure on its footprint.
+- **Cups:** each button is a rigid body hinged where its cup meets the wall, free to tilt.
+- **Gaps:** what can touch was listed before the run (proximity of the STLs) and checked after
+  it (`penetration.py`). In daily use nothing closes. Under the towel pull, on the drainer as it
+  is, the body's floor reaches the lower keyhole pads (3 mm gap), so those numbers are overstated.
+
+### The drainer as it is
+
+![As it is: daily use and one end bin](img/drainer-round1-side.webp)
+
+- **It nods:**
+  - the cups are 120 mm apart (x = ±60), but the dovetails that carry the body are at ±104;
+  - the 44 mm of slotted plate between them twists, and the whole body turns forward on it, about
+    2° in daily use;
+  - the towel bar drops 8.8 mm under the daily load and 36 mm when the towel is pulled
+    (overstated, see above).
+- **Stresses are moderate:** the plate 13 MPa (p99.9) in daily use, 48 when the towel is pulled,
+  at the ends of the outer slots.
+- **The cups:** each upper cup pulls 12.6 N all day.
+
+### The plate and the cups: three rounds, one variable at a time
+
+![The twelve plates, seen from the wall](img/drainer-plates.webp)
+
+| Variant | Change | Plate | Bar drops, daily | Plate p99.9, daily | Upper cup pull, daily | Bar drops, towel pulled | Worst cup, towel pulled |
+|---|---|---|---|---|---|---|---|
+| V0 | as it is | 39 242 mm³ | 8.8 mm | 13.2 MPa | 12.6 N | 35.6 mm* | 52 N |
+| S150 | cups 150 mm apart | −1.5 % | 2.9 | 6.2 | 13.1 | 12.3 | 57 |
+| S175 | cups 175 mm apart | −3.1 % | 0.80 | 1.8 | 13.2 | 3.3 | 62 |
+| P75 | cup rows 75 mm apart | 0 % | 7.2 | 11.6 | 9.3 | 29.1* | 39 |
+| T2 | plate 2.1 mm | +16.5 % | 5.8 | 8.5 | 12.9 | 23.6* | 55 |
+| W | windows, 20 mm bands | −1.3 % | 7.4 | 9.1 | 12.7 | 30.1* | 53 |
+| SP75 | S175 + rows 75 mm apart | −3.1 % | 0.72 | 1.7 | 9.7 | 2.9 | 46 |
+| SP80 | S175 + rows 80 mm apart | −3.1 % | 0.71 | 1.6 | 9.1 | 2.9 | 43 |
+| SW20 | S175 + a window, 20 mm bands | −6.3 % | 0.80 | 1.9 | 13.2 | 3.2 | 62 |
+| SW10 | S175 + a window, 10 mm bands | −17.9 % | 0.80 | 1.9 | 13.2 | 3.3 | 62 |
+| SPW10 | SP80 + a window, 10 mm bands | −17.9 % | 0.70 | 1.8 | 9.1 | 2.9 | 43 |
+| SPW4 | SP80 + a window, 4 mm bands | −24.9 % | 0.71 | 1.8 | 9.1 | 3.0 | 42 |
+
+\* Overstated: with that much nod, the body's floor rests on the lower keyhole pads.
+
+![Candidates, daily use, seen from the wall](img/drainer-candidates-wall.webp)
+
+![Candidates, towel pulled at one end, true scale](img/drainer-candidates-pull.webp)
+
+- **The supports matter most:**
+  - with the cups 175 mm apart, under the dovetails, the bar drops 0.8 mm instead of 8.8, the
+    plate works at a seventh of the stress, and it takes less plastic;
+  - no other single change comes close: a 25 % thicker plate gains a third of that for 16.5 %
+    more plastic.
+- **Row distance sets the cups' pull:** what the upper cups pull is the drainer's turning moment
+  over the distance between the rows. At 80 mm (the most the plate fits) it drops from 13.2 to
+  9.1 N per cup all day, and the worst cup under a towel pull from 62 to 43 N.
+- **With the cups at the edges, the middle of the plate does nothing:** one window with 4 mm
+  bands takes a quarter of its plastic and changes nothing else.
+
+### The rack
+
+With the plate stiff, the rack is the softest part.
+- **How it sags in daily use:** 2.9 mm in the middle of its floor, while its fences sag only
+  0.5–0.6 mm. The 1.6 mm slotted floor spans the 94 mm between the fences.
+- **Strength:** 5.4 MPa (p99.9), 6.9 peak, within its layers: about 7×.
+- **Correction:** the README's hand calculation (0.4 mm) counted only the fences.
+- **Pessimistic:** the bins press as an even pressure here, while a real bin carries much of its
+  load down its walls to its edges.
+
+The rack's own study is next: bins meshed as the other bound, then a thicker floor, taller fences,
+ribs under the walls between the bins, and the slots turned.
+
+### Not decided yet
+
+No variant is the drainer's default yet. The candidates are SPW4, SPW10 and SP80: cups 175 mm and
+80 mm apart, with or without the window. That choice comes after the rack's study, with the
+towel pull rerun with contact.
+
 ## Not checked
 
 - **Material:** isotropic, with the X-Y modulus. Bending across the layers is about a quarter
@@ -189,8 +319,8 @@ The cutlery drainer's plate is unchanged: the new parameters default to the old 
   under 2 MPa, where PETG barely creeps.
 - **Contact:** the full contact model of daily use never finished. The comparison rests on its
   first quarter of the load.
-- **The cutlery drainer** was not analysed. Its plate shares the slot pattern and would likely
-  gain the same way.
+- **The cutlery drainer:** the towel pull with contact (the body's floor on the keyhole pads), and
+  the rack with the bins meshed.
 
 ## Reproduce
 
@@ -201,6 +331,7 @@ micromamba run -n fea python variants.py <out> V0 WH0i20      # plate variants, 
 micromamba run -n fea python squeeze_contact.py <out> WH0i20  # squeeze, with contact
 micromamba run -n fea python assembly_tie.py <step dir> <out> 2.5   # the bonded assembly from STEP files
 micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
+micromamba run -n fea python drainer_fea.py <out> V0 SPW4 --cases=daily,pull_end   # the drainer
 ```
 
 | File | What it is |
@@ -211,4 +342,7 @@ micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
 | `squeeze_contact.py` | The squeeze with contact on the box's back wall |
 | `assembly_tie.py`, `assembly_contact.py` | The bonded and the contact assemblies (STEP input) |
 | `tray_fea.py` | The tray alone |
+| `drainer_dims.scad` | Echoes the drainer's dimensions, and exports its handle in place |
+| `drainer_model.py` | The drainer as an FEA model: STL meshes, surfaces, the hinged cups, loads |
+| `drainer_fea.py` | The drainer's variants and load cases, one block of results each |
 | `img/` | The images on this page |
