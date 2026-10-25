@@ -25,6 +25,8 @@ released, a released one that is crossed is put back):
   props      battens from the board to the next tread up and down, compression only
 
 usage: python board_fea.py <out dir> [variant ...]
+   CASES=lean SIGNS=dn GRAINS=x,z BOARD_H=900   (optional: which load cases, directions,
+   face-grain directions and board height to run)
 """
 import sys, os, subprocess, math, json
 import numpy as np
@@ -33,7 +35,7 @@ OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
 # ----------------------------------------------------------------- geometry
-W, H, TH = 780.0, 1000.0, 10.0          # board
+W, H, TH = 780.0, float(os.environ.get('BOARD_H', 1000)), 10.0   # board (BOARD_H: a trimmed board)
 T, R = 300.0, 175.0                     # step going and rise
 SLOPE = math.atan2(R, T)
 RAIL_TOP, RAIL_MID = 900.0, 450.0       # bar axes above the nosing line, vertically
@@ -62,14 +64,43 @@ RHO = 450e-12                           # t/mm^3 (light: the worst case for tipp
 DOG = 35 * 9.81
 PAW = 100.0
 CASES = {   # name: list of (x centre, z centre, patch w, patch h, force N)
-    'lean':        [(240, 950, PAW, PAW, 0.3 * DOG), (540, 950, PAW, PAW, 0.3 * DOG)],
+    'lean':        [(240, H - 50, PAW, PAW, 0.3 * DOG), (540, H - 50, PAW, PAW, 0.3 * DOG)],
     'strike_mid':  [(390, 950, PAW, PAW, 2.0 * DOG)],
     'strike_wall': [(60, 950, PAW, PAW, 2.0 * DOG)],
     'strike_rail': [(720, 950, PAW, PAW, 2.0 * DOG)],
     'push_low':    [(390, 400, 200, 200, 0.5 * DOG)],
 }
 
+# dog-gate-hook.scad: board_y 100, toe_y -115.3, hook at y 150 under the flange (z -51), the board's
+# bottom on the shoe floor at z 12.6; brackets 55 wide, legs 110 tall
+HOOK = dict(toe_y=-115.3 - 100, toe_z=-12.6, hook_y=150 - 100, hook_z=-51 - 12.6, w=55, h=110 - 12.6)
 VARIANTS = {
+    'H2_hooks':       dict(hooks=dict(HOOK, x=(100.0, W - 100.0))),
+    'H2w_hooks_w60':  dict(hooks=dict(HOOK, x=(100.0, W - 100.0), w=60)),
+    'H3_hooks':       dict(hooks=dict(HOOK, x=(100.0, W / 2, W - 100.0))),
+    'H2i_hooks_in':   dict(hooks=dict(HOOK, x=(200.0, W - 200.0))),
+    # vertical battens on the downhill face at the brackets, the shoe gripping board and batten
+    'R45x20':         dict(hooks=dict(HOOK, x=(100.0, W - 100.0), w=60), ribs=[(100.0, 40, 20, 960), (W - 100.0, 40, 20, 960)]),
+    'R45x20_in':      dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 960), (W - 200.0, 40, 20, 960)]),
+    'R20x45_in':      dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=40), ribs=[(200.0, 20, 45, 960), (W - 200.0, 20, 45, 960)]),
+    # battens cut from the board itself (10 mm plywood), from a 100 mm strip off its top: 45 x 10, 780 long;
+    # E along the strip: 2500 if the face grain runs across it (the worst case), 5000 along
+    'P45x10_780':     dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 10, 780, E_PERP), (W - 200.0, 40, 10, 780, E_PERP)]),
+    'P45x10_780_along': dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 10, 780, E_PAR), (W - 200.0, 40, 10, 780, E_PAR)]),
+    'P45x20_780':     dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 780, E_PERP), (W - 200.0, 40, 20, 780, E_PERP)]),
+    # the same two strips glued on edge (10 wide x 45 deep), modelled 20 wide x 35.7 deep: the same
+    # bending stiffness on the board's 20 mm mesh
+    'P10x45_edge':    dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 20, 35.7, 780, E_PERP), (W - 200.0, 20, 35.7, 780, E_PERP)]),
+    'P10x45_edge_along': dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 20, 35.7, 780, E_PAR), (W - 200.0, 20, 35.7, 780, E_PAR)]),
+    # the 100 mm strip as four 45 x 390 pieces, glued two by two: a double layer over the lower half
+    'P45x20_390':     dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 390, E_PERP), (W - 200.0, 40, 20, 390, E_PERP)]),
+    'P45x20_390_along': dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 390, E_PAR), (W - 200.0, 40, 20, 390, E_PAR)]),
+    # from a 1.2 x 1.2 m sheet: the board 780 x 1000 leaves a 420 x 1200 strip, so full-height battens of
+    # glued plywood strips, cut with the face grain along them (E 5000), 2 or 3 layers
+    'F45x20':         dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 960, E_PAR), (W - 200.0, 40, 20, 960, E_PAR)]),
+    'F45x30':         dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 30, 960, E_PAR), (W - 200.0, 40, 30, 960, E_PAR)]),
+    'F45x20_across':  dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 960, E_PERP), (W - 200.0, 40, 20, 960, E_PERP)]),
+    'R45x20_in_top':  dict(hooks=dict(HOOK, x=(200.0, W - 200.0), w=60), ribs=[(200.0, 40, 20, 960), (W - 200.0, 40, 20, 960)], batten=True),
     'B0_rail':        dict(feet=True, rail=True, grip=True),
     'B1_wall':        dict(feet=True, rail=True, grip=True, wall_ch=True),
     'B1_wall_free':   dict(feet=True, rail=True, wall_ch=True),
@@ -124,6 +155,8 @@ def els_in(x0, x1, z0, z1):
 
 
 MODEL_BATTEN = []
+MODEL_RIBS = []
+RIB_E = [E_PINE]
 
 
 def model(var, grain):
@@ -140,10 +173,26 @@ def model(var, grain):
         return nid[0]
 
     # tread under the bottom edge: z down blocked
-    for n in nodes_in(0, W, 0, 0):
-        uni.append((n, 3, +1, 'tread'))
-    if not var.get('feet'):
+    if not var.get('hooks'):
+        for n in nodes_in(0, W, 0, 0):
+            uni.append((n, 3, +1, 'tread'))
+    if not var.get('feet') and not var.get('hooks'):
         fixed.append((nodes_in(0, 0, 0, 0)[0], 1))          # nothing else holds x
+    if var.get('hooks'):
+        # dog-gate-hook: one-sided brackets hooked under the tread's back flange. Each bracket is
+        # stiff struts from its toe and its hook to every node of the board in its shoe (both faces):
+        # the toe rests on the tread (down only), the hook holds the heel down and the gate from
+        # sliding downhill (up only, -y only). The board stands in the shoes, not on the tread.
+        hk = var['hooks']
+        for k, fx in enumerate(hk['x']):
+            toe, hook = node((fx, hk['toe_y'], hk['toe_z'])), node((fx, hk['hook_y'], hk['hook_z']))
+            region = [n for n in nodes_in(fx - hk['w'] / 2, fx + hk['w'] / 2, 0, hk['h'])
+                      if abs(abs(XYZ[n - 1][1]) - TH / 2) < 1e-6]
+            for n in region:
+                stiff += [(toe, n, f'br{k}'), (hook, n, f'br{k}')]
+            stiff.append((toe, hook, f'br{k}'))
+            fixed.append((toe, 1))
+            uni += [(toe, 3, +1, f'toe{k}'), (hook, 3, -1, f'hook{k}_z'), (hook, 2, +1, f'hook{k}_y')]
     if var.get('feet'):
         for k, fx in enumerate(FOOT_X):
             up, dn = node((fx, TOE, 0)), node((fx, -TOE, 0))
@@ -222,6 +271,23 @@ def model(var, grain):
                 bat.append([bnode(*p, 2) for p in c] + [IDS[p + (0,)] for p in c] +
                            [bnode(*p, 2) for p in m] + [IDS[p + (0,)] for p in m] + [bnode(*p, 1) for p in c])
     MODEL_BATTEN[:] = bat
+    ribs = []
+    for (rx, rw, rd, rz1, *_) in var.get('ribs', ()):
+        rn = {}
+        def rnode(i, j, k):                  # k: 1 mid, 2 outer face (y = -t/2 - rd)
+            if (i, j, k) not in rn:
+                rn[i, j, k] = node((i * h / 2, -TH / 2 - k * rd / 2, j * h / 2))
+            return rn[i, j, k]
+        i0, i1, j1 = int(math.floor((rx - rw / 2) / h + 1e-6)), int(math.ceil((rx + rw / 2) / h - 1e-6)), int(round(rz1 / h))
+        for j in range(0, j1):
+            for i in range(i0, i1):
+                a, b = 2 * i, 2 * j
+                c = [(a, b), (a + 2, b), (a + 2, b + 2), (a, b + 2)]
+                m = [(a + 1, b), (a + 2, b + 1), (a + 1, b + 2), (a, b + 1)]
+                ribs.append([IDS[p + (2,)] for p in c] + [rnode(*p, 2) for p in c] +
+                            [IDS[p + (2,)] for p in m] + [rnode(*p, 2) for p in m] + [rnode(*p, 1) for p in c])
+    MODEL_RIBS[:] = ribs
+    RIB_E[0] = var['ribs'][0][4] if var.get('ribs') and len(var['ribs'][0]) > 4 else E_PINE
     held = {n for ns, _, _ in rigid for n in ns}      # a rigid body's nodes take no other support
     fixed = [f for f in fixed if f[0] not in held]
     uni = [u for u in uni if u[0] not in held or u[3] != 'tread']
@@ -260,6 +326,12 @@ def deck(var, grain, case, sign, active_uni, active_truss):
         L += ['*MATERIAL,NAME=PINE', '*ELASTIC,TYPE=ENGINEERING CONSTANTS',
               f'{E_PINE},400.,400.,0.4,0.4,0.4,600.,600.,', '60.,0.', '*DENSITY', f'{RHO}',
               '*SOLID SECTION,ELSET=BATTEN,MATERIAL=PINE,ORIENTATION=OR']
+    if MODEL_RIBS:
+        L.append('*ELEMENT,TYPE=C3D20R,ELSET=RIBS')
+        L += [f'{60000 + k},' + ','.join(map(str, e[:15])) + ',\n' + ','.join(map(str, e[15:])) for k, e in enumerate(MODEL_RIBS)]
+        L += ['*MATERIAL,NAME=PINEZ', '*ELASTIC,TYPE=ENGINEERING CONSTANTS',
+              f'400.,{RIB_E[0]},400.,0.02,0.4,0.4,600.,60.,', '600.,0.', '*DENSITY', f'{RHO}',
+              '*SOLID SECTION,ELSET=RIBS,MATERIAL=PINEZ,ORIENTATION=OR']
     e1, e2 = (E_PAR, E_PERP) if grain == 'x' else (E_PERP, E_PAR)
     L += ['*MATERIAL,NAME=PLY', '*ELASTIC,TYPE=ENGINEERING CONSTANTS',
           f'{e1},{e2},500.,{NU12},0.3,0.3,{G12},{G_ROLL},', f'{G_ROLL},0.',
@@ -277,14 +349,14 @@ def deck(var, grain, case, sign, active_uni, active_truss):
     L += ['*STEP', '*STATIC', '*BOUNDARY']
     L += [f'{f[0]},{f[1]},{f[1]},0.' for f in fixed]
     L += [f'{n},{d},{d},0.' for (n, d, s, _) in uni if (n, d) in active_uni]
-    L += ['*DLOAD', 'BOARD,GRAV,9810.,0.,0.,-1.'] + (['BATTEN,GRAV,9810.,0.,0.,-1.'] if MODEL_BATTEN else []) + ['*DLOAD']
+    L += ['*DLOAD', 'BOARD,GRAV,9810.,0.,0.,-1.'] + (['BATTEN,GRAV,9810.,0.,0.,-1.'] if MODEL_BATTEN else []) + (['RIBS,GRAV,9810.,0.,0.,-1.'] if MODEL_RIBS else []) + ['*DLOAD']
     for (cx, cz, pw, ph, F) in CASES[case]:
         es = els_in(cx - pw / 2, cx + pw / 2, cz - ph / 2, cz + ph / 2)
         p = F / (len(es) * h * h)
         # face 1 is the y = +t/2 face (pressure pushes towards -y), face 2 the y = -t/2 one
         L += [f'{e},P{1 if sign < 0 else 2},{p:.6f}' for e in es]
     L += ['*NSET,NSET=EVERY,GENERATE', f'1,{NN + len(extra)}', '*NODE PRINT,NSET=EVERY', 'U', '*NODE PRINT,NSET=EVERY', 'RF',
-          '*EL PRINT,ELSET=BOARD', 'S'] + (['*EL PRINT,ELSET=BATTEN', 'S'] if MODEL_BATTEN else [])
+          '*EL PRINT,ELSET=BOARD', 'S'] + (['*EL PRINT,ELSET=BATTEN', 'S'] if MODEL_BATTEN else []) + (['*EL PRINT,ELSET=RIBS', 'S'] if MODEL_RIBS else [])
     if tr:
         L += ['*EL PRINT,ELSET=PROPS', 'S']
     if lk:
@@ -294,9 +366,9 @@ def deck(var, grain, case, sign, active_uni, active_truss):
 
 
 def parse_dat(path):
-    global SB
+    global SB, SR
     U, RF, S, ST = {}, {}, [], {}
-    SB = []
+    SB, SR = [], []
     mode = None
     for line in open(path):
         t = line.split()
@@ -321,6 +393,8 @@ def parse_dat(path):
         elif mode == 'S' and len(vals) == 8:
             if vals[0] >= 100000:
                 ST[int(vals[0])] = vals[2]
+            elif vals[0] >= 60000:
+                SR.append(vals[2:])
             elif vals[0] >= 50000:
                 SB.append(vals[2:])
             else:
@@ -377,6 +451,7 @@ def run(vname, grain, case, sign):
                uy_max=float(np.abs(uy).max()),
                sx=float(np.abs(S[:, 0]).max()), sz=float(np.abs(S[:, 1]).max()))
     res['s_batten'] = float(np.abs(np.array(SB)[:, 0]).max()) if SB else 0.0
+    res['s_rib'] = float(np.abs(np.array(SR)[:, 1]).max()) if SR else 0.0
     fx, fz = (FM_PAR, FM_PERP) if grain == 'x' else (FM_PERP, FM_PAR)
     res['util'] = max(res['sx'] / fx, res['sz'] / fz)
     # support forces (force of the support on the board), summed per support
@@ -406,8 +481,8 @@ if __name__ == '__main__':
     allres = {}
     for v in names:
         for grain in os.environ.get('GRAINS', 'x,z').split(','):
-            for case in CASES:
-                for sign in (+1, -1):
+            for case in [c for c in CASES if c in os.environ.get('CASES', ','.join(CASES)).split(',')]:
+                for sign in [s for s in (+1, -1) if ('up' if s > 0 else 'dn') in os.environ.get('SIGNS', 'up,dn')]:
                     job, res = run(v, grain, case, sign)
                     allres[job] = res
                     if res is None:

@@ -60,8 +60,9 @@ the edge the piece tips over (each direction has its own edge):
      **both** "falls the way it was pushed" and "falls at all" (see below). Report peak and impulse
      (`2 · peak · T / π`).
    - A few clips just under and just over each threshold (`--video`, `MUJOCO_GL=cgl` on macOS) show
-     the user what happens. They are explanations, not model images: keep them out of the repo
-     (CLAUDE.md §3.3).
+     the user what happens. Commit the final ones in `projects/<project>/stability/videos/` (MP4,
+     tens of KB each) and link them from the README: they are simulation results, like the FEA
+     images, not renders of the model (which stay Blender, CLAUDE.md §3.3).
 4. **Report** in the README: one table of the design (statics and simulation side by side), one of
    the trade-off knob, one line per alternative, and what the user should do (pads, ballast, lean).
 
@@ -91,10 +92,22 @@ physics`.
 
 ## Case studies
 
-### 1. dog-gate (2026-10-25)
+### 1. dog-gate, simple version (2026-10-25)
 
 A 1 m plywood board (3.5 kg) on two one-sided brackets with 275 mm feet, leaning 5° over them,
 against the next riser. Steady push at the top: 8.5 N statics / 10.4 N simulated forwards, 2.8 / 3.1
 backwards over the riser. Taps: 2.6 N·s to throw it down the stair, 1.15 to make it fall at all
 (rebound). Brackets on both faces in the middle of the tread, or discs Ø230: ≈5 N either way, half
 as steady down the stair. Figures and tables: [dog-gate README](../../projects/dog-gate/README.md#stability).
+
+### 2. dog-gate, reinforced version: anchored, not just standing (2026-10-25)
+
+The same gate with each bracket's heel hooked under the back flange of an open stair's tray tread
+([`sim_hook.py`](../../projects/dog-gate/stability/sim_hook.py)): the treads as plates with their
+flanges, the hooks as boxes under them. Leaning (206 N at the top) it tilts 0.5° and stays put;
+the hooks' contact force, 807 N for the two, matches the board FEA (2 × 377 N), which is the check
+that the rigid model's geometry is right (a first run gave 3 kN: the brace box was tilted the wrong
+way and became the pivot). A hard blow (690 N, 50 ms) tilts it 0.7° and it settles back. Once a
+piece is anchored, stability is a yes/no and the question moves to strength: the forces go to the
+FEA ([tools/fea](../fea/README.md), case 6). The contact peak of a blow in a rigid model depends on
+the contact stiffness, not on the parts: do not size parts from it.

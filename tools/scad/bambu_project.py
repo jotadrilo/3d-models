@@ -35,7 +35,8 @@ SAMPLES = {
 }
 
 BOARD_SAMPLES = {
-    "board_bracket": ("Board bracket", 128, 128),
+    "board_bracket": ("Board bracket", 90, 128),
+    "board_bracket_hook": ("Board bracket with hook", 180, 128),
 }
 
 

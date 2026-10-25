@@ -40,6 +40,7 @@ sc.collection.objects.link(cam)
 sc.camera = cam
 cam.data.type = 'ORTHO'
 cam.data.ortho_scale = size * 1.05 * 4 / 3   # the width: fits the size in the 3:4 height too
+cam.data.clip_end = size * 10                  # large parts (a 1 m board) sit beyond the default 1000
 
 DIRS = {'hero': (-0.9, -1.6, 1.1), 'under': (-0.9, -1.6, -0.9), 'top': (0, -0.0001, 1), 'front': (0, -1, 0.25),
         'side': (1, -0.0001, 0.1), 'wall': (0.0001, 1, 0.05)}

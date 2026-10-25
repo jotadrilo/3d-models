@@ -685,3 +685,35 @@ project's record, with the images, is in
   - each upper cup pulls 9 N all day instead of 13;
   - the plate's plastic is −25 % and the rack's +31 %, about the same in all.
   - nothing closes under any case, so the bonded linear model holds.
+
+
+### 6. dog-gate, a board on hooked brackets: board, then bracket (2026-10-25)
+
+[`projects/dog-gate/fea/`](../../projects/dog-gate/fea/). One load case, agreed with the user: a
+leaning dog, 206 N on the top edge of a 1 m board. A chain of two models:
+
+- **The board** (`board_fea.py`): plywood as one layer of C3D20R bricks (CalculiX's S8R shells
+  cannot be grabbed by rigid bodies), orthotropic, the worst-case values and both face-grain
+  directions; battens as more bricks on its face. Supports as stiff trusses from the bracket's
+  toe and hook to the board's nodes in its shoe, one-sided supports by iteration (release what
+  pulls, restore what is crossed). Rigid bodies on the board's nodes clashed with every truss
+  end and every SPC; truss fans did not.
+- **The bracket** (`bracket_fea.py`): the toe, hook and strap forces from the board model, the
+  board's push on the shoe as two pressures sized for equilibrium, the bolts as bundles of steel
+  bars from the lip's hole nodes to the leg's (a distributing coupling with a truss between the
+  reference nodes carried nothing).
+
+Lessons:
+- **A thin board is not a cantilever.** 10 mm plywood fixed at two shoes bent 20–37 cm; the
+  battens, not the brackets, decide the deflection (fea/board_fea.py variants: 1.7 cm with three
+  10 mm strips glued flat).
+- **Model the bolts.** Contact only, the shoe opened and the lip and leg showed 30–37 MPa; with
+  the bolts, 10 MPa (p99.5).
+- **A contact fixed both ways invents bending.** The strap held on the flange in both directions
+  bent at its root (45 MPa); released where it pulled, the iteration never settled and the part
+  drifted 100 mm. The horizontal load went to the toe's friction instead (pads: μ 0.7 × 398 N
+  against 103 N).
+- **The across-layers stress is zero on a face parallel to the layers**: show it on a cut at half
+  the width (`cut_ply.py`, an exact plane section of the tets, coloured from the nodes), not on
+  the surface. `render_ply.py` now sets the camera's clip end from the part's size (a 1 m board
+  was beyond the default).

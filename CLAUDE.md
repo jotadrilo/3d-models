@@ -174,7 +174,7 @@ the user the analysis in [tools/stability](tools/stability/README.md): statics f
 angle, energy barrier and tap, per direction and variant, in seconds), then a rigid-body simulation
 (MuJoCo) when it gets tapped or knocked, leans on a wall or a step, or could slide; and a luggage
 scale on the real piece to calibrate both. The scripts go in `projects/<project>/stability/`
-(`make stability`, `make sim`).
+(`make stability`, `make sim`), and the final clips of the simulation in its `videos/`, committed.
 
 ---
 
@@ -531,6 +531,23 @@ Research behind each component in `tools/scad/`, one entry per component.
   - The loads are the board's weight and the moment that tips it (≈3 N·m per bracket at
     most), so any orientation-correct print has margins of tens; no fit test needed beyond the
     board's real thickness for the bolt length.
+  - **Hook** (`heel`, dog-gate-hook): on an open stair the bracket can be anchored without holes.
+    An arm runs from the shoe along the tread to its back edge, a strap drops behind the back
+    flange and a lip goes under it. Forward tipping lifts the heel, so the lip bears up on the
+    flange with the whole foot as lever (≈380 N per hook for a 206 N lean at 1 m); sliding down
+    the stair pushes the strap onto the flange. A hook at the toe would sit on the pivot and
+    hold nothing. Slide 20 mm forwards to hook, back to free it, so the board needs that room in
+    front of the next step. Tray treads (pressed 2–2.5 mm steel, flanges 25–75 mm, 240–330
+    deep; Lichtgitter, Elefant, Meiser datasheets) vary: print hook slices for several
+    `edge_h` before the brackets. Round the corner over the tread's edge (`fillet` ≤ the
+    sheet's bend radius, ≈3).
+  - **Anchored, it carries the push**, and then it is a real structure (dog-gate FEA): the
+    shoe takes the board's whole moment (≈100 N·m per bracket), so the board needs battens up
+    it (a 10 mm board alone bends 20–37 cm) and the shoe grips board + batten; the brace buckles
+    under ≈850 N at 8.4 mm (12.6 is fine); the shoe's lip bends at 4.2 mm (12.6 with the bolts:
+    3× in the layers, 2.7× across). Model the bolts in an FEA as steel bars between the holes
+    (without them the shoe opens and the stresses double); a contact only pushes, and fixing it
+    both ways (the strap on the flange) gives false bending.
 
 ---
 

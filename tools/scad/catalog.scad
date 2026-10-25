@@ -18,8 +18,8 @@ use <joints.scad>
 use <hardware.scad>
 use <boards.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket]
+part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook]
 assembled = false;
 section = false;
 
@@ -45,6 +45,7 @@ hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
 h_play = 0.4; h_reach = 14;
 dt_h = 30; dt_plate = 2.1; dt_wall = 20;   // sliding dovetail: length, the plate under the housing, the wall behind the tail
 bb_reach = 60; bb_h = 70; bb_w = 20; bb_m = 6.3; bb_bolts = [18, 40]; bb_t = 10;   // a small board bracket, M6, on a 10 mm board
+bh_heel = 35; bh_edge = 20; bh_sheet = 2; bh_shoe = 10.6; bh_lip = 6.3;              // the same with a shoe and a hook under a 20 mm flange
 
 // ---------------------------------------------------------------- printable samples
 
@@ -137,6 +138,15 @@ module house_box_sample() {   // the house style: a small box with a keyhole in 
 }
 
 module board_bracket_sample() board_bracket_print(bb_reach, bb_h, bb_w, bb_m, 6.5, bb_bolts);
+module board_bracket_hook_sample() hooked_bracket(print = true);
+module hooked_bracket(print = false) {
+    args = [bb_reach, bb_h, bb_w, bb_m, 6.5, [bb_lip_z(), 45], 0.6, 0];
+    if (print) board_bracket_print(bb_reach, bb_h, bb_w, bb_m, 6.5, [24, 45], 0.6, 0, bh_shoe, bh_lip, bh_lip,
+                                   bh_heel, 12, bh_edge, 6.3, 8, 1, 2);
+    else board_bracket(bb_reach, bb_h, bb_w, bb_m, 6.5, [24, 45], 0.6, 0, bh_shoe, bh_lip, bh_lip,
+                       bh_heel, 12, bh_edge, 6.3, 8, 1, 2);
+}
+function bb_lip_z() = 24;
 
 module sample(p) {
     if (p == "keyhole_pad") keyhole_pad_sample();
@@ -157,6 +167,7 @@ module sample(p) {
     else if (p == "dovetail_tail") dovetail_tail_sample();
     else if (p == "house_box") house_box_sample();
     else if (p == "board_bracket") board_bracket_sample();
+    else if (p == "board_bracket_hook") board_bracket_hook_sample();
 }
 
 // ---------------------------------------------------------------- demos
@@ -176,7 +187,7 @@ X = assembled ? 0 : 1;   // explode factor
 
 // The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
 // +x), "y" keeps y >= 0 (look from -y, the front).
-function cut_plane(name) = name == "bracket" ? "x" : name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
+function cut_plane(name) = name == "bracket" || name == "bracket_hook" ? "x" : name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
 function cut_z(name) = name == "dovetail" ? dt_h / 2 : hb_h / 2;
 module cut(name) {
     if (!section) children();
@@ -293,6 +304,17 @@ module demo_part(name, role) {
             translate([0, y0 + 1.6, z]) rotate([-90, 0, 0]) hex_nut(6);
         }
         if (role == "arrow") for (s = [-1, 1]) arrow([0, s * (bb_t / 2 + 40), bb_h + 10], [0, s * (bb_t / 2 + 16), bb_h + 10]);
+    }
+    else if (name == "bracket_hook") {
+        // a bracket hooked under the back flange of a pressed steel tread, the board in its shoe
+        // (the tread's back edge at y = bh_heel from the leg's face; cut through the middle)
+        if (role == "wall") {   // the tread: plate and back flange, open below
+            box([-30, -bb_reach - 20, -bh_sheet], [30, bh_heel, 0]);
+            box([-30, bh_heel - bh_sheet, -bh_edge], [30, bh_heel, 0]);
+        }
+        if (role == "mate") box([-30, 0.3, bh_lip], [30, 10.3, bb_h + 30]);   // the board in the shoe
+        if (role == "piece") translate([0, -16 * X, 0]) mirror([0, 1, 0]) hooked_bracket();
+        if (role == "arrow") arrow([0, -bb_reach, 30], [0, -bb_reach + 14, 30]);   // slides up the tread to hook on
     }
     else if (name == "handle") {
         // the handle's arms sprung over the block, its pins seated in the sockets
