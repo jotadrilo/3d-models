@@ -32,6 +32,7 @@ SAMPLES = {
     "handle": ("Handle", 200, 65),
     "dovetail_housing": ("Dovetail housing", 60, 60),
     "dovetail_tail": ("Dovetail tail", 100, 60),
+    "stabilizer": ("Stabilizer fins", 140, 60),
 }
 
 BOARD_SAMPLES = {
@@ -54,7 +55,9 @@ def main():
     )
     plate = proj.plate("Library samples")
     for part, (name, x, y) in SAMPLES.items():
-        plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y)
+        # one-line tabs: Classic walls drop them, Arachne prints them
+        plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y,
+                  settings={"wall_generator": "arachne"} if part == "stabilizer" else None)
     # Board holders: bigger samples, on their own plate
     plate = proj.plate("Board holders")
     for part, (name, x, y) in BOARD_SAMPLES.items():

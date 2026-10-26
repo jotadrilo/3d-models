@@ -2,8 +2,10 @@
 """Build a ready-to-print Bambu Studio project for the sink organizers.
 
 Plate 1: the soap caddy's body standing on its floor (its dovetail tails
-along Z) and its wall plate flat on its back (the keyholes' slots and the
-housings' flanks in XY).
+along Z), turned a quarter so its printing fins fit beside the wall plate,
+and its wall plate flat on its back (the keyholes' slots and the housings'
+flanks in XY). Above SLOW_Z the body's walls print slower: its thin walls
+sway under the nozzle up there (fea/README.md, "Print stiffness").
 Plate 2: the soap caddy's tray on its back, the box on its floor and the four
 buttons on their flanges.
 Plate 3: the cutlery drainer's body standing and its wall plate flat.
@@ -15,6 +17,8 @@ Plate 6: fit tests, minutes and a few grams before the big plates: a keyhole
 pad with a button (screw it onto a cup first), a strip of plate with a
 dovetail housing and a strip of wall with its tail, a slice of the soap
 caddy's body with the bottom of its box, and the handle's pins in a block.
+Plate 7: the sway test, two strips of the soap caddy's side wall as flexible
+as its body where it printed rough, one bare and one held by stabilizer fins.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
@@ -30,6 +34,11 @@ from bambu3mf import PETG_BASIC, PETG_HF, PETG_MATTE, Filament, Project, load_sc
 SOAP = os.path.join(HERE, "soap-caddy.scad")
 DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
 FLAT = (-90, 0, 0)   # the plates and trays on their backs
+SLOW_Z = 100         # the soap caddy body's walls print slower above this
+SLOW = {"outer_wall_speed": "60", "inner_wall_speed": "80"}
+# The stabilizer fins' tabs are one line wide: Classic walls drop them (no room
+# for a loop in and out), Arachne prints them as a single bead
+FINS = {"wall_generator": "arachne"}
 
 
 def main():
@@ -54,6 +63,7 @@ def main():
             "override_filament_scarf_seam_setting": "1",
             "seam_slope_type": "external",
             "seam_slope_conditional": "1",
+            "reduce_crossing_wall": "1",     # no travel across the slotted walls: PETG strings there
         },
     )
 
@@ -64,8 +74,8 @@ def main():
         return load_scad(DRAINER, name, args.defs, colour=False, **kw)
 
     p = proj.plate("Soap caddy - body and wall plate")
-    p.add("Soap caddy body", soap("body"), 70, 128)
-    p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 186, 128)
+    p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 75, 128, settings=FINS, ranges=[(SLOW_Z, 250, SLOW)])
+    p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 192, 128)
 
     p = proj.plate("Soap caddy - tray, box and buttons")
     p.add("Soap caddy tray", soap("tray", rotate=FLAT), 128, 95)
@@ -92,11 +102,14 @@ def main():
 
     p = proj.plate("Fit tests")
     p.add("Keyhole pad", soap("test_keyhole", rotate=FLAT), 45, 60)
-    p.add("Test buttons", soap("test_buttons"), 215, 120)
+    p.add("Test buttons", soap("test_buttons", rotate=(0, 0, 90)), 225, 160)
     p.add("Dovetail housing", soap("test_dovetail_housing"), 110, 60)
     p.add("Dovetail tail", soap("test_dovetail_tail"), 140, 60)
     p.add("Handle pin test", drainer("test_pin"), 200, 60)
-    p.add("Soap caddy width test", soap("test_width"), 128, 175)
+    p.add("Soap caddy width test", soap("test_width"), 108, 178, settings=FINS)
+
+    p = proj.plate("Sway test")
+    p.add("Sway test", soap("test_sway"), 128, 128, settings=FINS)
     proj.write(args.output)
 
 

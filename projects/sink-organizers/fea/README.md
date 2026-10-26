@@ -18,6 +18,9 @@ of the turning moment (tools/fea/README.md, Assembly). Rerun with hinged cups, t
 - **Changed:** a design study of the wall plate, one variable at a time over 13 variants. It
   replaced the plate's slot fields with windows: 7.4 % less plastic, 29 % less bending and a
   third of the stress.
+- **Printing:** the body printed rough above ≈165 mm, its walls swaying under the nozzle. A
+  print stiffness study ([5](#5-the-body-while-it-prints)) put six fixes side by side; the body
+  now prints with sacrificial fins beside its walls.
 
 ## Load cases
 
@@ -214,6 +217,71 @@ rerun:
   The box rests on the button heads, so the cups' tilt hardly enters.
 
 
+## 5. The body while it prints
+
+`print_sway.py`, the method in tools/fea/README.md ("Print stiffness"). The body printed in red
+PETG HF (2026-10) came out clean up to ≈165 mm and rough, stringy and tangled above, worst at
+the far front return's tip and along the top band.
+
+**The model:** the body cut at the nozzle's height (`body_cut.scad`), fixed at the bed, and 1 N
+sideways on a 3 mm patch of the top layer, along x and along y, at the side wall's back edge,
+middle and front, the front return's tip and the front's middle. Each value is the worst of
+those, in mm of the layer moving per N.
+
+| Variant (one change from R) | 100 mm | 150 mm | 190 mm | 209 mm | Worst | Plastic |
+|---|---|---|---|---|---|---|
+| R as printed | 8.8 | 17.0 | **32.6** | 5.9 | 32.6 | 84 g |
+| A side walls 2.52 (`side_add=0.84`) | 3.2 | 9.1 | 18.3 | 3.3 | 18.3 | +22 g |
+| B side walls 3.36 (`side_add=1.68`) | 1.5 | 5.1 | 10.4 | 2.0 | 10.4 | +44 g |
+| C front frame 2.52 (`frame_t=2.52`) | 8.6 | 16.8 | 32.0 | 4.9 | 32.0 | ≈0 |
+| D walls 2.52 from 60 mm up (`side_add_z=60`) | 5.8 | 14.6 | 27.8 | 3.8 | 27.8 | < +22 g |
+| E slotted back wall 1.68 (`back_wall=1.68`) | 7.2 | 3.1 | 4.5 | 1.1 | 7.2 | +31 g |
+| F stabilizer fins 20 mm, tabs 0.84 × 1.6 every 10 | 1.0 | 0.8 | 1.3 | 1.1 | 1.3 | +26 g, cut off |
+| **F2 the same, tabs 0.42 × 0.4 every 20 (the default)** | 1.2 | 0.9 | 1.3 | 1.2 | **1.3** | +26 g, snapped off |
+| G fins with a 12 mm flange, no tabs: contact only | 8.8 | 16.9 | 32.5 | 4.5 | 32.5 | +41 g |
+| H the same, fins 12 mm | 8.8 | 16.9 | 32.6 | 4.7 | 32.6 | +30 g |
+
+R at 60, 130 and 170 mm: 2.0, 11.3, 24.1.
+
+- **It matches the print.** Clean at 9–17 mm/N, rough from ≈24 (170 mm), and the worst
+  point is the front return's free tip, where the tangle was. The top band is rough too, though
+  the finished body is stiff there (5.9): the front only closes at 203 mm, so the layers under
+  the bar print with the U still open. The walls hardly move along y (≤0.6).
+- **The whole U leans.** Both side walls bend the same way along x, and nothing across the body
+  stops them: the floor at the bottom and the bar at the very top are its only ties.
+- **Thicker walls gain less than t³ (A, B, D):** 1.8× for 2.52 mm instead of 3.4×, as the lower
+  part and the corners bend too. And it has to start at the bed: D, thickened from 60 mm up,
+  loses most of A's gain.
+- **The frame does nothing (C):** it is in the plane that is already stiff.
+- **A wall across closes the U (E):** the top drops 5–7×. What is left is the front edge of
+  the deep lower part (7.2 at 100 mm), which printed clean anyway.
+- **Fins hold it everywhere (F):** ≤1.3 at every height, 25× less than R, with the body itself
+  unchanged. They cost ≈26 g per print and cutting them off, and the body is 142 mm wide on the
+  bed, so plate 1 holds it turned a quarter. The tabs are modelled fully bonded: if one lets go
+  mid-print, the real figure is higher.
+- **Fins that only touch do not work (G, H).** Run with fins on one side and tabs standing in
+  for the contact (`LEFT=1`, every load towards the fins): the wall pushed out onto its fins
+  moves 1.1, but pushed in, 32.5, as bare. The walls bend each on its own, and the outer
+  face's perimeter pushes its wall inwards, so the fins need tabs.
+- **One-line tabs every 20 mm hold as well (F2)** in the model, but a 0.42 × 0.4 tab is two
+  elements across at h = 2: read 1.3 as optimistic. In the G-code, Classic walls drop a
+  one-line tab; Arachne prints it (the project sets it on the objects with fins).
+
+**The sway test** (`test_sway`, plate 7): two strips of the side wall, 40 long and 120 tall, on
+a thin foot. The bare one, along x at its free end: 8.5 mm/N at 60 mm, 26 at 90 and 60 at 120,
+so it passes 17, 24 and 33 at about 78, 88 and 98 mm (the body's 150–190 mm) and goes on to
+nearly twice the body's worst, so it cannot fail to show the sway. The one with fins: ≤0.5 at
+the end, ≤2.9 at the middle, 18 mm from them.
+
+**The cutlery drainer's body**, the same check (`PIECE=drainer`, cut at 40, 70, 95 and 114 mm):
+0.4, 3.6, 9.2 and 11.9 mm/N, its worst at the front's middle, along x. Shorter (114 mm) and
+tied by the rack's ledges and the handle's bosses, it stays inside what printed clean on the
+soap caddy (≈17), though over the ≤10 aim at the top: no fins.
+
+**Decision (2026-10-26):** F, chosen by the user over E (the piece unchanged) and B, then F2:
+the smallest tabs that print, so the fins snap off with as little as possible to clean. The
+project also slows the body's walls above 100 mm (60/80 mm/s) and avoids crossing walls.
+
 ## Cutlery drainer
 
 `drainer_fea.py`, with the model in `drainer_model.py`. Not printed yet: the study is there to
@@ -390,6 +458,8 @@ micromamba run -n fea python squeeze_contact.py <out> WH0i20  # squeeze, with co
 micromamba run -n fea python assembly_tie.py <step dir> <out> 2.5   # the bonded assembly from STEP files
 micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
 micromamba run -n fea python drainer_fea.py <out> F V0       # the drainer as it is now and as it was, all four cases
+CUTS=100,150,190,209 micromamba run -n fea python print_sway.py <out> R F   # the body while it prints
+PIECE=drainer CUTS=40,70,95,114 micromamba run -n fea python print_sway.py <out>   # the drainer's body
 ```
 
 | File | What it is |
@@ -403,4 +473,5 @@ micromamba run -n fea python drainer_fea.py <out> F V0       # the drainer as it
 | `drainer_dims.scad` | Echoes the drainer's dimensions, and exports its handle in place |
 | `drainer_model.py` | The drainer as an FEA model: STL meshes, surfaces, the hinged cups, loads |
 | `drainer_fea.py` | The drainer's variants and load cases, one block of results each |
+| `body_cut.scad`, `drainer_body_cut.scad`, `print_sway.py` | Each body as it stands on the bed at a given height, and the print stiffness study on it |
 | `img/` | The images on this page |

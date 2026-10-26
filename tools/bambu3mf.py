@@ -187,6 +187,7 @@ class Object:
     y: float
     settings: dict            # per-object process overrides, e.g. {"wall_loops": "4"}
     part_name: object         # callable(colour) -> part name
+    ranges: list = field(default_factory=list)   # height range modifiers: (min_z, max_z, {key: value})
 
 
 @dataclass
@@ -195,9 +196,11 @@ class Plate:
     prime_tower: tuple = (20, 30)     # front-left, clear of the excluded area
     objects: list = field(default_factory=list)
 
-    def add(self, name, mesh, x=BED_W / 2, y=BED_D / 2, settings=None, part_name=None):
-        """Place `mesh` centred at (x, y) on this plate (default: the plate centre)."""
-        self.objects.append(Object(name, mesh, x, y, settings or {}, part_name or (lambda c: c or name)))
+    def add(self, name, mesh, x=BED_W / 2, y=BED_D / 2, settings=None, part_name=None, ranges=None):
+        """Place `mesh` centred at (x, y) on this plate (default: the plate centre). `ranges`:
+        height range modifiers, [(min_z, max_z, {key: value}), ...], z from the bed."""
+        self.objects.append(Object(name, mesh, x, y, settings or {}, part_name or (lambda c: c or name),
+                                   ranges or []))
 
 
 class Project:
@@ -251,7 +254,7 @@ class Project:
     def write(self, out):
         self.check_layout()
         cols = _plate_columns(len(self.plates))
-        files, rels, objects, items, settings, plates_cfg = {}, [], [], [], [], []
+        files, rels, objects, items, settings, plates_cfg, ranges = {}, [], [], [], [], [], []
         next_id, k = 1, 0
         for pi, plate in enumerate(self.plates):
             ox = (pi % cols) * BED_W * (1 + PLATE_GAP)
@@ -286,6 +289,16 @@ class Project:
                 settings.append(f'<object id="{obj_id}"><metadata key="name" value="{_attr(o.name)}"/>'
                                 f'<metadata key="extruder" value="{self.filament_for(parts[0][1])}"/>'
                                 f"{extra}{part_cfg}</object>")
+                if o.ranges:   # keyed by the object's place in the model, from 1
+                    # Every range needs its layer height and extruder (0: the object's):
+                    # without them the CLI dies on loading. Speeds apply per range;
+                    # accelerations do not (they are global).
+                    lh = self.process_overrides.get("layer_height") or re.search(r"(\d\.\d+)mm", self.process).group(1)
+                    ranges.append(f'<object id="{k}">' + "".join(
+                        f'<range min_z="{z0:g}" max_z="{z1:g}">'
+                        + "".join(f'<option opt_key="{key}">{_attr(v)}</option>'
+                                  for key, v in {"layer_height": lh, "extruder": "0", **opts}.items())
+                        + "</range>" for z0, z1, opts in o.ranges) + "</object>")
                 instances.append(f'<model_instance><metadata key="object_id" value="{obj_id}"/>'
                                  '<metadata key="instance_id" value="0"/>'
                                  f'<metadata key="identify_id" value="{100 + k}"/></model_instance>')
@@ -309,6 +322,9 @@ class Project:
             f'<?xml version="1.0" encoding="UTF-8"?>\n<config>{"".join(settings)}{"".join(plates_cfg)}'
             "<assemble></assemble></config>")
         files["Metadata/project_settings.config"] = json.dumps(cfg, indent=4)
+        if ranges:
+            files["Metadata/layer_config_ranges.xml"] = (
+                f'<?xml version="1.0" encoding="utf-8"?>\n<objects>{"".join(ranges)}</objects>')
         files["[Content_Types].xml"] = (
             '<?xml version="1.0" encoding="UTF-8"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
             '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'

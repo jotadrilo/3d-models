@@ -17,9 +17,10 @@ use <mounts.scad>
 use <joints.scad>
 use <hardware.scad>
 use <boards.scad>
+use <print_aids.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook]
+part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook, stabilizer]
+demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook, stabilizer]
 assembled = false;
 section = false;
 
@@ -45,6 +46,7 @@ hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
 h_play = 0.4; h_reach = 14;
 dt_h = 30; dt_plate = 2.1; dt_wall = 20;   // sliding dovetail: length, the plate under the housing, the wall behind the tail
 bb_reach = 60; bb_h = 70; bb_w = 20; bb_m = 6.3; bb_bolts = [18, 40]; bb_t = 10;   // a small board bracket, M6, on a 10 mm board
+st_h = 40; st_w = 10; st_len = 30;   // a strip of 1.68 mm wall with a stabilizer fin on each face
 bh_heel = 35; bh_edge = 20; bh_sheet = 2; bh_shoe = 10.6; bh_lip = 6.3;              // the same with a shoe and a hook under a 20 mm flange
 
 // ---------------------------------------------------------------- printable samples
@@ -120,6 +122,12 @@ module dovetail_tail_sample()      // a strip of wall standing on its end, the t
         dovetail_tail(dt_h);
         translate([-1.68 / 2, -dovetail_housing_d() - dt_wall, 0]) cube([1.68, dt_wall, dt_h]);
     }
+module stabilizer_wall() {         // a strip of wall standing on a return, along y
+    translate([-1.68 / 2, -st_len / 2, 0]) cube([1.68, st_len, st_h]);
+    translate([-1.68 / 2, st_len / 2 - 1.68, 0]) cube([12, 1.68, st_h]);
+}
+module stabilizer_fins() for (s = [0, 1]) mirror([s, 0, 0]) translate([1.68 / 2, -st_len / 4, 0]) stabilizer_fin(st_h, st_w);
+module stabilizer_sample() { stabilizer_wall(); stabilizer_fins(); }   // printed as one: cut the fins off
 module house_box_sample() {   // the house style: a small box with a keyhole in its back
     w = 60; d = 45; h = 40; t = 1.68;
     difference() {
@@ -165,6 +173,7 @@ module sample(p) {
     else if (p == "handle") handle_sample();
     else if (p == "dovetail_housing") dovetail_housing_sample();
     else if (p == "dovetail_tail") dovetail_tail_sample();
+    else if (p == "stabilizer") stabilizer_sample();
     else if (p == "house_box") house_box_sample();
     else if (p == "board_bracket") board_bracket_sample();
     else if (p == "board_bracket_hook") board_bracket_hook_sample();
@@ -187,8 +196,8 @@ X = assembled ? 0 : 1;   // explode factor
 
 // The plane each demo is cut on for its section: "x" keeps x <= 0 (look from
 // +x), "y" keeps y >= 0 (look from -y, the front).
-function cut_plane(name) = name == "bracket" || name == "bracket_hook" ? "x" : name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" ? "z" : "x";
-function cut_z(name) = name == "dovetail" ? dt_h / 2 : hb_h / 2;
+function cut_plane(name) = name == "bracket" || name == "bracket_hook" ? "x" : name == "holes" || name == "diamond" || name == "lead_in" ? "y" : name == "handle" || name == "dovetail" || name == "stabilizer" ? "z" : "x";
+function cut_z(name) = name == "dovetail" ? dt_h / 2 : name == "stabilizer" ? 20.8 : hb_h / 2;
 module cut(name) {
     if (!section) children();
     else intersection() {
@@ -315,6 +324,12 @@ module demo_part(name, role) {
         if (role == "mate") box([-30, 0.3, bh_lip], [30, 10.3, bb_h + 30]);   // the board in the shoe
         if (role == "piece") translate([0, -16 * X, 0]) mirror([0, 1, 0]) hooked_bracket();
         if (role == "arrow") arrow([0, -bb_reach, 30], [0, -bb_reach + 14, 30]);   // slides up the tread to hook on
+    }
+    else if (name == "stabilizer") {
+        // a thin wall printing standing, a fin on each face tied to it by
+        // tabs (cut through a tab, from above): the fins in orange
+        if (role == "piece") stabilizer_wall();
+        if (role == "mate") stabilizer_fins();
     }
     else if (name == "handle") {
         // the handle's arms sprung over the block, its pins seated in the sockets

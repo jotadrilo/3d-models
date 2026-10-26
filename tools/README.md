@@ -59,7 +59,7 @@ Main pieces:
 | `load_scad(scad, part, defs, rotate, colour=True)` | Mesh grouped by colour. `colour=False` for single-colour models (otherwise uncoloured faces get OpenSCAD's preview colours) |
 | `Project(title, process, filaments, process_overrides, colour_map)` | Process preset name, `Filament(preset, "#RRGGBB")` list (slot order) |
 | `proj.plate(name, prime_tower=(20, 30))` | New plate |
-| `plate.add(name, mesh, x, y, settings={...})` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides |
+| `plate.add(name, mesh, x, y, settings={...}, ranges=[...])` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides; `ranges` are height range modifiers, `[(z0, z1, {key: value})]` from the bed (`layer_config_ranges.xml`; each range also gets the layer height and extruder, which the CLI needs). Speeds work per range, accelerations do not (they are global) |
 | `proj.write(path)` | Checks the layout and names and writes the 3MF |
 | `Project(..., printer=X2D)`, `PRINTERS` | Target printer: `P1S` (default) or `X2D`. `printer.preset(kind, base)` finds the system preset made for it, e.g. `X2D.preset("filament", "Bambu PLA Matte")` |
 | `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC`, `PETG_MATTE` | Filament preset names for the P1S 0.4 |
@@ -124,6 +124,7 @@ module with the same name as a library one hides it: wrap library calls under a 
 | [`joints.scad`](scad/joints.scad) | Part to part, male and female | `diamond_key` / `diamond_socket` (print on their side), `tongue_profile` / `groove_profile`, `lead_in_plug` / `lead_in_socket` (2D children, chamfered tip and mouth), `sprung_handle` / `sprung_handle_socket` (a U snapped onto a part by its diamond pins) and `sprung_handle_strain`, `dovetail_tail` / `dovetail_housing` (a body slid down onto a wall plate, resting on the housing's closed bottom) |
 | [`style.scad`](scad/style.scad) | House style for wall pieces | `house_plan(w, d, r)` (straight back, rounded front corners), `house_shell(w, d, t, r)`, `wall_slot(...)`, `slot_positions(lo, hi, w, rib)`, `wall_slots_tilted(at, u0, u1, z0, z1, axis, tilt, w, rib)` (45° slots for walls that print standing with the slots across Z); both take `max_len` to split long slots in a wall that prints standing |
 | [`boards.scad`](scad/boards.scad) | Holding a board upright | `board_bracket` (an "escuadra": in pairs bolted through the board, or one-sided with a `shoe` round the board's foot, a `lean`, and a `heel` hook under an open stair tread's back flange; print with `board_bracket_print`, on its side), `board_bracket_tip_force(weight, reach, at)`, `bolt_hole_x` |
+| [`print_aids.scad`](scad/print_aids.scad) | Printed with a part, cut off after | `stabilizer_fin(h, w, t, gap, tab_w, tab_h, tab_pitch)` (a fin beside a thin wall that prints standing, tied to it by tabs, so the wall cannot sway under the nozzle) |
 | [`hardware.scad`](scad/hardware.scad) | Bought parts, never printed | `suction_cup`, `wood_screw`, `rod`, `hex_bolt`, `hex_nut`, `washer`: stand-ins for assemblies, renders and clearance checks |
 | [`catalog.scad`](scad/catalog.scad) | Samples and demos | `part=`: every component and its mate, printable, in print orientation. `demo=`: each one in use, for the renders |
 
@@ -146,6 +147,7 @@ and the wall (white).
 | **Sliding dovetail**: the body's side wall slid down into the wall plate's housing, its tail resting on the closed bottom (cut across, from above) | ![](scad/renders/dovetail-section-top.webp) |
 | **Board bracket**: a pair on the two faces of a board, the same bolts through both legs and the board (cut through the bolts) | ![](scad/renders/bracket-section-front.webp) |
 | **Board bracket with shoe and hook**: the board in the shoe, the heel hooked under a tray tread's back flange (cut through the middle) | ![](scad/renders/bracket_hook-section-front.webp) |
+| **Stabilizer fins**: a thin wall printing standing, a fin on each face (orange) tied to it by tabs across a 0.3 mm gap (cut through a tab, from above) | ![](scad/renders/stabilizer-section-top.webp) |
 
 Sample plate: ![](scad/renders/catalog-hero.webp)
 

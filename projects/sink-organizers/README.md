@@ -49,6 +49,11 @@ The split is what lets both parts print the way they need to:
   bridge. Their side walls spread, the ledges came apart, and the tray and
   box slid out. Now the floor and the front tie the side walls together, and
   the plate holds them at the back.
+- Standing, the soap caddy's 209 mm body has no wall across it until its
+  front bar closes at the top, so its thin side walls swayed under the
+  nozzle and came out rough above ≈165 mm. It now prints with four
+  sacrificial fins beside its walls, tied to them by one-line tabs: snap
+  them off after printing ([Analyses](#analyses)).
 
 To take a piece down: lift it 12 mm (`drop`) off its buttons and take it off
 the wall; on the table, slide the body up off the plate.
@@ -261,7 +266,16 @@ without cracking.
 - **Box width**: the top 12 mm of the soap caddy's body and the bottom 12 mm
   of its box. The box must drop through with a little play and stop against
   the returns. Too tight: raise `box_play` and `tray_play`; sloppy: lower
-  them.
+  them. The slice keeps the body's fins and one row of their tabs.
+- **Sway test** (plate 7, 17 g, about 2 h): two strips of the soap caddy's side wall,
+  as flexible at the top as its body was where it printed rough. The bare
+  strip should come out rough above ~85 mm, as the body did; the one
+  with fins should be clean, and its fins should snap off flush. Tabs gone
+  before the end (the fins loose): raise `tab_h` to 0.6 or lower
+  `tab_pitch`. Bumps where the tabs were: a knife takes them off; note
+  them in tools/README.md, "Tested fits". A bare strip that prints clean
+  means the slicer slowed down for the small layers (minimum layer time)
+  and hid the sway: print it next to something bigger.
 - **Handle pins**: snap the small handle onto the block: the pins must click
   in and hold. Too stiff: raise `pin_play`.
 
@@ -270,7 +284,7 @@ without cracking.
 | Part | Size (mm) | Notes |
 |---|---|---|
 | soap caddy `plate` | 108 × 211 × 6 | Wall plate: four keyholes, two housings, three windows; printed flat on its back |
-| soap caddy `body` | 101 × 114 × 209 | Side walls with the tails, floor, ledges, the box's returns and bar; printed standing |
+| soap caddy `body` | 101 × 114 × 209 | Side walls with the tails, floor, ledges, the box's returns and bar; printed standing, with four fins (142 mm wide on the bed) to cut off |
 | soap caddy `tray` | 97 × 103 × 24 | Sloping floor, slats, rims; printed on its back |
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
 | cutlery drainer `plate` | 217 × 116 × 6 | Wall plate: four keyholes at its corners, two housings, one window; printed flat on its back |
@@ -281,6 +295,16 @@ without cracking.
 | cutlery drainer `handle` | 239 × 49 × 10 | The U with its two diamond pins; printed flat |
 | `button` | Ø 16 × 13 | One per cup (8); the stud goes right through; printed on its flange |
 | `test_*` | — | The fit tests above |
+
+## Analyses
+
+Decided per CLAUDE.md §2.3:
+
+| Trigger | Analysis | Result |
+|---|---|---|
+| Loads with margins near 5× and a tangled load path (plate, tray, cups) | FEA, single parts and the assembly on the wall | Done: [Strength and orientation](#strength-and-orientation), [fea/README.md](fea/README.md) |
+| Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With the fins, ≤1.3 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)). The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
+| Free-standing piece | Stability | Not needed: both pieces hang on suction cups |
 
 ## Strength and orientation
 
@@ -333,19 +357,30 @@ soap caddy's tray alone, then each piece whole on its cups.
 - **Supports:** none. The plates lie on their backs, the bodies stand, the
   trays lie on their backs, the box, rack and bins stand on their floors,
   and the handle lies flat.
+- **Soap caddy body:** prints with four sacrificial fins (`stabilizer_fin`,
+  tools/scad/print_aids.scad), 20 mm out from its side walls and tied to
+  them by tabs one line wide and 2 layers tall every 20 mm (Arachne walls
+  on the objects with fins: Classic drops tabs that thin); plate 1 holds it
+  turned a quarter to fit them.
+  Its walls print at 60 mm/s (outer) and 80 (inner) above 100 mm (a height
+  range modifier), and the project avoids travel across walls, where PETG
+  strings. After printing, bend the fins off; if a tab leaves a bump, a
+  knife takes it off.
 
 With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing), plate (flat) | 5 h 48 min, 111 g | 5 h 07 min, 114 g | 5 h 48 min, 122 g |
-| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 15 min, 69 g | 2 h 57 min, 71 g | 3 h 15 min, 75 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 20 min, 94 g | 3 h 57 min, 96 g | 4 h 20 min, 103 g |
-| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 51 min, 94 g | 3 h 31 min, 96 g | 3 h 51 min, 103 g |
-| 5 · Cutlery drainer: bins | 3 bins | 4 h 54 min, 78 g | 4 h 32 min, 80 g | 4 h 54 min, 86 g |
-| 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 23 min, 34 g | 1 h 18 min, 35 g | 1 h 24 min, 38 g |
+| 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 6 h 52 min, 135 g | 6 h 33 min, 138 g | 6 h 53 min, 148 g |
+| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 69 g | 3 h 06 min, 71 g | 3 h 22 min, 75 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 25 min, 94 g | 4 h 04 min, 96 g | 4 h 25 min, 103 g |
+| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 56 min, 94 g | 3 h 36 min, 96 g | 3 h 56 min, 103 g |
+| 5 · Cutlery drainer: bins | 3 bins | 5 h 19 min, 78 g | 5 h 06 min, 80 g | 5 h 19 min, 86 g |
+| 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 32 min, 36 g | 1 h 27 min, 36 g | 1 h 32 min, 39 g |
+| 7 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
 
-PETG bonds hard to the textured plate: use a glue stick as a release layer,
+Avoiding travel across walls costs 5–25 min on the other plates (the bins
+the most). PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
 
 ## Parameters
@@ -378,6 +413,10 @@ pieces do not fit.
 | `sponge_rim`, `step_r`, `bar_h` | 12, 10, 6 | The deep part of the side walls; the step; the bar across the front |
 | `slat_pitch` | 9 | Slat spacing |
 | `box_play`, `box_h`, `wall_t`, `floor_t`, `collar_t`, `return_w` | 0.25, 90, 1.68, 2, 4, 10 | The box |
+| `fin_w`, `fin_t`, `fin_gap`, `fin_flange`, `fin_sides` | 20, 1.26, 0.3, 0, [-1, 1] | The body's printing fins (0: none), a flange on their outer edge (for fins with no tabs), which side walls get them |
+| `tab_w`, `tab_h`, `tab_pitch` | 0.42, 0.4, 20 | Tabs tying the fins to the walls (0 tall: none, and the fins only stop the walls leaning their way) |
+| `test_sway_h`, `test_sway_len`, `test_sway_fin` | 100, 40, 12 | The sway test's strips and fins |
+| `side_add`, `side_add_z`, `frame_t`, `back_wall` | 0, 0, 1.68, 0 | Thicker side walls (from a height), front frame, a slotted back wall. Variants of the print stiffness study, off by default |
 | **Cutlery drainer** | | |
 | `frame_w`, `bins`, `bin_d`, `bin_h` | 210, 3, 90, 80 | Width along the wall; number of bins, their depth and height |
 | `counter_gap` | 15 | Counter to the body |

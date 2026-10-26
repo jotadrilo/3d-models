@@ -18,6 +18,7 @@ and what we learn (results, what was simplified and whether that held) is added 
 | Deflection matters (something sags, rubs or touches) | Single part: the deflection converges with a coarse mesh |
 | Several parts on a wall or a stand, and the question is how the load is shared (cups, screws, hooks) | **Assembly** (§ [Assembly](#assembly)) |
 | The joint itself is the question (binding, seating, snap-in) | Contact on that joint alone, not the whole assembly |
+| A tall, thin part printed standing, or a print that came out rough higher up | **Print stiffness** (§ [Print stiffness](#print-stiffness)): the part as it stands on the bed at several heights |
 
 Nothing replaces the fit test print. FEA answers "how strong and how stiff", not "does it fit".
 
@@ -395,6 +396,31 @@ caddy, bonded: daily use, none; squeeze, the box's back wall up to 1.9 mm into t
   drawn through each other. Before reading an overlap as a result, look at it at ×1. If the parts
   still overlap at real scale, the model is missing a contact there.
 
+## Print stiffness
+
+A question about printing, not use: how far does the layer being printed move when the nozzle
+pushes it? A thin wall that prints standing with nothing across it bends away from the nozzle,
+and the layer comes out rough, stringy and misplaced (CLAUDE.md §4.1).
+
+- **Geometry:** the part cut at the height z the nozzle is at: everything printed so far, nothing
+  above. What closes a section at the top (a bar across, a roof) is not there yet while the
+  layers under it print, so the full part is the wrong model.
+- **Supports:** the bed: every node at z = 0 fixed.
+- **Load:** 1 N sideways on a small patch (r = 3 mm, the nozzle's reach) of the top layer, along
+  x and along y, at a few points: the wall's back edge, middle and front, any free edge or return.
+  One step per load case, so one mesh serves them all (`*CLOAD, OP=NEW`).
+- **Result:** the compliance, mm per N, at each point and height. The nozzle's real force is
+  not known, so compare it with what printed well, not with a stress.
+- **Cost:** 2–5 min per height (one mesh, ≈10 linear steps); 4–7 heights per variant.
+
+**Calibration (soap caddy body, PETG HF, 0.20 Standard, P1S, 2026-10):** clean up to ≈17 mm/N,
+rough from ≈20–24, very rough at 33. Aim for **≤ 10 mm/N** at every height. One print, one
+material: add every new print to this line.
+
+**Reading it:** the part sways as a whole, not just its top edge: in an open section (a U) both
+walls lean the same way, and only a wall across (in the other plane) stops that. Thickening the
+walls gains less than t³ predicts, because the lower part and the joints bend too (case 7).
+
 ## Case studies
 
 ### 1. Soap caddy tray, single part (2026-10-24)
@@ -717,3 +743,27 @@ Lessons:
   the width (`cut_ply.py`, an exact plane section of the tets, coloured from the nodes), not on
   the surface. `render_ply.py` now sets the camera's clip end from the part's size (a 1 m board
   was beyond the default).
+
+### 7. Soap caddy body while it prints (2026-10-26)
+
+[`projects/sink-organizers/fea/print_sway.py`](../../projects/sink-organizers/fea/print_sway.py),
+the method in [Print stiffness](#print-stiffness). The body (two 1.68 mm side walls 209 mm tall,
+tied by the floor and by a front frame whose bar closes at 203 mm) printed rough above ≈165 mm
+in PETG HF.
+
+- **The model matched the print:** compliance 9 mm/N at 100 mm, 17 at 150 (both clean), 24 at
+  170 (where the roughness starts), 33 at 190, and the worst point, the front return's free tip,
+  is where the worst tangle was. Along y (in the walls' plane) it hardly moves: ≤0.6.
+- **Six variants, one change each:** walls 2.52 mm → 18 (1.8×, not the 3.4× of t³); walls 3.36 →
+  10 (+44 g); a thicker front frame → no change; a slotted back wall (the U closed into a tube) →
+  ≤4.5 above 150, 7.2 at 100 (+31 g, and the box and tray move forward); **sacrificial fins**
+  beside the walls (`stabilizer_fin`, tools/scad/print_aids.scad) → ≤1.3 at every height (+26 g
+  to snap off), the one chosen.
+- **Contact is one-sided: model it so.** Fins with no tabs, a gap and a flange (so the walls
+  only rest on them), were run with fins on one side at a time and tabs standing in for the
+  contact, loaded towards them. A wall pushed outwards: 1.1. Pushed inwards: 32.5, as with no
+  fins: the two walls bend each on its own, not as one U. Load both faces of every wall
+  before trusting a contact-only support.
+- **The fins' tabs were modelled as fully bonded** and, at one line × 2 layers, coarsely
+  meshed: ≤1.3 is a lower bound on the real compliance. The sway test prints the answer.
+

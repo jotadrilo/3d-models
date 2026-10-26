@@ -41,7 +41,7 @@ def main():
         d = os.path.join(out, name.split()[0])
         os.makedirs(d, exist_ok=True)
         t0 = time.time()
-        procs = [subprocess.Popen(['openscad', '-o', os.path.join(d, p + '.stl'), '-D', 'part="%s"' % p]
+        procs = [subprocess.Popen(['openscad', '-o', os.path.join(d, p + '.stl'), '-D', 'part="%s"' % p, '-D', 'fin_w=0']   # the body in use: no printing fins
                                   + [a for x in defs for a in ('-D', x)] + [SCAD], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                  for p in cm.PARTS]
         for p in procs:

@@ -158,23 +158,36 @@ When the strong orientation fights printability:
 Every functional project's README says, per loaded part, which load it carries, how the part is
 oriented for it, and the margin when the load crosses the layers.
 
-**Optional load analysis (FEA).** When a margin comes out under ~5× by hand, or the load path is
-too tangled to work out by hand, offer the user an FEA with gmsh + CalculiX. The same goes when the
-question is how an assembly shares its load (each suction cup's pull on the wall). Method,
-modelling choices, cost and past results are in [tools/fea](tools/fea/README.md). The scripts go in
-`projects/<project>/fea/`.
-To improve a loaded part, follow its **design study** workflow. The aim, unless the user says
-otherwise, is the least material and the least bending under the real load cases. Change one
-variable per variant, show the previews and the results side by side, and let the user pick from a
-top 3 before anything becomes a default.
+**Analyses: decide them, unasked.** Whoever works on a project (any agent, any session) runs
+through the triggers below **without waiting for the user to ask**: when a project starts, when a
+part's geometry changes, and when a print fails (photo, symptom). The decision goes in the first
+answer, as part of the plan, not as an afterthought at its end. Cheap checks (a single-part run,
+statics: minutes) are run and reported; long ones (an assembly with contact, a design study, a
+simulation: over ~15 min) are proposed with their cost and run when the user says go. The README's
+**Analyses** section records every trigger that applies: done (and the result), or not needed (and
+the hand figure that shows it).
 
-**Optional stability analysis (tipping).** A piece that stands free (nothing screws it down) and can
-be pushed or knocked fails by tipping or sliding, not by breaking, and FEA does not see that. Offer
-the user the analysis in [tools/stability](tools/stability/README.md): statics first (tipping force,
-angle, energy barrier and tap, per direction and variant, in seconds), then a rigid-body simulation
-(MuJoCo) when it gets tapped or knocked, leans on a wall or a step, or could slide; and a luggage
-scale on the real piece to calibrate both. The scripts go in `projects/<project>/stability/`
-(`make stability`, `make sim`), and the final clips of the simulation in its `videos/`, committed.
+| Trigger | Analysis |
+|---|---|
+| A load margin under ~5× by hand, or a load path too tangled to work out by hand | **FEA**, single part ([tools/fea](tools/fea/README.md)) |
+| How an assembly shares its load (each suction cup's pull on the wall) | **FEA**, assembly |
+| Something sags, rubs or touches under load | **FEA**, deflection |
+| A tall, thin part printed standing (walls ≤ 2 mm rising more than ~60 mm, open sections such as a U, free edges), or a print that came out rough, wavy or stringy higher up | **Print stiffness** FEA: the part cut at several heights, a sideways force on its top layer, its compliance against what printed well ([tools/fea](tools/fea/README.md#print-stiffness)) |
+| A piece that stands free (nothing screws it down) and can be pushed or knocked | **Stability** ([tools/stability](tools/stability/README.md)) |
+
+FEA: gmsh + CalculiX; method, modelling choices, cost and past results in
+[tools/fea](tools/fea/README.md), the scripts in `projects/<project>/fea/`. To improve a loaded
+part, follow its **design study** workflow. The aim, unless the user says otherwise, is the least
+material and the least bending under the real load cases. Change one variable per variant, show the
+previews and the results side by side, and let the user pick from a top 3 before anything becomes a
+default.
+
+Stability: a piece that stands free fails by tipping or sliding, not by breaking, and FEA does not
+see that. Statics first (tipping force, angle, energy barrier and tap, per direction and variant,
+in seconds), then a rigid-body simulation (MuJoCo) when it gets tapped or knocked, leans on a wall
+or a step, or could slide; and a luggage scale on the real piece to calibrate both. The scripts go
+in `projects/<project>/stability/` (`make stability`, `make sim`), and the final clips of the
+simulation in its `videos/`, committed.
 
 ---
 
@@ -314,6 +327,13 @@ side, top). The renders go in "Model images".
   `wall_slots_tilted()`). The rib between two slots grows as a free column a couple of mm
   across, and its stiffness drops with the cube of its height: the soap caddy box's 76 mm slots
   came out clean up to ~35 mm and rough and stringy above, where the nozzle pushed the ribs about.
+- **A thin wall that prints standing, with no wall across it, sways under the nozzle higher up.**
+  The soap caddy's body (two 1.68 mm side walls 209 mm tall, tied only by the floor and a front
+  frame that closes at the very top) came out rough and stringy above ~165 mm. A print
+  stiffness FEA (§2.3, [tools/fea](tools/fea/README.md#print-stiffness)) put its top layer at
+  33 mm/N sideways; it printed clean up to ~17 mm/N. Aim for ≤10 mm/N at every height. A wall
+  across (XZ for walls in YZ) works best; thicker walls help less than t³ says (2.52 mm: 1.8×,
+  not 3.4×). When the part cannot change, `stabilizer_fin()` (§4.7) holds it while it prints.
 - **Tie open-fronted walls across the front.** Two side walls joined only by a back plate spread,
   and whatever rests on ledges between them drops or slides out (the soap caddy's frame). When
   the part prints on its back, a front bar is a long bridge: tie them with a plate that is
@@ -456,6 +476,35 @@ Research behind each component in `tools/scad/`, one entry per component.
   - A detent, if one is ever needed, must sit unloaded once seated: PETG creeps under load,
     faster when warm (UTS creep study; Polymers 2025).
 
+- **Stabilizer fin** (`print_aids.scad`, from sink-organizers): a printing aid, not part of
+  the piece. A plate standing on the bed in the XZ plane, beside a thin wall that prints
+  standing, tied to its face by tabs; in its own plane it is far stiffer than the wall
+  across it, so the wall cannot sway under the nozzle. Snapped off after printing.
+  - **Where it comes from:** slicers' answer to wobbling tall parts is supports painted on
+    vertical faces with a small X/Y distance, so they never touch the part but stop it moving
+    (Bambu forum reports, no measured results; Bambu Studio paints on vertical faces since
+    1.10, and users report single dots being ignored). Industrial slicers generate the same
+    thing as part of the model: GrabCAD Print's Wall Stabilizer builds towers beside a wall,
+    joined by contact points that pierce it (TriMech). This one is modelled, so the script
+    places it and the FEA sees it.
+  - **Tabs, not just contact.** A fin that only touches (no tabs, a gap) stops its wall
+    leaning towards it and not away: the soap caddy's two side walls bend each on its own,
+    and pushed inwards a wall moved 32.5 mm/N with fins outside, as with none (FEA). Fins
+    inside a U cannot be lifted out past ledges, so the tabs hold both ways.
+  - **Smallest tab: one line (0.42) × 2 layers (0.4), every 20 mm, across a 0.3 mm gap,
+    printed with Arachne.** Classic walls drop a one-line tab (the perimeter has no room to
+    go in and come out; checked in the G-code: nothing crosses the gap); Arachne prints it as
+    a single bead, and so does Classic at 0.84. Set `wall_generator = arachne` on the objects
+    with fins.
+  - **Numbers (FEA, soap caddy body):** two fins 20 × 1.26 mm per side: the top layer's
+    compliance drops from 33 to ≤1.3 mm/N at every height, with 0.84 × 1.6 tabs every 10 mm
+    or 0.42 × 0.4 every 20 (the tabs modelled fully bonded and coarsely meshed: an upper
+    bound on the stiffness). ≈26 g of fins; the part is 2 × (gap + w) wider on the bed.
+  - **Tabs only where the wall is solid** (not over slots), and clear of anything with a fit
+    (dovetails, housings).
+  - Untested in print yet: whether one-line tabs hold through the print and snap off flush.
+    sink-organizers' `test_sway` (a bare strip of wall and one with fins, as flexible as the
+    body) and `test_width` check it.
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left
@@ -692,6 +741,8 @@ Research behind each component in `tools/scad/`, one entry per component.
       that tests the real thing (the button on the cup's stud, the peg in the piece's hole),
       designed against measured hardware, not its nominal size. Check how each part goes in,
       along its whole path, not only where it ends up.
+- [ ] Analyses decided (§2.3, "Analyses: decide them, unasked"): every trigger that applies is run
+      or proposed, and the README's Analyses section says which and why.
 - [ ] Each loaded part oriented for its load (§2.3), with the margin noted in the README; FEA
       offered when a margin is under ~5× or the load path is unclear (tools/fea).
 - [ ] A piece that stands free: stability analysis offered (tools/stability), the tipping figures
