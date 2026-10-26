@@ -273,6 +273,10 @@ so it passes 17, 24 and 33 at about 78, 88 and 98 mm (the body's 150–190 mm) a
 nearly twice the body's worst, so it cannot fail to show the sway. The one with fins: ≤0.5 at
 the end, ≤2.9 at the middle, 18 mm from them.
 
+**Printed (PETG HF, 2026-10-26):** the bare strip swayed visibly under the nozzle and came out
+rough above ≈85 mm, where the model has it at 24 mm/N; the strip with fins came out clean to
+the top, and its one-line tabs held all the way and snapped off with no mark.
+
 **The cutlery drainer's body**, the same check (`PIECE=drainer`, cut at 40, 70, 95 and 114 mm):
 0.4, 3.6, 9.2 and 11.9 mm/N, its worst at the front's middle, along x. Shorter (114 mm) and
 tied by the rack's ledges and the handle's bosses, it stays inside what printed clean on the

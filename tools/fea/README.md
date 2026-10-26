@@ -413,9 +413,11 @@ and the layer comes out rough, stringy and misplaced (CLAUDE.md §4.1).
   not known, so compare it with what printed well, not with a stress.
 - **Cost:** 2–5 min per height (one mesh, ≈10 linear steps); 4–7 heights per variant.
 
-**Calibration (soap caddy body, PETG HF, 0.20 Standard, P1S, 2026-10):** clean up to ≈17 mm/N,
-rough from ≈20–24, very rough at 33. Aim for **≤ 10 mm/N** at every height. One print, one
-material: add every new print to this line.
+**Calibration (PETG HF, 0.20 Standard, P1S, 2026-10):** clean up to ≈17 mm/N, rough from
+≈20–24, very rough at 33. Aim for **≤ 10 mm/N** at every height. Two prints agree: the soap
+caddy body (rough above ≈165 mm, 17 → 24 mm/N between 150 and 170) and the sway test, a bare
+strip of the same wall (rough above ≈85 mm, 24 mm/N at 88; it visibly swayed under the nozzle),
+while the same strip held by stabilizer fins (≤0.5) printed clean. Add every new print here.
 
 **Reading it:** the part sways as a whole, not just its top edge: in an open section (a U) both
 walls lean the same way, and only a wall across (in the other plane) stops that. Thickening the
@@ -765,5 +767,6 @@ in PETG HF.
   fins: the two walls bend each on its own, not as one U. Load both faces of every wall
   before trusting a contact-only support.
 - **The fins' tabs were modelled as fully bonded** and, at one line × 2 layers, coarsely
-  meshed: ≤1.3 is a lower bound on the real compliance. The sway test prints the answer.
+  meshed: ≤1.3 is a lower bound on the real compliance. The sway test settled it in print: the
+  strip with fins came out clean, the bare one rough from where the model said.
 

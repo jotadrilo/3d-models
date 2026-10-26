@@ -183,6 +183,7 @@ Add a row whenever a fit test settles or rules out a value (CLAUDE.md §4.6).
 | | | 0.05 / 0.2 | Rocks slightly (the floor play lets the tail come off its flanks and tilt) | | |
 | | | 0.10, 0.15, 0.20 / 0.2 | Loose | | |
 | `dovetail_housing` | the same, head `w` 1.26 × `d` 3 | 0.25 flanks, 0.35 floor | Loose, and the head printed round | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
+| `stabilizer_fin` | tabs `tab_w` × `tab_h` every `tab_pitch`, `gap`, Arachne walls | **0.42 × 0.4 every 20, gap 0.3** | Works: a 120 mm strip of slotted 1.68 mm wall held by a 12 mm fin on each face printed clean to the top, the tabs held all the way and snapped off with no mark; the same strip bare swayed visibly under the nozzle and came out rough above ~85 mm, as the FEA said (24 mm/N there) | PETG HF, P1S, 0.20 | sink-organizers `test_sway`, 2026-10 |
 
 When a new project invents a mount or joint another project could use, move it here, make its
 sizes arguments, give it its mate, add both and a demo to `catalog.scad`, and check that the projects using it export the same

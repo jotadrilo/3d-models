@@ -502,9 +502,10 @@ Research behind each component in `tools/scad/`, one entry per component.
     bound on the stiffness). ≈26 g of fins; the part is 2 × (gap + w) wider on the bed.
   - **Tabs only where the wall is solid** (not over slots), and clear of anything with a fit
     (dovetails, housings).
-  - Untested in print yet: whether one-line tabs hold through the print and snap off flush.
-    sink-organizers' `test_sway` (a bare strip of wall and one with fins, as flexible as the
-    body) and `test_width` check it.
+  - **Tested** (sink-organizers `test_sway`, PETG HF, 2026-10): a 120 mm strip of slotted
+    1.68 mm wall with a fin on each face printed clean to the top; the one-line tabs held all
+    the way and snapped off with no mark. The bare strip swayed visibly under the nozzle and
+    came out rough above ~85 mm, where the FEA put it at 24 mm/N.
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left
