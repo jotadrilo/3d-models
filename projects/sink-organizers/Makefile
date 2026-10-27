@@ -5,8 +5,8 @@
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SOAP_PARTS     ?= plate body tray box button test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width
-DRAINER_PARTS  ?= plate body tray rack bin handle test_pin
+SOAP_PARTS     ?= plate body tray box button jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width
+DRAINER_PARTS  ?= plate body tray rack bin handle jig test_pin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'
 BLENDER        ?= blender
@@ -67,6 +67,8 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate4 --plate 4 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate5 --plate 5 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/fit-tests --plate 6 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/soap-caddy-jig --plate 8 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-jig --plate 9 --views top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
 clean: ## Remove exported files (the committed Bambu project and renders are kept)

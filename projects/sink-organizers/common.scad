@@ -43,6 +43,11 @@ drop = 12;           // how far the plate drops onto its buttons; lift it this m
 pad_t = 4.2;         // pad thickness around each keyhole (10 lines) [3.36:0.42:6.3]
 pad_w = 22;          // pad width [18:1:40]
 
+/* [Installation jig] */
+jig_bar_w = 6.3;     // the jig's bars, across (15 lines) [4.2:0.42:12.6]
+jig_bar_t = 2;       // the jig's bars, thick (10 layers): thin, so each cup seats by itself [1.2:0.2:4.2]
+jig_rim = 1.68;      // the jig round its keyholes (4 lines) [1.26:0.42:4.2]
+
 /* [Plate and body] */
 back_t = 1.68;       // wall plate (4 lines) [1.26:0.42:4.2]
 side_t = 1.68;       // the body's walls (4 lines): also the dovetails' necks [1.26:0.42:3.36]
@@ -234,6 +239,47 @@ module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0, slats = true) {
             box([-iw - eps, tie_y, z_s - slat_h], [iw + eps, tie_y - slat_w, z_s + tie_up]);
             box([-iw - eps, (y0 + tie_y) / 2 - slat_w / 2, z_s - slat_h], [iw + eps, (y0 + tie_y) / 2 + slat_w / 2, z_s - slat_h + 2.5]);
         }
+    }
+}
+
+// ---------------------------------------------------------------- installation jig
+
+// A skeleton that holds the suction cups where the plate hangs them, to stick
+// them on the wall one by one, each in sight and pressed by itself: a
+// keyhole per cup (cups, [x, z] each), a rim round each, bars along `bars`
+// ([[x0, z0], [x1, z1]] each), legs from the lowest cups down, and a frame
+// round the piece's outline seen from the front (hw its half width, z0 to
+// z1), the outline on its outside: it is as big as the piece, and its bottom
+// bar takes a spirit level. Printed flat on its back, like the plate.
+//
+// Its keyholes are the plate's upside down, the entry above: the cups hang
+// from the jig, so their weight holds each button at the bottom of its slot,
+// where the plate's would sit. With the cups stuck, push the jig down `drop`
+// and take it off.
+module install_jig(cups, bars, hw, z0, z1) {
+    sr = keyhole_shank_r(shank_d, keyhole_play);
+    up = 2 * (sr - shank_d / 2);   // the shank sits on the slot's bottom, not its top as in the plate
+    lo = min([for (c = cups) c[1]]);
+    legs = [for (c = cups) if (c[1] == lo) [c, [c[0], z0]]];
+    fx = hw - jig_bar_w / 2;
+    fz = [z0 + jig_bar_w / 2, z1 - jig_bar_w / 2];
+    frame = [for (i = [0 : 3]) let(k = [[-fx, fz[0]], [fx, fz[0]], [fx, fz[1]], [-fx, fz[1]]]) [k[i], k[(i + 1) % 4]]];
+    difference() {
+        union() {
+            for (c = cups) translate([c[0], 0, c[1] + up]) rotate([90, 0, 0]) chamfered_prism(pad_t, chamfer) hull() {
+                circle(r = sr + (head_d - shank_d) / 2 + jig_rim);   // round the countersink
+                translate([0, drop]) circle(r = entry_r + jig_rim);
+            }
+            rotate([90, 0, 0]) chamfered_prism(jig_bar_t, chamfer) {
+                intersection() {   // the bars stop at the outline; union(): lazy-union splits a bare for()
+                    union() for (b = concat(bars, legs)) hull() for (p = b) translate(p) square(jig_bar_w, center = true);
+                    translate([-hw, z0]) square([2 * hw, z1 - z0]);
+                }
+                for (b = frame) hull() for (p = b) translate(p) square(jig_bar_w, center = true);
+            }
+        }
+        for (c = cups) translate([c[0], 0, c[1] + up]) mirror([0, 0, 1])
+            keyhole_cut(pad_t, drop, shank_d, head_d, keyhole_play);
     }
 }
 

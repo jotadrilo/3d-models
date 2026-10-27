@@ -55,6 +55,9 @@ The split is what lets both parts print the way they need to:
   sacrificial fins beside its walls, tied to them by one-line tabs: snap
   them off after printing ([Analyses](#analyses)).
 
+To put the cups on the wall, use the piece's [installation jig](#installation-jigs-plates-8-and-9),
+not the plate.
+
 To take a piece down: lift it 12 mm (`drop`) off its buttons and take it off
 the wall; on the table, slide the body up off the plate.
 
@@ -226,6 +229,51 @@ front; the rack only rests between them.
   level, each slot got a flat roof with a loose end, which the slicer
   flagged as a floating cantilever.
 
+## Installation jigs (plates 8 and 9)
+
+Sticking the cups on the wall through the plate is awkward: the plate hides
+them, so you cannot see them seal or press each one firmly on its own. Each
+piece has a jig that puts its four cups exactly where the plate's keyholes
+hang them, and nothing else (`install_jig` in [common.scad](common.scad)):
+
+| Soap caddy | Cutlery drainer |
+|---|---|
+| ![Soap caddy installation jig](renders/soap-caddy-jig-top.webp) | ![Cutlery drainer installation jig](renders/cutlery-drainer-jig-top.webp) |
+
+- **Keyholes, upside down:** the plate's keyhole cut (tested) with the entry
+  above the slot. In the plate the entry is below, because the plate drops
+  onto buttons already on the wall. In the jig the cups hang from it, so an
+  entry below would let them slide down and fall out. With the entry above,
+  their weight holds each button at the bottom of its slot, where the plate
+  will hold it (shifted 0.6 mm up, since the shank rests on the slot's other
+  end). Each keyhole has a rim 1.68 mm wide (`jig_rim`) and is as thick as
+  the plate's pads.
+- **Outline:** a frame of 6.3 × 2 mm bars (`jig_bar_w`, `jig_bar_t`) round
+  what the piece takes up seen from the front, its outer edge on the outline:
+  the plate and the body for the soap caddy (108 × 211), the plate, body and
+  towel handle for the cutlery drainer (239 × 116). Put a spirit level on
+  its bottom bar. The upper keyholes stick out over the top bar, since their
+  entries are above.
+- **Bars and legs:** the soap caddy's keyholes hang on a bar across through
+  the lower pair and one up through the upper two, the cutlery drainer's on
+  an H; legs run from the lower cups down to the frame. In their plane the
+  bars keep the spacing; across it they are thin, so pressing one cup does
+  not lift the others off the wall.
+
+To use it:
+1. Screw the buttons onto the cups and hang each cup in its keyhole: in
+   through the round entry at the top, then down to the bottom of the slot.
+2. Clean and dry the wall. Hold the jig against it where the piece goes,
+   with a spirit level on the bottom bar.
+3. Press each keyhole hard against the wall with your thumb, one at a time,
+   until the cup lies flat and clear of air.
+4. Push the jig down 12 mm (`drop`), so its entries come to the button
+   heads, and take it off. Hang the plate on the buttons.
+
+The loads are a thumb pressing each rim onto its button's flange, in
+compression: no analysis needed. The soap caddy's jig: 37 min, 13 g; the
+cutlery drainer's: 40 min, 15 g.
+
 ## Fit tests (plate 6)
 
 Each piece tests the real thing, printed the way the real part prints. The
@@ -293,6 +341,8 @@ without cracking.
 | cutlery drainer `rack` | 206 × 94 × 17 | Shelf, 2.4 mm, slotted front to back, with a fence at the front and back; printed on its floor |
 | cutlery drainer `bin` | 68 × 90 × 80 | Three; printed standing on their floors |
 | cutlery drainer `handle` | 239 × 49 × 10 | The U with its two diamond pins; printed flat |
+| soap caddy `jig` | 108 × 221 × 4.2 | Installation jig: four upside-down keyholes on bars, in a frame round the piece's outline; printed flat |
+| cutlery drainer `jig` | 239 × 125 × 4.2 | Installation jig: an H through four upside-down keyholes, in a frame round the piece's outline; printed flat |
 | `button` | Ø 16 × 13 | One per cup (8); the stud goes right through; printed on its flange |
 | `test_*` | — | The fit tests above |
 
@@ -305,6 +355,7 @@ Decided per CLAUDE.md §2.3:
 | Loads with margins near 5× and a tangled load path (plate, tray, cups) | FEA, single parts and the assembly on the wall | Done: [Strength and orientation](#strength-and-orientation), [fea/README.md](fea/README.md) |
 | Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With the fins, ≤1.3 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)). Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
 | Free-standing piece | Stability | Not needed: both pieces hang on suction cups |
+| Installation jigs | — | Not needed: a thumb presses each rim onto its button in compression; the jig holds four cups (≈80 g) |
 
 ## Strength and orientation
 
@@ -378,6 +429,8 @@ With the default parameters:
 | 5 · Cutlery drainer: bins | 3 bins | 5 h 19 min, 78 g | 5 h 06 min, 80 g | 5 h 19 min, 86 g |
 | 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 32 min, 36 g | 1 h 27 min, 36 g | 1 h 32 min, 39 g |
 | 7 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
+| 8 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
+| 9 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
 
 Avoiding travel across walls costs 5–25 min on the other plates (the bins
 the most). PETG bonds hard to the textured plate: use a glue stick as a release layer,
@@ -395,6 +448,7 @@ pieces do not fit.
 | **Shared** ([common.scad](common.scad)) | | |
 | `cup_d`, `cup_h`, `stud_len`, `stud_hole` | 50, 12, 12, 3.9 | Suction cups: diameter, wall to the hub face, stud length (measure yours), pilot hole for the stud |
 | `shank_d`, `head_d`, `flange_d`, `keyhole_play`, `shank_play`, `drop`, `pad_t`, `pad_w` | 7, 12, 16, 0.3, 0.1, 12, 4.2, 22 | Buttons and keyholes |
+| `jig_bar_w`, `jig_bar_t`, `jig_rim` | 6.3, 2, 1.68 | Installation jigs: bars and outline frame, rim round the keyholes |
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |

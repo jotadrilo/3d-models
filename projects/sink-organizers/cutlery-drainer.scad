@@ -30,7 +30,7 @@
 // stand on their floors, the handle lies flat (its bending plane in XY).
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, rack, bin, handle, button, test_pin]
+part = "assembly";   // [assembly, plate, body, tray, rack, bin, handle, button, jig, test_pin]
 show_items = true;   // draw the wall, counter, suction cups, cutlery and towel (assembly only)
 section = "none";    // [none, keyhole, handle] cut the assembly through a keyhole, or level with the handle's pins, for the section renders
 with_handle = true;  // the towel handle (assembly only)
@@ -149,6 +149,11 @@ echo(str("handle: ", span + 2 * handle_s, " x ", handle_reach + 1.5 * handle_s, 
 // ---------------------------------------------------------------- parts
 
 module plate() wall_plate(top, cups, [[slot_margin, top - slot_margin]]);
+
+// Installation jig: an H, each side through a column of cups, in a frame
+// round the plate, the body and the handle.
+module jig() let(mz = (lo_z + hi_z) / 2, w = max(plate_hx(), hx, with_handle ? span / 2 + handle_s : 0))
+    install_jig(cups, [[cups[0], cups[1]], [cups[2], cups[3]], [[-w, mz], [w, mz]]], w, -dt_cap, top);
 
 // The side walls seen from the side: deep at the bottom round the tray, as
 // deep as the rack above it, a rounded step between them. The deep part's
@@ -330,6 +335,7 @@ else if (part == "rack") rack();
 else if (part == "bin") bin();
 else if (part == "handle") handle();
 else if (part == "button") button();
+else if (part == "jig") jig();
 else if (part == "test_pin") test_pin();
 else if (part == "assembly") {
     color(piece_colour) cut() plate();

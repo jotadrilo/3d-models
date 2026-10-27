@@ -25,7 +25,7 @@
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, box, button, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
+part = "assembly";   // [assembly, plate, body, tray, box, button, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
@@ -162,6 +162,11 @@ if (top_above_counter + bottle_h > cabinet_h)
 // ---------------------------------------------------------------- parts
 
 module plate() wall_plate(top, cups, [[lo_cup_z + pad_hi + slot_margin, z_seat - slot_margin], [z_seat + slot_margin, top - slot_margin]]);
+
+// Installation jig: a bar across through the lower cups, one up through the
+// upper ones, in a frame round the plate and the body.
+module jig() let(w = max(plate_hx(), hx))
+    install_jig(cups, [[[-w, lo_cup_z], [w, lo_cup_z]], [[0, lo_cup_z], [0, top]]], w, -dt_cap, top);
 
 // The side walls seen from the side: deep at the bottom round the tray, as
 // deep as the box (and its front) above it, a rounded step between them.
@@ -343,6 +348,7 @@ else if (part == "body") body(fins = true);
 else if (part == "tray") soap_tray();
 else if (part == "box") bottle_box();
 else if (part == "button") button();
+else if (part == "jig") jig();
 else if (part == "test_keyhole") test_keyhole();
 else if (part == "test_buttons") test_buttons();
 else if (part == "test_dovetail_housing") test_dovetail_housing();

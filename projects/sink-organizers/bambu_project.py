@@ -110,6 +110,12 @@ def main():
 
     p = proj.plate("Sway test")
     p.add("Sway test", soap("test_sway"), 128, 128, settings=FINS)
+
+    p = proj.plate("Soap caddy - installation jig")
+    p.add("Soap caddy jig", soap("jig", rotate=FLAT), 128, 136)
+
+    p = proj.plate("Cutlery drainer - installation jig")
+    p.add("Cutlery drainer jig", drainer("jig", rotate=FLAT), 128, 128)
     proj.write(args.output)
 
 
