@@ -165,16 +165,37 @@ stiffness nor its stress.
 It is laid out like the soap caddy: the bins stand on a rack over the tray,
 and the tray slides out under the rack with the bins in place.
 
-**Bins.** Three bins, 68 × 90 mm and 80 mm tall (`bin_h`): low enough to pick
-a teaspoon out. Every wall and floor is slotted, so the cutlery airs and
-drips.
+**Bins.** Three bins, 68 × 90 mm and 200 mm tall (`bin_h`), deep enough for
+a chef's knife's 20 cm blade. Every wall and floor is slotted, so the
+cutlery airs and drips. They rise 118 mm above the body, whose side walls
+still stop 80 mm up the bins (`body_bin_h`).
 
-- **What holds them:** they stand side by side on the rack with 0.25 mm of
-  play round each (`bin_play`, the soap caddy box's tested fit), between
-  the side walls, and the rack's 15 mm fences (`fence_h`) hold their feet
-  front and back. The first version gave them 0.5 mm and stood them on the
-  tray's slats, and they rattled.
+- **Why so tall:** the first bins were 80 mm. Teaspoons (15 cm) stood in
+  them just right, but table knives (24 cm) and the chef's knife (32 cm)
+  stuck far out and the bins looked tiny.
+- **Risers** (false bottoms) keep the short cutlery as high as before. Each
+  is a short bin inside the bin's walls (`riser_play` 0.3 per side), printed
+  on its floor and dropped in **upside down**, so its slotted floor is the
+  false bottom. A riser in the middle of a bin would be a 66 × 88 mm bridge
+  printed standing, and this one moves between bins.
+  - Left, teaspoons: a 120 mm riser leaves 78 mm, as deep as the old bins.
+  - Middle, table cutlery: a 68 mm riser leaves 130 mm. A knife shows about
+    110 mm, a fork about 55.
+  - Right, chef's knife: no riser; 198 mm, the handle out.
+  - `risers` sets them, left to right. To take a riser out, tip the bin
+    over.
+- **What holds them:** the room for each bin on the rack is laid out with
+  0.25 mm per side (`bin_play`), between the side walls and the rack's
+  15 mm fences (`fence_h`). The bin itself is only 0.1 smaller per side
+  (`bin_fit`), so it does not rock: a 200 mm bin tilts until its foot jams
+  between the fences, about 2·fit / 15. At the old 0.25 its rim would move
+  ≈6.7 mm, at 0.1 ≈2.7, and at 0.05 ≈1.3. The first version gave the bins
+  0.5 mm and stood them on the tray's slats, and they rattled.
+  - The value comes from a fit test on your printed rack and body
+    (plate 8, below).
 - **Removing them:** lift them straight up.
+
+![Cut through the middle of the bins, from the front: the risers in the left and middle bins](renders/cutlery-drainer-section-bins-front.webp)
 
 **Rack.** A slotted shelf on two ledges, chamfered at 45° underneath because
 the body prints standing.
@@ -229,7 +250,7 @@ front; the rack only rests between them.
   level, each slot got a flat roof with a loose end, which the slicer
   flagged as a floating cantilever.
 
-## Installation jigs (plates 8 and 9)
+## Installation jigs (plates 11 and 12)
 
 Sticking the cups on the wall through the plate is awkward: the plate hides
 them, so you cannot see them seal or press each one firmly on its own. Each
@@ -274,7 +295,7 @@ The loads are a thumb pressing each rim onto its button's flange, in
 compression: no analysis needed. The soap caddy's jig: 37 min, 13 g; the
 cutlery drainer's: 40 min, 15 g.
 
-## Fit tests (plate 6)
+## Fit tests (plates 8 and 9)
 
 Each piece tests the real thing, printed the way the real part prints. The
 button hole and the dovetail were settled in black PETG Basic on the P1S
@@ -284,6 +305,14 @@ filled, about 20 % stiffer and a sixth weaker in tension than PETG Basic (Bambu'
 data sheets), so check above all that the button taps onto the stud
 without cracking.
 
+- **Bins** (plate 8, its own plate): three rings 12 mm tall with the bin's
+  outline at `bin_fit` 0.05, 0.1 and 0.15 per side. Test them on the rack
+  and body you have already printed.
+  - Drop each ring between the rack's fences, then the three side by side
+    between the side walls.
+  - Use the tightest one that goes down by hand without forcing: it should
+    stand without rocking front to back. Set it with `-D bin_fit=…` and
+    print the bins.
 - **Buttons on the cup**: three buttons with pilot holes of 3.8, 3.9 and
   4.0 mm as modelled (≈3.55, 3.65 and 3.75 printed), marked by 1 to 3
   notches in the flange. 3.7 tapped but was hard to turn by hand. Use the
@@ -315,7 +344,7 @@ without cracking.
   of its box. The box must drop through with a little play and stop against
   the returns. Too tight: raise `box_play` and `tray_play`; sloppy: lower
   them. The slice keeps the body's fins and one row of their tabs.
-- **Sway test** (plate 7, 17 g, about 2 h): two strips of the soap caddy's side wall,
+- **Sway test** (plate 10, 17 g, about 2 h): two strips of the soap caddy's side wall,
   as flexible at the top as its body was where it printed rough. The bare
   strip should come out rough above ~85 mm, as the body did; the one
   with fins should be clean, and its fins should snap off flush. Tabs gone
@@ -339,7 +368,9 @@ without cracking.
 | cutlery drainer `body` | 218 × 114 × 114 | Side walls with the tails, floor, ledges for the tray and the rack, the handle's bosses; printed standing |
 | cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and a drip lip; printed on its back |
 | cutlery drainer `rack` | 206 × 94 × 17 | Shelf, 2.4 mm, slotted front to back, with a fence at the front and back; printed on its floor |
-| cutlery drainer `bin` | 68 × 90 × 80 | Three; printed standing on their floors |
+| cutlery drainer `bin` | 68.7 × 90.3 × 200 | Three; printed standing on their floors |
+| cutlery drainer `riser` | 64.6 × 86.3 × 120 and 68 | False bottoms (`riser_n` 0 and 1); printed on their floors, dropped into the bins upside down |
+| cutlery drainer `test_bin` | 68.7 × 90.3 × 12 | The bins' fit test: the bin's foot, at `bin_fit` 0.05, 0.1 and 0.15 |
 | cutlery drainer `handle` | 239 × 49 × 10 | The U with its two diamond pins; printed flat |
 | soap caddy `jig` | 108 × 221 × 4.2 | Installation jig: four upside-down keyholes on bars, in a frame round the piece's outline; printed flat |
 | cutlery drainer `jig` | 239 × 125 × 4.2 | Installation jig: an H through four upside-down keyholes, in a frame round the piece's outline; printed flat |
@@ -354,7 +385,9 @@ Decided per CLAUDE.md §2.3:
 |---|---|---|
 | Loads with margins near 5× and a tangled load path (plate, tray, cups) | FEA, single parts and the assembly on the wall | Done: [Strength and orientation](#strength-and-orientation), [fea/README.md](fea/README.md) |
 | Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With the fins, ≤1.3 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)). Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
-| Free-standing piece | Stability | Not needed: both pieces hang on suction cups |
+| The 200 mm bins and the 120 mm riser, printed standing on 1.26–2.10 mm slotted walls | Print stiffness FEA (`PIECE=bin`) | Done: worst at the middle of the bin's long wall, pushed across it. At 1.26 mm walls, 4.2 mm/N; at 1.68 (the default), 1.9; at 2.10, 1.0. All are well under the ≤10 aim: a closed box is stiff where the open soap caddy body was not. No fins ([fea/README.md](fea/README.md#cutlery-drainer-bins-while-they-print)) |
+| Free-standing piece | Stability | Not needed: both pieces hang on suction cups. The bins stand loose on the rack, but its fences and the side walls cage their feet, so a leaning knife only tilts a bin by its play (`bin_fit`, [Bins](#cutlery-drainer)) |
+| Leaning cutlery on the rack's fences | By hand | Not needed: a 200 g knife leaning on a rim puts ≈0.1 N·m on its bin. The 15 mm fence takes it as ≈7 N over 68 mm, ≈2 MPa across the fence's layers: 6× PETG's Z strength derated to 40 %. The bins weigh ≈100 g more than before against the 1 kg of cutlery the wall FEA carries; their weight sits no further from the wall |
 | Installation jigs | — | Not needed: a thumb presses each rim onto its button in compression; the jig holds four cups (≈80 g) |
 
 ## Strength and orientation
@@ -425,15 +458,27 @@ With the default parameters:
 | 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 6 h 52 min, 135 g | 6 h 33 min, 138 g | 6 h 53 min, 148 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 69 g | 3 h 06 min, 71 g | 3 h 22 min, 75 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 25 min, 94 g | 4 h 04 min, 96 g | 4 h 25 min, 103 g |
-| 4 · Cutlery drainer: tray, rack, handle and buttons | tray, rack, handle, 4 buttons | 3 h 56 min, 94 g | 3 h 36 min, 96 g | 3 h 56 min, 103 g |
-| 5 · Cutlery drainer: bins | 3 bins | 5 h 19 min, 78 g | 5 h 06 min, 80 g | 5 h 19 min, 86 g |
-| 6 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 32 min, 36 g | 1 h 27 min, 36 g | 1 h 32 min, 39 g |
-| 7 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
-| 8 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
-| 9 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
+| 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
+| 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 14 min, 58 g | 2 h 08 min, 60 g | 2 h 14 min, 64 g |
+| 6 · Cutlery drainer: bins | 3 bins, 200 mm | 16 h 10 min, 210 g | 15 h 49 min, 215 g | 16 h 10 min, 230 g |
+| 7 · Cutlery drainer: risers | the 120 and 68 mm risers | 5 h 10 min, 69 g | 4 h 57 min, 71 g | 5 h 10 min, 76 g |
+| 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 20 min, 18 g | 1 h 18 min, 19 g | 1 h 20 min, 20 g |
+| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 32 min, 36 g | 1 h 26 min, 36 g | 1 h 32 min, 39 g |
+| 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
+| 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
+| 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
 
 Avoiding travel across walls costs 5–25 min on the other plates (the bins
-the most). PETG bonds hard to the textured plate: use a glue stick as a release layer,
+the most).
+
+**Plates 4 and 5 were one plate**: the tray standing 103 mm with the rack,
+the handle and four buttons spread round it. For 87 layers the nozzle
+crossed the bed between seven parts (1277 travels over 40 mm, 188 m in
+all, every one retracted), and the first print in PETG HF came off in a
+fist of strings. Now the tall tray prints alone and the short parts sit
+close together. Strings that thick with retraction on also mean wet PETG:
+dry it (65 °C, 8 h) before the long plates. The bins print a few mm apart
+for the same reason. PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.
 
 ## Parameters
@@ -472,14 +517,15 @@ pieces do not fit.
 | `test_sway_h`, `test_sway_len`, `test_sway_fin` | 100, 40, 12 | The sway test's strips and fins |
 | `side_add`, `side_add_z`, `frame_t`, `back_wall` | 0, 0, 1.68, 0 | Thicker side walls (from a height), front frame, a slotted back wall. Variants of the print stiffness study, off by default |
 | **Cutlery drainer** | | |
-| `frame_w`, `bins`, `bin_d`, `bin_h` | 210, 3, 90, 80 | Width along the wall; number of bins, their depth and height |
+| `frame_w`, `bins`, `bin_d`, `bin_h`, `body_bin_h` | 210, 3, 90, 200, 80 | Width along the wall; number of bins, their room's depth and their height; how far the body's side walls reach up the bins |
 | `counter_gap` | 15 | Counter to the body |
 | `cup_span`, `cup_pitch` | 175, 80 | Between the cups of a row (under the dovetails), and between the rows |
 | `towel_gap`, `step_r` | 14, 6 | Room for the towel in front of the body; the step between the side walls' deep and shallow parts |
 | `tray_rim` | 5 | The tray's rims above its floor, at the back |
 | `rack_t`, `fence_t`, `fence_h`, `rack_stop` | 2.4, 1.68, 15, 2 | Rack: floor, fences, their height, the bumps in front of it |
 | `rack_slots_across` | true | The rack floor's slots run front to back, so its strips span fence to fence |
-| `bin_wall`, `bin_floor`, `bin_r`, `bin_play` | 1.26, 1.6, 5, 0.25 | Bins |
+| `bin_wall`, `bin_floor`, `bin_r`, `bin_play`, `bin_fit` | 1.68, 1.6, 5, 0.25, 0.1 | Bins: walls, floor, corners; their room on the rack, per side (the rack and body are laid out with it); the bin's clearance in it, per side (fit test) |
+| `risers`, `riser_play`, `riser_n` | [120, 68, 0], 0.3, 0 | Risers (false bottoms): height in each bin, left to right, 0 for none; clearance in the bin; which one `part="riser"` exports |
 | `handle_s`, `handle_drop`, `pin_s`, `pin_len`, `pin_play`, `boss_t`, `boss_w`, `handle_play` | 10, 12, 6, 5, 0.15, 4.2, 16, 0.4 | Towel handle, its pins and bosses |
 
 ## Renders
@@ -499,4 +545,4 @@ Add `RENDER_FLAGS="--samples 32 --scale 0.25"` for a quick draft.
 | Soap caddy | ![](renders/soap-caddy-hero.webp) | ![](renders/soap-caddy-front.webp) | ![](renders/soap-caddy-side.webp) | ![](renders/soap-caddy-top.webp) | ![](renders/soap-caddy-back.webp) |
 | Cutlery drainer | ![](renders/cutlery-drainer-hero.webp) | ![](renders/cutlery-drainer-front.webp) | ![](renders/cutlery-drainer-side.webp) | ![](renders/cutlery-drainer-top.webp) | ![](renders/cutlery-drainer-back.webp) |
 
-Plates: ![](renders/soap-caddy-plate1-hero.webp) ![](renders/soap-caddy-plate2-hero.webp) ![](renders/cutlery-drainer-plate3-hero.webp) ![](renders/cutlery-drainer-plate4-hero.webp) ![](renders/cutlery-drainer-plate5-hero.webp) ![](renders/fit-tests-top.webp)
+Plates: ![](renders/soap-caddy-plate1-hero.webp) ![](renders/soap-caddy-plate2-hero.webp) ![](renders/cutlery-drainer-plate3-hero.webp) ![](renders/cutlery-drainer-plate4-hero.webp) ![](renders/cutlery-drainer-plate5-hero.webp) ![](renders/cutlery-drainer-plate6-hero.webp) ![](renders/cutlery-drainer-plate7-hero.webp) ![](renders/fit-tests-top.webp)

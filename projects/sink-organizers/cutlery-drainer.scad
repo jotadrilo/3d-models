@@ -18,9 +18,13 @@
 //     front and back that holds the bins' feet and stiffens it across. A
 //     bump on each ledge stops it sliding forward. It lifts out once the
 //     bins are out.
-//   - bins: open boxes with slotted floors, side by side on the rack with
-//     little play. They lift out (and get reprinted when the knives have
-//     scored them).
+//   - bins: tall open boxes with slotted floors, side by side on the rack,
+//     snug between its fences and the side walls so leaning cutlery does
+//     not rock them. They rise above the body and lift out (and get
+//     reprinted when the knives have scored them).
+//   - risers: false bottoms, short bins dropped upside down into a bin, so
+//     short cutlery stands as high as long: the teaspoons on a tall one,
+//     the table cutlery on a low one, the chef's knife on the bin's floor.
 //   - handle: an optional U across the front for the towel. Its arms are
 //     sprung apart to snap diamond pins into sockets on both side walls
 //     (sprung_handle in tools/scad/joints.scad): it cannot turn, and pulling
@@ -30,9 +34,9 @@
 // stand on their floors, the handle lies flat (its bending plane in XY).
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, rack, bin, handle, button, jig, test_pin]
+part = "assembly";   // [assembly, plate, body, tray, rack, bin, riser, handle, button, jig, test_pin, test_bin]
 show_items = true;   // draw the wall, counter, suction cups, cutlery and towel (assembly only)
-section = "none";    // [none, keyhole, handle] cut the assembly through a keyhole, or level with the handle's pins, for the section renders
+section = "none";    // [none, keyhole, handle, bins] cut the assembly through a keyhole, level with the handle's pins, or through the middle of the bins (the risers), for the section renders
 with_handle = true;  // the towel handle (assembly only)
 explode = 0;         // [0:0.1:1] tray slid out, rack and bins lifted (renders)
 body_lift = 0;       // [0:1:200] body slid up off the plate (renders)
@@ -41,7 +45,8 @@ body_lift = 0;       // [0:1:200] body slid up off the plate (renders)
 frame_w = 210;       // width of the body, along the wall [120:1:300]
 bins = 3;            // number of bins [1:1:5]
 bin_d = 90;          // bin depth, front to back [50:1:120]
-bin_h = 80;          // bin height: low enough to pick teaspoons out [50:1:140]
+bin_h = 200;         // bin height: deep enough for a chef's knife's blade (20 cm) [50:1:240]
+body_bin_h = 80;     // how far the body's side walls reach up the bins, above the rack floor [50:1:200]
 
 /* [Kitchen] */
 counter_gap = 15;    // counter to the bottom of the body (preview and checks) [3:1:100]
@@ -65,10 +70,16 @@ rack_stop = 2;       // depth of the bumps in front of the rack, on its ledges [
 rack_slots_across = true; // the rack floor's slots run front to back, so its strips span the short way, fence to fence (fea/README.md)
 
 /* [Bins] */
-bin_wall = 1.26;     // bin walls (3 lines) [1.26:0.42:2.52]
+bin_wall = 1.68;     // bin walls (4 lines): stiffer under the nozzle (fea/README.md) and against knives [1.26:0.42:2.52]
 bin_floor = 1.6;     // bin floor (8 layers) [1.2:0.2:3]
 bin_r = 5;           // rounded vertical corners of the bins [1:0.5:12]
-bin_play = 0.25;     // clearance round each bin, per side: the soap caddy's box_play [0.1:0.05:1]
+bin_play = 0.25;     // room for each bin, per side, between the rack's fences and the side walls (the rack and body are laid out with it) [0.1:0.05:1]
+bin_fit = 0.1;       // clearance round each bin, per side, in that room: snug, so leaning cutlery does not rock the tall bins (test_bin) [0:0.025:0.5]
+
+/* [Risers] */
+risers = [120, 68, 0]; // riser height in each bin, left to right, 0 for none: the teaspoons (15 cm) on 120, the table cutlery on 68, the chef's knife (32 cm) on the floor
+riser_play = 0.3;    // clearance round a riser inside its bin, per side: it drops in loose [0.1:0.05:1]
+riser_n = 0;         // which bin's riser part="riser" exports [0:1:4]
 
 /* [Towel handle] */
 handle_s = 10;       // handle section, square, with chamfered edges [7:0.5:16]
@@ -105,7 +116,8 @@ reach_f = reach + ledge_stop + 1;              // body front at the tray: the le
 bar_y = -reach_f - towel_gap - handle_s / 2;   // handle bar axis, in front of the body
 thx = ix - tray_play;                          // tray and rack half width
 cell = 2 * ix / bins;
-bin_w = cell - 2 * bin_play;
+bin_w = cell - 2 * bin_fit;                    // the bin itself, snug in its room
+bin_dd = bin_d + 2 * (bin_play - bin_fit);
 bin_xs = [for (i = [0 : bins - 1]) -ix + (i + 0.5) * cell];
 
 // Heights, from the bottom of the body
@@ -118,7 +130,7 @@ z_b = z_r + rack_t;                            // the bins stand here
 lower_top = ledge_h + ledge_stop + tray_rim;   // top of the side walls' deep part
 lo_z = pad_lo + 2 - dt_cap;                    // lower keyholes' rest point: the pads start 2 mm up the plate
 hi_z = lo_z + cup_pitch;
-top = max(z_b + bin_h, hi_z + pad_hi);         // top of the body and the plate
+top = max(z_b + body_bin_h, hi_z + pad_hi);    // top of the body and the plate
 pin_y = -ud + boss_w / 2 + 2;                  // pin axes, near the front of the side walls
 arm_z = top - handle_drop;                     // pin axes and the handle's mid-plane
 span = frame_w + 2 * (boss_t + handle_play);   // between the handle's arms
@@ -135,13 +147,16 @@ assert(pin_s * sqrt(2) + 4 <= boss_w, "the pins are too big for the bosses");
 assert(pin_len <= boss_t + side_t + 1, "the pins are longer than the bosses are deep");
 assert(sprung_handle_strain(span, handle_reach, handle_s, spread) <= 0.01, "the handle strains over 1 % to go on: lengthen its arms (towel_gap) or shorten the pins");
 assert(hi_z + pad_hi <= top, "the upper keyholes do not fit on the plate");
-assert(arm_z - boss_w / 2 - boss_t >= z_r + slot_margin, "the handle's bosses reach the rack: raise bin_h or lower handle_drop");
+assert(arm_z - boss_w / 2 - boss_t >= z_r + slot_margin, "the handle's bosses reach the rack: raise body_bin_h or lower handle_drop");
 assert(counter_gap >= dt_cap, "the plate reaches the counter");
+assert(max(risers) <= bin_h - bin_floor - 20, "a riser is taller than its bin");
 
 echo(str("body: ", frame_w, " x ", reach_f, " x ", top, " mm (w x d x h), ", ud, " deep above the tray; plate ", 2 * plate_hx(), " x ", top + dt_cap,
          "; tray edge ", reach + wall_gap, " mm from the wall, the handle ", -bar_y + handle_s / 2 + wall_gap));
 echo(str("tray: ", 2 * thx, " x ", tray_y0 - tray_y1, " x ", z_s, " mm; rack ", 2 * thx, " x ", tray_y0 - rack_y1, " x ", rack_t + fence_h, " mm at ", z_r, "; ",
-         bins, " bins ", bin_w, " x ", bin_d, " x ", bin_h, " mm (inside ", bin_w - 2 * bin_wall, " x ", bin_d - 2 * bin_wall, ")"));
+         bins, " bins ", bin_w, " x ", bin_dd, " x ", bin_h, " mm (inside ", bin_w - 2 * bin_wall, " x ", bin_dd - 2 * bin_wall, "), ",
+         bin_h - body_bin_h - rack_t, " mm above the body; depth on the risers ",
+         [for (i = [0 : bins - 1]) bin_h - bin_floor - riser_h(i)]));
 echo(str("cups above the counter: ", counter_gap + lo_z, " and ", counter_gap + hi_z, " mm, ", cup_span, " mm apart"));
 echo(str("handle: ", span + 2 * handle_s, " x ", handle_reach + 1.5 * handle_s, " mm; its arms open ", spread,
          " mm each to go on: ", round(sprung_handle_strain(span, handle_reach, handle_s, spread) * 1000) / 10, " % strain in the bar; button ", button_h, " mm"));
@@ -241,17 +256,18 @@ module rack() {
     }
 }
 
-// One bin, in print orientation: floor on the bed, centred on x and y.
-module bin() {
-    w = bin_w; d = bin_d; r = bin_r;
-    module outline(o = 0) offset(r = r + o) offset(delta = -r) square([w, d], center = true);
+// An open box with a slotted floor and slotted walls, in print orientation:
+// floor on the bed, centred on x and y. The outline is the bin's, offset by o.
+module bin_shell(h, o = 0) {
+    r = bin_r + o; w = bin_w + 2 * o; d = bin_dd + 2 * o;
+    module outline(e = 0) offset(r = r + e) offset(delta = -r) square([w, d], center = true);
     difference() {
         union() {
             hull() {
                 linear_extrude(eps) offset(delta = -chamfer) outline();
                 translate([0, 0, chamfer]) linear_extrude(bin_floor - chamfer) outline();
             }
-            linear_extrude(bin_h) difference() { outline(); outline(-bin_wall); }
+            linear_extrude(h) difference() { outline(); outline(-bin_wall); }
         }
         // drain slots across the floor, split at slot_max_len like the walls'
         for (y = slot_xs(-d / 2 + bin_wall + 2, d / 2 - bin_wall - 2),
@@ -262,11 +278,23 @@ module bin() {
         // slot_max_len: the bin prints standing, and the ribs between long
         // slots sway under the nozzle (the soap caddy's box came out rough)
         for (s = [-1, 1], x = slot_xs(-w / 2 + r + slot_rib, w / 2 - r - slot_rib))
-            slot(x, s * d / 2, bin_floor + slot_margin, bin_h - slot_margin, "y");
+            slot(x, s * d / 2, bin_floor + slot_margin, h - slot_margin, "y");
         for (s = [-1, 1], y = slot_xs(-d / 2 + r + slot_rib, d / 2 - r - slot_rib))
-            slot(s * w / 2, y, bin_floor + slot_margin, bin_h - slot_margin, "x");
+            slot(s * w / 2, y, bin_floor + slot_margin, h - slot_margin, "x");
     }
 }
+
+// One bin, in print orientation.
+module bin() bin_shell(bin_h);
+
+// A riser (false bottom), in print orientation: a short bin inside the
+// bin's walls, printed on its floor and dropped into the bin upside down,
+// so its floor is the false bottom and its open side stands on the bin's
+// floor. The water drains through both floors.
+function riser_h(i) = i < len(risers) ? risers[i] : 0;
+module riser(h) bin_shell(h, -bin_wall - riser_play);
+// in place, in the bin at the origin
+module riser_placed(h) if (h > 0) translate([0, 0, bin_floor + h]) mirror([0, 0, 1]) riser(h);
 
 // The towel handle, in print orientation: the U flat on the bed.
 module handle() sprung_handle(span, handle_reach, handle_s, pin_s, pin_len);
@@ -285,15 +313,26 @@ module test_pin() {
     translate([0, boss_w / 2 + 6, 0]) sprung_handle(test_w + 2 * handle_play, 14, handle_s, pin_s, pin_len);
 }
 
+// Fit test: the bin's foot, as snug as the bins (bin_fit), to drop between
+// the printed rack's fences and side by side between the body's side walls.
+// Print it with a few bin_fit values (bambu_project.py does).
+module test_bin() difference() {
+    bin_shell(12);
+    translate([0, 0, -1]) linear_extrude(bin_floor + 2) offset(delta = -bin_wall - 4)
+        square([bin_w, bin_dd], center = true);          // no floor but a rim: it only tests the outline
+}
+
 // ---------------------------------------------------------------- assembly
 
 // "keyhole" keeps x <= the right column of keyholes (look from +x); "handle"
-// keeps z <= the pins' axes (look from the top): the U and its pins in the walls.
+// keeps z <= the pins' axes (look from the top): the U and its pins in the walls;
+// "bins" keeps the back half of the bins (look from the front): the risers.
 module cut() {
     if (section == "none") children();
     else intersection() {
         union() children();
         if (section == "keyhole") translate([cup_span / 2 - 1000, -1000, -1000]) cube([1000, 2000, 2000]);
+        else if (section == "bins") translate([-1000, y_bins, -1000]) cube([2000, 2000, 2000]);
         else translate([-1000, -1000, arm_z - 2000]) cube([2000, 2000, 2000]);
     }
 }
@@ -307,8 +346,8 @@ module items() {
     cut() cups_and_buttons(cups, mate_colour);
     // cutlery standing in the bins: a few handles with their heads up
     color("#B8BCC2") cut() for (i = [0 : bins - 1], j = [0 : 2]) {
-        l = [150, 210, 130][i % 3];
-        translate([bin_xs[i] + (j - 1) * bin_w / 4, y_bins + (j - 1) * 18, z_b + bin_floor + body_lift + lift])
+        l = [150, 240, 320][i % 3];
+        translate([bin_xs[i] + (j - 1) * bin_w / 4, y_bins + (j - 1) * 18, z_b + bin_floor + riser_h(i) + body_lift + lift])
             rotate([(j - 1) * 5, (j - 1) * 6, 0]) {
                 translate([-1.5, -5, 0]) cube([3, 10, l - 45]);
                 translate([0, 0, l - 25]) scale([0.4, 1.4, 3]) sphere(d = 15);
@@ -333,10 +372,12 @@ else if (part == "body") body();
 else if (part == "tray") drainer_tray();
 else if (part == "rack") rack();
 else if (part == "bin") bin();
+else if (part == "riser") riser(riser_h(riser_n));
 else if (part == "handle") handle();
 else if (part == "button") button();
 else if (part == "jig") jig();
 else if (part == "test_pin") test_pin();
+else if (part == "test_bin") test_bin();
 else if (part == "assembly") {
     color(piece_colour) cut() plate();
     color(piece_colour) cut() translate([0, 0, body_lift]) {
@@ -344,7 +385,7 @@ else if (part == "assembly") {
         translate([0, -pull, 0]) drainer_tray();
         translate([0, 0, lift]) {
             rack();
-            for (x = bin_xs) translate([x, y_bins, z_b + lift / 2]) bin();
+            for (i = [0 : bins - 1]) translate([bin_xs[i], y_bins, z_b + lift / 2]) { bin(); riser_placed(riser_h(i)); }
         }
     }
     if (with_handle) color(mate_colour) cut() translate([0, 0, body_lift]) handle_placed();

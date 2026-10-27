@@ -10,6 +10,7 @@ nozzle force scales it.
 
 usage: python print_sway.py <out dir> [variant ...]
        PIECE=drainer python print_sway.py <out dir>      # the cutlery drainer's body
+       PIECE=bin CUTS=60,100,140,170,200 python print_sway.py <out dir>   # its bins and risers
 """
 import sys, os, subprocess, json, time
 import numpy as np
@@ -33,9 +34,12 @@ VARIANTS = {                      # one change per variant from the reference
 CUTS = [int(c) for c in os.environ.get('CUTS', '60,100,130,150,170,190,209').split(',')]
 H = 2.0
 PIECE = os.environ.get('PIECE', 'soap')
-SCAD = os.path.join(cm.HERE, {'soap': 'body_cut.scad', 'drainer': 'drainer_body_cut.scad', 'strip': 'sway_test_cut.scad'}[PIECE])
+SCAD = os.path.join(cm.HERE, {'soap': 'body_cut.scad', 'drainer': 'drainer_body_cut.scad', 'strip': 'sway_test_cut.scad', 'bin': 'bin_cut.scad'}[PIECE])
 if PIECE == 'drainer':
     VARIANTS = {'R as it is': []}
+if PIECE == 'bin':               # the 200 mm bins, one wall thickness per variant, and the tall riser
+    VARIANTS = {'W126 bin walls 1.26 (3 lines)': ['bin_wall=1.26'], 'W168 bin walls 1.68 (4 lines)': ['bin_wall=1.68'],
+                'W210 bin walls 2.10 (5 lines)': ['bin_wall=2.1'], 'R120 riser 120, walls 1.26': ['bin_wall=1.26', 'fea_riser=120']}
 if PIECE == 'strip':             # the sway test (test_sway), its bare strip and the one with fins
     VARIANTS = {'S120 strips 120 mm (the default)': [], 'S100 strips 100 mm': ['test_sway_h=100']}
 PATCH_R = 3.0                     # radius of the loaded patch, the nozzle's reach

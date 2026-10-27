@@ -9,15 +9,20 @@ sway under the nozzle up there (fea/README.md, "Print stiffness").
 Plate 2: the soap caddy's tray on its back, the box on its floor and the four
 buttons on their flanges.
 Plate 3: the cutlery drainer's body standing and its wall plate flat.
-Plate 4: the cutlery drainer's tray on its back, the rack on its floor, the
-towel handle flat (the towel's weight bends it along XY) and the four
-buttons.
-Plate 5: the cutlery drainer's three bins on their floors.
-Plate 6: fit tests, minutes and a few grams before the big plates: a keyhole
+Plate 4: the cutlery drainer's tray on its back, alone: it stands 103 mm
+and the rest of its old plate 17, so the nozzle crossed the bed between
+seven parts for 87 layers and the PETG strung across it.
+Plate 5: the cutlery drainer's rack on its floor, the towel handle flat (the
+towel's weight bends it along XY) and the four buttons, close together.
+Plate 6: the cutlery drainer's three 200 mm bins on their floors, a few mm
+apart.
+Plate 7: the risers (false bottoms) on their floors.
+Plate 8: the bins' fit test: the bin's foot at three bin_fit values.
+Plate 9: fit tests, minutes and a few grams before the big plates: a keyhole
 pad with a button (screw it onto a cup first), a strip of plate with a
 dovetail housing and a strip of wall with its tail, a slice of the soap
 caddy's body with the bottom of its box, and the handle's pins in a block.
-Plate 7: the sway test, two strips of the soap caddy's side wall as flexible
+Plate 10: the sway test, two strips of the soap caddy's side wall as flexible
 as its body where it printed rough, one bare and one held by stabilizer fins.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
@@ -70,8 +75,8 @@ def main():
     def soap(name, **kw):
         return load_scad(SOAP, name, args.defs, colour=False, **kw)
 
-    def drainer(name, **kw):
-        return load_scad(DRAINER, name, args.defs, colour=False, **kw)
+    def drainer(name, extra=(), **kw):
+        return load_scad(DRAINER, name, args.defs + list(extra), colour=False, **kw)
 
     p = proj.plate("Soap caddy - body and wall plate")
     p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 75, 128, settings=FINS, ranges=[(SLOW_Z, 250, SLOW)])
@@ -88,17 +93,27 @@ def main():
     p.add("Cutlery drainer body", drainer("body"), 128, 74)
     p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), 128, 190)
 
-    p = proj.plate("Cutlery drainer - tray, rack, handle and buttons")
-    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 218)
-    p.add("Cutlery drainer rack", drainer("rack"), 128, 140)
-    p.add("Towel handle", drainer("handle"), 128, 60)
-    for i, x in enumerate((30, 48, 208, 226)):
-        p.add(f"Cutlery drainer button {i + 1}", button, x, 22)
+    p = proj.plate("Cutlery drainer - tray")
+    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 128)
+
+    p = proj.plate("Cutlery drainer - rack, handle and buttons")
+    p.add("Cutlery drainer rack", drainer("rack"), 128, 160)
+    p.add("Towel handle", drainer("handle"), 128, 80)
+    for i, x in enumerate((92, 116, 140, 164)):
+        p.add(f"Cutlery drainer button {i + 1}", button, x, 40)
 
     p = proj.plate("Cutlery drainer - bins")
     bin_ = drainer("bin")
-    for i, x in enumerate((55, 128, 201)):
+    for i, x in enumerate((52, 128, 204)):
         p.add(f"Cutlery drainer bin {i + 1}", bin_, x, 128)
+
+    p = proj.plate("Cutlery drainer - risers")
+    for i, (x, name) in enumerate(((90, "teaspoons"), (166, "table cutlery"))):
+        p.add(f"Cutlery drainer riser {i + 1} ({name})", drainer("riser", extra=[f"riser_n={i}"]), x, 128)
+
+    p = proj.plate("Cutlery drainer - bin fit test")
+    for x, fit in ((52, "0.05"), (128, "0.1"), (204, "0.15")):
+        p.add(f"Bin fit {fit}", drainer("test_bin", extra=[f"bin_fit={fit}"]), x, 128)
 
     p = proj.plate("Fit tests")
     p.add("Keyhole pad", soap("test_keyhole", rotate=FLAT), 45, 60)

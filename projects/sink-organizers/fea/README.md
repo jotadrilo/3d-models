@@ -439,6 +439,24 @@ cases:
 - **Stresses:** everything works under 6 MPa (p99.9) in the worst case.
 - **What is left:** the cups. 9 N all day each, and 43 N for a moment when the towel is yanked.
 
+## Cutlery drainer bins while they print
+
+`print_sway.py` with `PIECE=bin` (`bin_cut.scad`), as in section 5. The bins went from 80 to
+200 mm tall (2026-10): slotted walls printed standing, well past the ~60 mm trigger. Each value
+is the worst of the long wall's back edge, middle and front and the short wall's middle, along
+x and y: always the middle of the long (90 mm) wall, pushed across it.
+
+| Variant (one change) | 80 mm | 140 mm | 200 mm | Worst |
+|---|---|---|---|---|
+| W126 walls 1.26 (3 lines, the first bins) | 4.2 | 4.1 | 2.7 | 4.2 |
+| **W168 walls 1.68 (the default)** | 1.9 | 1.8 | 1.2 | **1.9** |
+| W210 walls 2.10 | 1.0 | 1.0 | 0.6 | 1.0 |
+| R120 the 120 mm riser, walls 1.26 | 3.3 (at 60) | 2.3 (at 120) | — | 3.3 |
+
+**Reading it:** a closed box, so even the thinnest wall stays under half the ≤10 aim; the soap
+caddy's open U reached 33. 1.68 halves it again and resists knives better, for 0.9 mm of the
+inside. No fins.
+
 ## Not checked
 
 - **Material:** isotropic, with the X-Y modulus. Bending across the layers is about a quarter
@@ -464,6 +482,8 @@ micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
 micromamba run -n fea python drainer_fea.py <out> F V0       # the drainer as it is now and as it was, all four cases
 CUTS=100,150,190,209 micromamba run -n fea python print_sway.py <out> R F   # the body while it prints
 PIECE=drainer CUTS=40,70,95,114 micromamba run -n fea python print_sway.py <out>   # the drainer's body
+PIECE=bin CUTS=80,140,200 micromamba run -n fea python print_sway.py <out> W126 W168 W210   # its bins
+PIECE=bin CUTS=60,120 micromamba run -n fea python print_sway.py <out> R120                   # the tall riser
 ```
 
 | File | What it is |
@@ -477,5 +497,5 @@ PIECE=drainer CUTS=40,70,95,114 micromamba run -n fea python print_sway.py <out>
 | `drainer_dims.scad` | Echoes the drainer's dimensions, and exports its handle in place |
 | `drainer_model.py` | The drainer as an FEA model: STL meshes, surfaces, the hinged cups, loads |
 | `drainer_fea.py` | The drainer's variants and load cases, one block of results each |
-| `body_cut.scad`, `drainer_body_cut.scad`, `print_sway.py` | Each body as it stands on the bed at a given height, and the print stiffness study on it |
+| `body_cut.scad`, `drainer_body_cut.scad`, `bin_cut.scad`, `print_sway.py` | Each body (and the drainer's bins and risers) as it stands on the bed at a given height, and the print stiffness study on it |
 | `img/` | The images on this page |

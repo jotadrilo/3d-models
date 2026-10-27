@@ -6,7 +6,7 @@ OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
 SOAP_PARTS     ?= plate body tray box button jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width
-DRAINER_PARTS  ?= plate body tray rack bin handle jig test_pin
+DRAINER_PARTS  ?= plate body tray rack bin riser handle jig test_pin test_bin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'
 BLENDER        ?= blender
@@ -59,6 +59,8 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-apart --model assembly.3mf --views hero $(RENDER_FLAGS)
 	$(COLOUR) -D 'section="keyhole"' -o assembly.3mf cutlery-drainer.scad
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-section-keyhole --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
+	$(COLOUR) -D 'section="bins"' -o assembly.3mf cutlery-drainer.scad
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-section-bins --model assembly.3mf --views front $(RENDER_FLAGS)
 	$(COLOUR) -D 'section="handle"' -o assembly.3mf cutlery-drainer.scad
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-section-handle --model assembly.3mf --views top $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/soap-caddy-plate1 --plate 1 --views hero $(RENDER_FLAGS)
@@ -66,9 +68,11 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate3 --plate 3 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate4 --plate 4 --views hero $(RENDER_FLAGS)
 	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate5 --plate 5 --views hero $(RENDER_FLAGS)
-	$(RENDER) $(PROJECT) renders/fit-tests --plate 6 --views top $(RENDER_FLAGS)
-	$(RENDER) $(PROJECT) renders/soap-caddy-jig --plate 8 --views top $(RENDER_FLAGS)
-	$(RENDER) $(PROJECT) renders/cutlery-drainer-jig --plate 9 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate6 --plate 6 --views hero $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-plate7 --plate 7 --views hero $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/fit-tests --plate 9 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/soap-caddy-jig --plate 11 --views top $(RENDER_FLAGS)
+	$(RENDER) $(PROJECT) renders/cutlery-drainer-jig --plate 12 --views top $(RENDER_FLAGS)
 	rm -f assembly.3mf
 
 clean: ## Remove exported files (the committed Bambu project and renders are kept)
