@@ -5,8 +5,8 @@
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SAMPLES        ?= keyhole_pad keyhole_button standoff_peg peg_block screw_plate holes diamond_female diamond_male tongue_female tongue_male lead_in_female lead_in_male handle_block handle dovetail_housing dovetail_tail house_box board_bracket board_bracket_hook stabilizer
-DEMOS          ?= keyhole standoff_peg screw holes diamond tongue lead_in handle dovetail bracket bracket_hook stabilizer
+SAMPLES        ?= keyhole_pad keyhole_button tape_mount standoff_peg peg_block screw_plate holes diamond_female diamond_male tongue_female tongue_male lead_in_female lead_in_male handle_block handle dovetail_housing dovetail_tail house_box board_bracket board_bracket_hook stabilizer
+DEMOS          ?= keyhole tape standoff_peg screw holes diamond tongue lead_in handle dovetail bracket bracket_hook stabilizer
 SRC            := catalog.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender

@@ -43,6 +43,18 @@ drop = 12;           // how far the plate drops onto its buttons; lift it this m
 pad_t = 4.2;         // pad thickness around each keyhole (10 lines) [3.36:0.42:6.3]
 pad_w = 22;          // pad width [18:1:40]
 
+/* [Adhesive mount] */
+mount = "cups";      // [cups, tape] what the plate's keyholes hang on: buttons on suction cups, or the heads of a frame stuck to the wall with foam tape (part="frame")
+tape = "square";     // [square, round] the tape pieces' shape
+tape_n = 2;          // pieces of tape in the row at the top of the frame: the fewest the load test allows (each piece set per piece) [1:1:5]
+tape_size = 0;       // the tape pieces' side or diameter; 0: 40 for squares, 30 for rounds (HOMMAND pads) [0:1:60]
+tape_foot_d = 30;    // the feet's spacers at the bottom: a round piece of the same tape, its liner left on, so it bears on the wall without sticking [15:1:40]
+tape_t = 3;          // tape thickness (HOMMAND pads: 3 mm): the frame stands this much off the wall, less its seats [0.4:0.1:5]
+tape_gap = 3;        // between the tape pieces in the row [2:0.5:10]
+tape_seat = 0.2;     // shallow seats for the tape pieces in the frame's back, to place them (1 layer) [0:0.2:0.6]
+tape_frame_d = 6;    // depth of the frame's bars [3:0.5:12]
+tape_inset = 2;      // the frame stays this far inside the plate's outline, hidden behind it [0:1:10]
+
 /* [Installation jig] */
 jig_bar_w = 6.3;     // the jig's bars, across (15 lines) [4.2:0.42:12.6]
 jig_bar_t = 2;       // the jig's bars, thick (10 layers): thin, so each cup seats by itself [1.2:0.2:4.2]
@@ -286,6 +298,21 @@ module install_jig(cups, bars, hw, z0, z1) {
 // ---------------------------------------------------------------- fit tests
 
 // A keyhole pad, printed flat, for a button.
+// Load test for the tape: one head on a frame for a single piece of tape
+// (tape, tape_size), to stick on the wall and load with test_hanger.
+module test_tape() let(t = tape_sz())
+    tape_mount([[0, 0]], t / 2 + 1, -(t / 2 + 1), tape_stand(), 1, tape, t, tape_gap, tape_foot_d, tape_seat,
+               tape_frame_d, pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
+// A keyhole pad that hangs a weight from a cord through its foot, for test_tape.
+module test_hanger() difference() {
+    union() {
+        translate([0, pad_t, 0]) pad_at(0, 0);
+        translate([-pad_w / 2, 0, -pad_lo - 20]) cube([pad_w, pad_t, 20 + eps]);
+    }
+    translate([0, pad_t, 0]) keyhole_at(0, 0);
+    translate([0, -1, -pad_lo - 10]) rotate([-90, 0, 0]) cylinder(d = 6, h = pad_t + 2);
+}
+
 module test_keyhole() difference() {
     translate([0, pad_t, 0]) pad_at(0, 0);
     translate([0, pad_t, 0]) keyhole_at(0, 0);
@@ -335,6 +362,34 @@ module test_dovetail_tail() {
 // ---------------------------------------------------------------- assembly helpers
 
 // The suction cups and buttons at cups ([x, z] each), in colour c for the buttons.
+// The adhesive frame, in print orientation, for the plate (top: the plate's
+// top) and its keyholes' rest points (cups, [x, z] each): the tape row at the
+// top of the plate's outline, the feet at its bottom, hidden behind it, and
+// the heads where the buttons would be. Frame y = z - tape_frame_zc(top).
+function tape_sz() = tape_size > 0 ? tape_size : tape == "round" ? 30 : 40;
+function tape_stand() = wall_gap - (tape_t - tape_seat);   // tape face to the plate's back face
+function tape_frame_zc(top) = (top - dt_cap) / 2;
+function tape_frame_h(top) = top + dt_cap - 2 * tape_inset;
+module tape_frame(top, cups) let(zc = tape_frame_zc(top), h = tape_frame_h(top)) {
+    echo(str("tape frame: ", tape_n, " ", tape, " pieces of tape (", round(tape_area(tape_n, tape, tape_sz())), " cm²) at the top, ",
+             len(tape_feet_x([for (c = cups) [c[0], c[1] - zc]], h / 2 - 1 - tape_sz())), " feet; ", tape_stand() + head_front, " mm deep"));
+    tape_mount([for (c = cups) [c[0], c[1] - zc]], h / 2, -h / 2, tape_stand(), tape_n, tape, tape_sz(), tape_gap, tape_foot_d, tape_seat,
+               tape_frame_d, pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
+}
+// The frame on the wall, its tape and the feet's spacers
+module tape_frame_placed(top, cups, c) {
+    zc = tape_frame_zc(top); h = tape_frame_h(top);
+    hs = [for (k = cups) [k[0], k[1] - zc]];
+    ty = h / 2 - 1 - tape_sz() / 2;
+    color(c) translate([0, wall_gap - tape_t + tape_seat, zc]) rotate([90, 0, 0]) tape_frame(top, cups);
+    color("#E8E2D0") translate([0, wall_gap, zc]) rotate([90, 0, 0]) linear_extrude(tape_t) {
+        for (p = tape_row(tape_n, tape_sz(), tape_gap, ty)) translate(p) tape_piece(tape, tape_sz());
+        for (x = tape_feet_x(hs, ty - tape_sz() / 2)) translate([x, -h / 2 + 1 + tape_foot_d / 2]) circle(d = tape_foot_d);
+    }
+}
+// Whatever the plate hangs on, in colour c: the cups and their buttons, or the frame
+module mounts(top, cups, c) if (mount == "tape") tape_frame_placed(top, cups, c); else cups_and_buttons(cups, c);
+
 module cups_and_buttons(cups, c) for (p = cups) {
     color("#DDEEFF", 0.45) translate([p[0], wall_gap, p[1]]) rotate([90, 0, 0]) cylinder(d1 = cup_d, d2 = 14, h = cup_h);
     color(c) translate([p[0], flange_t, p[1]]) rotate([90, 0, 0]) button();

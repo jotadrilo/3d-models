@@ -25,7 +25,7 @@
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, box, button, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
+part = "assembly";   // [assembly, plate, body, tray, box, button, jig, frame, test_tape, test_hanger, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
@@ -86,6 +86,9 @@ collar_t = 4;        // round collar round the floor hole (20 layers) [2:0.2:8]
 return_w = 10;       // front returns that keep the bottle from tipping forward; they round into the sides [0:1:25]
 
 include <common.scad>
+
+// Pieces of tape on the adhesive frame (mount="tape"): the bottle and a hand on the sponge (README, "Adhesive mount").
+tape_n = 2;
 use <../../tools/scad/print_aids.scad>
 
 // The wall plate's slot fields as windows, the upper ones with 20 mm solid
@@ -337,7 +340,7 @@ module items() {
         color("#2E6B30") cut() translate([-sponge_w / 2, -sponge_d / 2, 0]) cube([sponge_w, sponge_d, 8]);
         color("#F2D43A") cut() translate([-sponge_w / 2, -sponge_d / 2, 8]) cube([sponge_w, sponge_d, sponge_h - 8]);
     }
-    cut() cups_and_buttons(cups, mate_colour);
+    cut() mounts(top, cups, mate_colour);
     // wall and counter, just round the caddy
     color("#EEEEEE") cut() translate([-100, wall_gap, -counter_gap - 20]) cube([200, 10, top + counter_gap + 60]);
     color("#C8B89A") cut() translate([-100, -sink_dist + wall_gap, -counter_gap - 20]) cube([200, sink_dist, 20]);
@@ -349,7 +352,10 @@ else if (part == "tray") soap_tray();
 else if (part == "box") bottle_box();
 else if (part == "button") button();
 else if (part == "jig") jig();
+else if (part == "frame") tape_frame(top, cups);
 else if (part == "test_keyhole") test_keyhole();
+else if (part == "test_tape") test_tape();
+else if (part == "test_hanger") test_hanger();
 else if (part == "test_buttons") test_buttons();
 else if (part == "test_dovetail_housing") test_dovetail_housing();
 else if (part == "test_dovetail_tail") test_dovetail_tail();

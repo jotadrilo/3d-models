@@ -34,7 +34,7 @@
 // stand on their floors, the handle lies flat (its bending plane in XY).
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, rack, bin, riser, handle, button, jig, test_pin, test_bin]
+part = "assembly";   // [assembly, plate, body, tray, rack, bin, riser, handle, button, jig, frame, test_pin, test_bin]
 show_items = true;   // draw the wall, counter, suction cups, cutlery and towel (assembly only)
 section = "none";    // [none, keyhole, handle, bins] cut the assembly through a keyhole, level with the handle's pins, or through the middle of the bins (the risers), for the section renders
 with_handle = true;  // the towel handle (assembly only)
@@ -92,6 +92,9 @@ boss_w = 16;         // boss height and length [12:1:30]
 handle_play = 0.4;   // clearance between the handle's arms and the bosses, per side [0.2:0.1:1]
 
 include <common.scad>
+
+// Pieces of tape on the adhesive frame (mount="tape"): 1 kg of cutlery and a wet towel, its moment over a short plate (README, "Adhesive mount").
+tape_n = 3;
 
 // The wall plate: with the cups under the dovetails its middle carries
 // nothing, so one window takes it out, with 4 mm bands above and below: a
@@ -343,7 +346,7 @@ lift = explode * 120;                          // rack and bins, lifted
 y_bins = (bin_y0 + bin_y1) / 2;
 
 module items() {
-    cut() cups_and_buttons(cups, mate_colour);
+    cut() mounts(top, cups, mate_colour);
     // cutlery standing in the bins: a few handles with their heads up
     color("#B8BCC2") cut() for (i = [0 : bins - 1], j = [0 : 2]) {
         l = [150, 240, 320][i % 3];
@@ -376,6 +379,7 @@ else if (part == "riser") riser(riser_h(riser_n));
 else if (part == "handle") handle();
 else if (part == "button") button();
 else if (part == "jig") jig();
+else if (part == "frame") tape_frame(top, cups);
 else if (part == "test_pin") test_pin();
 else if (part == "test_bin") test_bin();
 else if (part == "assembly") {

@@ -27,6 +27,7 @@ SAMPLES = {
     "lead_in_male": ("Lead-in male", 75, 110),
     "keyhole_pad": ("Keyhole pad", 110, 110),
     "keyhole_button": ("Keyhole button", 140, 110),
+    "tape_mount": ("Tape mount", 230, 160),
     "standoff_peg": ("Standoff peg", 165, 110),
     "handle_block": ("Handle block", 200, 110),
     "handle": ("Handle", 200, 65),

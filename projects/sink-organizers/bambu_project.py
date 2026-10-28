@@ -24,6 +24,11 @@ dovetail housing and a strip of wall with its tail, a slice of the soap
 caddy's body with the bottom of its box, and the handle's pins in a block.
 Plate 10: the sway test, two strips of the soap caddy's side wall as flexible
 as its body where it printed rough, one bare and one held by stabilizer fins.
+Plates 11 and 12: the installation jigs, for the suction cups.
+Plates 13-15: the adhesive mount (mount="tape", for walls where suction cups
+let go): a load test (one head on one square and one round piece of tape,
+and two hangers for a weight on a cord), then a frame per piece, stuck to
+the wall with foam tape, with the heads the plates' keyholes hang on.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
@@ -72,8 +77,8 @@ def main():
         },
     )
 
-    def soap(name, **kw):
-        return load_scad(SOAP, name, args.defs, colour=False, **kw)
+    def soap(name, extra=(), **kw):
+        return load_scad(SOAP, name, args.defs + list(extra), colour=False, **kw)
 
     def drainer(name, extra=(), **kw):
         return load_scad(DRAINER, name, args.defs + list(extra), colour=False, **kw)
@@ -131,6 +136,21 @@ def main():
 
     p = proj.plate("Cutlery drainer - installation jig")
     p.add("Cutlery drainer jig", drainer("jig", rotate=FLAT), 128, 128)
+
+    # The adhesive mount (mount="tape"): a frame per piece, stuck to the wall
+    # with foam tape, carrying the heads the plates' keyholes hang on, and a
+    # load test for the tape first
+    p = proj.plate("Adhesive load test")
+    for x, t in ((70, "square"), (130, "round")):
+        p.add(f"Tape test ({t})", soap("test_tape", extra=[f'tape="{t}"']), x, 128)
+    for x in (180, 210):
+        p.add(f"Test hanger {(x - 150) // 30}", soap("test_hanger", rotate=FLAT), x, 128)
+
+    p = proj.plate("Soap caddy - adhesive frame")
+    p.add("Soap caddy adhesive frame", soap("frame"), 128, 136)
+
+    p = proj.plate("Cutlery drainer - adhesive frame")
+    p.add("Cutlery drainer adhesive frame", drainer("frame"), 128, 128)
     proj.write(args.output)
 
 

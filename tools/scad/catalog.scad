@@ -19,8 +19,8 @@ use <hardware.scad>
 use <boards.scad>
 use <print_aids.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook, stabilizer]
-demo = "none";  // [none, keyhole, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook, stabilizer]
+part = "all";   // [all, keyhole_pad, keyhole_button, tape_mount, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook, stabilizer]
+demo = "none";  // [none, keyhole, tape, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook, stabilizer]
 assembled = false;
 section = false;
 
@@ -38,6 +38,8 @@ ARROW = "#C12E1F";   // how it goes together
 // Shared sizes
 pad_t = 4.2; pad_w = 22; drop = 12; shank_d = 7; head_d = 12;   // keyhole, as in soap-caddy
 cup_h = 12;
+tape_t = 3; tape_seat = 0.2; tape_s = 40;   // a square of foam tape, and the frame's seat for it
+tape_stand = cup_h + keyhole_button_flange_t(pad_t, shank_d, head_d) - (tape_t - tape_seat);   // the piece as far off the wall as on a cup
 flange_t = keyhole_button_flange_t(pad_t, shank_d, head_d);
 peg_d = 6; peg_len = cup_h + flange_t; boss_t = pad_t;
 key_s = 3;   // diamond key side
@@ -57,6 +59,7 @@ module keyhole_pad_sample()   // lying on its back, countersink up
         keyhole_cut(pad_t, drop, shank_d, head_d);
     }
 module keyhole_button_sample() keyhole_button(pad_t, shank_d, head_d);
+module tape_mount_sample() tape_mount([[0, 0]], tape_s / 2 + 1, -tape_s / 2 - 1, tape_stand, 1, size = tape_s, seat_depth = tape_seat, pad_t = pad_t);
 module standoff_peg_sample() standoff_peg(peg_d + 0.1, boss_t, peg_len);
 module peg_block_sample()     // a slice of the piece the peg presses into
     difference() {
@@ -159,6 +162,7 @@ function bb_lip_z() = 24;
 module sample(p) {
     if (p == "keyhole_pad") keyhole_pad_sample();
     else if (p == "keyhole_button") keyhole_button_sample();
+    else if (p == "tape_mount") tape_mount_sample();
     else if (p == "standoff_peg") standoff_peg_sample();
     else if (p == "peg_block") peg_block_sample();
     else if (p == "screw_plate") screw_plate_sample();
@@ -226,6 +230,23 @@ module demo_part(name, role) {
             arrow([0, yp + 4, -12], [0, yb - flange_t - 4, -12]);       // 1: over the head
             arrow([0, yp - pad_t - 4, drop + 10], [0, yp - pad_t - 4, -2]); // 2: drop
             arrow([0, yb - 2, -22], [0, -cup_h - 2, -22]);                // the button screws onto the stud
+        }
+    }
+    else if (name == "tape") {
+        // a square of foam tape on the wall, the mount stuck on it (1); the
+        // piece's keyhole goes over the head and drops, as on a suction cup (2)
+        ym = -(tape_t - tape_seat) - 14 * X;   // the mount's tape face, exploded off the tape
+        yp = ym - tape_stand - 24 * X;         // piece back face
+        if (role == "wall") if (assembled) wall(-30, 30, -30, 30); else wall(-40, 40, -45, 45);
+        if (role == "hw") translate([0, 0, 0]) rotate([90, 0, 0]) linear_extrude(tape_t) square(tape_s, center = true);
+        if (role == "mate") translate([0, ym, 0]) rotate([90, 0, 0]) tape_mount_sample();
+        if (role == "piece") translate([0, yp, drop * X]) difference() {
+            keyhole_pad(pad_t, pad_w, drop, shank_d, head_d);
+            keyhole_cut(pad_t, drop, shank_d, head_d);
+        }
+        if (role == "arrow") {
+            arrow([0, ym - 4, -26], [0, -tape_t - 2, -26]);                // 1: stick it on
+            arrow([0, yp - pad_t - 4, drop + 10], [0, yp - pad_t - 4, -2]); // 2: drop
         }
     }
     else if (name == "standoff_peg") {
@@ -338,7 +359,7 @@ module demo_part(name, role) {
     }
 }
 
-names = ["keyhole_pad", "keyhole_button", "standoff_peg", "peg_block", "screw_plate", "holes",
+names = ["keyhole_pad", "keyhole_button", "tape_mount", "standoff_peg", "peg_block", "screw_plate", "holes",
          "diamond_female", "diamond_male", "tongue_female", "tongue_male", "lead_in_female",
          "lead_in_male", "dovetail_housing", "dovetail_tail", "house_box"];
 

@@ -55,7 +55,7 @@ The split is what lets both parts print the way they need to:
   sacrificial fins beside its walls, tied to them by one-line tabs: snap
   them off after printing ([Analyses](#analyses)).
 
-To put the cups on the wall, use the piece's [installation jig](#installation-jigs-plates-8-and-9),
+On a wall where suction cups do not hold, hang the plate on an [adhesive frame](#adhesive-mount-plates-13-to-15) instead. To put the cups on the wall, use the piece's [installation jig](#installation-jigs-plates-11-and-12),
 not the plate.
 
 To take a piece down: lift it 12 mm (`drop`) off its buttons and take it off
@@ -295,6 +295,69 @@ The loads are a thumb pressing each rim onto its button's flange, in
 compression: no analysis needed. The soap caddy's jig: 37 min, 13 g; the
 cutlery drainer's: 40 min, 15 g.
 
+## Adhesive mount (plates 13 to 15)
+
+The first installation fell off the wall: the wall behind the sink is the
+countertop slab, slightly textured, and within about 5 hours every suction
+cup had let go, the empty cutlery drainer's too (it asked ≈1 N of each). For
+a wall like that, `mount="tape"` hangs the same plates on a frame stuck to
+the wall with double-sided foam tape (`tape_mount` in
+[tools/scad](../../tools/scad/), CLAUDE.md §4.7). The plates, bodies and
+everything in front are unchanged, and so is the suction-cup version
+(`mount="cups"`, the default).
+
+| Soap caddy | Cutlery drainer |
+|---|---|
+| ![Soap caddy adhesive frame](renders/soap-caddy-frame-hero.webp) | ![Cutlery drainer adhesive frame](renders/cutlery-drainer-frame-hero.webp) |
+
+- **Heads:** the frame carries a button head where each cup was, so the
+  plate's keyholes drop onto it as onto the buttons, exactly as far apart
+  (no jig). Its posts hold the plate as far off the wall as the cups did,
+  counting the 3 mm tape (`tape_t`): the trays still reach past the sink's
+  edge.
+- **Tape only at the top:** the piece's moment pulls the top of the frame
+  off the wall and pushes its bottom onto it. So the tape is one row at the
+  top (`tape_n`: 2 squares for the soap caddy, 3 for the cutlery drainer),
+  which takes the weight and the pull, and the bottom has two feet that only
+  bear on the wall.
+- **Feet:** each takes a round of the same tape with its **liner left on**,
+  a 3 mm spacer that does not stick. Without them the frame would lean 3 mm
+  into the wall and peel the top row.
+- **Tape:** HOMMAND pads (3M adhesive on 3 mm EVA foam), 40 × 40 squares and
+  Ø 30 rounds (`tape`, `tape_size`). Shallow seats in the frame's back place
+  them. Five squares and four rounds for both pieces.
+
+**How many pieces of tape.** The data sheet's strength ("65 lb per inch")
+comes from a fast test; what brought the cups down was a constant load over
+hours, and the sheet says nothing about that. 3M's rule for foam tape under
+a dead load is ≈2.7 N per 40 × 40 square, with a large margin. By that
+rule the soap caddy's top row (≈10 N: the bottle's weight and its pull)
+would need 4 squares and the cutlery drainer's (≈25 N, full, with a wet
+towel) 9. The load test decides instead:
+
+1. Print plate 13: a mount with one square, one with one round, and two
+   hangers with a hole for a cord.
+2. Stick the square one on the wall (clean it with alcohol, no soap; press
+   hard for 30 s) and leave it 24 h.
+3. Hang a hanger on it with 2 kg (a 2 l bottle) for 48 h. The head's pull,
+   20 mm off the wall, peels harder than the frame does.
+4. If it holds, each square holds ≥20 N: 2 squares give the soap caddy
+   ≈4× and 3 the cutlery drainer ≈2.4×. If it creeps or lets go, raise
+   `tape_n` and test again (the round one tells you whether rounds would do).
+
+To put it up:
+1. Stick the tape on the frame's top row and the rounds, liner on, on its
+   feet.
+2. Clean the wall with alcohol, put the frame where the piece goes with a
+   spirit level on its top bar, and press the tape hard for 30 s.
+3. Wait 24 h, then hang the plate on the heads and slide the body on.
+
+| Plate | Contents | PETG Basic | PETG HF | PETG Matte |
+|---|---|---|---|---|
+| 13 · Adhesive load test | a mount with one square, one with one round, 2 hangers | 50 min, 16 g | 46 min, 17 g | 50 min, 18 g |
+| 14 · Soap caddy: adhesive frame | the frame, tape face down | 1 h 19 min, 33 g | 1 h 15 min, 34 g | 1 h 19 min, 36 g |
+| 15 · Cutlery drainer: adhesive frame | the frame, tape face down | 1 h 18 min, 34 g | 1 h 13 min, 34 g | 1 h 18 min, 37 g |
+
 ## Fit tests (plates 8 and 9)
 
 Each piece tests the real thing, printed the way the real part prints. The
@@ -375,6 +438,9 @@ without cracking.
 | soap caddy `jig` | 108 × 221 × 4.2 | Installation jig: four upside-down keyholes on bars, in a frame round the piece's outline; printed flat |
 | cutlery drainer `jig` | 239 × 125 × 4.2 | Installation jig: an H through four upside-down keyholes, in a frame round the piece's outline; printed flat |
 | `button` | Ø 16 × 13 | One per cup (8); the stud goes right through; printed on its flange |
+| soap caddy `frame` | 88 × 210 × 22 | Adhesive mount (`mount="tape"`): a ladder with 2 squares of tape at the top, 2 feet and the four heads; printed tape face down |
+| cutlery drainer `frame` | 207 × 114 × 22 | The same with 3 squares |
+| `test_tape`, `test_hanger` | 42 × 42 (32 × 32 round) × 22; 22 × 58 × 4.2 | The tape's load test: one head on one piece of tape (`tape` square or round), and a keyhole pad with a hole for a cord and a weight |
 | `test_*` | — | The fit tests above |
 
 ## Analyses
@@ -389,6 +455,7 @@ Decided per CLAUDE.md §2.3:
 | Free-standing piece | Stability | Not needed: both pieces hang on suction cups. The bins stand loose on the rack, but its fences and the side walls cage their feet, so a leaning knife only tilts a bin by its play (`bin_fit`, [Bins](#cutlery-drainer)) |
 | Leaning cutlery on the rack's fences | By hand | Not needed: a 200 g knife leaning on a rim puts ≈0.1 N·m on its bin. The 15 mm fence takes it as ≈7 N over 68 mm, ≈2 MPa across the fence's layers: 6× PETG's Z strength derated to 40 %. The bins weigh ≈100 g more than before against the 1 kg of cutlery the wall FEA carries; their weight sits no further from the wall |
 | Installation jigs | — | Not needed: a thumb presses each rim onto its button in compression; the jig holds four cups (≈80 g) |
+| The suction cups let go of the textured wall; the adhesive frames hold the pieces with a few pieces of foam tape | Load test of the tape on the real wall (plate 13) | Proposed, the user's to run: one square, 2 kg for 48 h, decides `tape_n` ([Adhesive mount](#adhesive-mount-plates-13-to-15)). The frames themselves: not needed by hand. Their posts carry ≤43 N peak (the towel pulled) into 6.3 × 6 bars, a few MPa, and pull along their axis across the layers at ≈0.2 MPa, margins over 10× |
 
 ## Strength and orientation
 
@@ -467,6 +534,9 @@ With the default parameters:
 | 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
 | 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
+| 13 · Adhesive load test | a mount with one square, one with one round, 2 hangers | 50 min, 16 g | 46 min, 17 g | 50 min, 18 g |
+| 14 · Soap caddy: adhesive frame | the frame | 1 h 19 min, 33 g | 1 h 15 min, 34 g | 1 h 19 min, 36 g |
+| 15 · Cutlery drainer: adhesive frame | the frame | 1 h 18 min, 34 g | 1 h 13 min, 34 g | 1 h 18 min, 37 g |
 
 Avoiding travel across walls costs 5–25 min on the other plates (the bins
 the most).
@@ -494,6 +564,8 @@ pieces do not fit.
 | `cup_d`, `cup_h`, `stud_len`, `stud_hole` | 50, 12, 12, 3.9 | Suction cups: diameter, wall to the hub face, stud length (measure yours), pilot hole for the stud |
 | `shank_d`, `head_d`, `flange_d`, `keyhole_play`, `shank_play`, `drop`, `pad_t`, `pad_w` | 7, 12, 16, 0.3, 0.1, 12, 4.2, 22 | Buttons and keyholes |
 | `jig_bar_w`, `jig_bar_t`, `jig_rim` | 6.3, 2, 1.68 | Installation jigs: bars and outline frame, rim round the keyholes |
+| `mount` | cups | What the plates hang on: buttons on suction cups, or the adhesive frame (`tape`) |
+| `tape_n`, `tape`, `tape_size`, `tape_t`, `tape_gap`, `tape_foot_d`, `tape_seat`, `tape_frame_d`, `tape_inset` | 2 (soap caddy) / 3 (drainer), square, 0 (40 square, 30 round), 3, 3, 30, 0.2, 6, 2 | Adhesive frame: pieces of tape in its top row, their shape and size, the tape's thickness, gap between pieces, the feet's spacers, the seats' depth, the bars' depth, how far it stays inside the plate's outline |
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |

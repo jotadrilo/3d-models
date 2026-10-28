@@ -518,6 +518,33 @@ Research behind each component in `tools/scad/`, one entry per component.
   flange ≈3 mm short of the cup. Measure the stud from the hub face (`stud_len`, 12 by
   default). Print the pad flat (the slot in XY) and the button standing; the loads are small
   and stay in compression or shear (soap-caddy README, "Strength and orientation").
+- **Adhesive mount** (`mounts.scad`, `tape_mount`, from sink-organizers): a ladder frame stuck
+  to the wall with double-sided foam tape, carrying keyhole button heads where suction cups would
+  be, so a piece made for cups hangs on it unchanged. It came from a wall where suction cups let
+  go: the sink organizers' wall is the countertop slab, slightly textured, and every cup came off
+  within ~5 h (2026-10), with the empty drainer asking only ~1 N of each. On a textured or porous
+  wall, use tape (or screws), not cups.
+  - **Long-term load, not the data sheet's strength.** Foam tape creeps under a constant load;
+    tensile and peel figures come from fast tests. 3M's design guide for VHB gives, for static
+    (dead) loads, **about 1 lb per 4 in² (≈1.7 kPa, ≈2.7 N per 40 × 40 mm square)**, a rule with
+    a large margin; the dynamic strengths are a hundred times that (vendor guidance). Cheap EVA
+    pads (HOMMAND, "3M adhesive", 3 mm, "65 lb per inch") have no creep data at all. So the count
+    comes from a **load test** on the real wall: one piece of tape with a head and a hanger
+    (`test_tape`, `test_hanger`), 24 h after sticking it, a known weight for 48 h.
+  - **Tape only where the wall pulls.** The piece's moment pulls the top of the frame off the wall
+    and pushes the bottom onto it: one row of tape at the top takes the weight (shear) and the
+    pull; the bottom only needs **feet** that bear on the wall. The feet need a spacer as thick as
+    the tape (a piece of it with its liner left on): without one the frame leans the tape's
+    thickness into the wall and peels the top row. Put the row as high as the piece allows: the
+    pull is the moment over the distance from the feet.
+  - **Peel is what fails first.** A rigid frame spreads the load over the whole piece of tape;
+    a thin bracket flexes and peels it from one edge. Bars 6.3 × 6, the tape bar a back plate with
+    ribs. The heads' posts stand the piece's back face as far off the wall as the cups did
+    (`stand` = wall gap − tape thickness + seat depth), so nothing in front changes.
+  - **Applying it** (3M's guidance for foam tapes): clean with isopropyl alcohol and water, no
+    soap; firm pressure for ~30 s; the bond builds over 24–72 h, so load it the next day; above
+    ~15 °C. The tape face prints on the textured plate; its shallow seats (one layer) place the
+    pieces.
 - **Stand-off peg** (`mounts.scad`): a post that rests on the wall in compression. It stops a
   piece hung on two side-by-side mounts from nodding forward. It goes into a through hole
   **from behind**, its shoulder on the piece's back face, so the wall only pushes it further in.
