@@ -94,7 +94,7 @@ handle_play = 0.4;   // clearance between the handle's arms and the bosses, per 
 include <common.scad>
 
 // Pieces of tape on the adhesive frame (mount="tape"): 1 kg of cutlery and a wet towel, its moment over a short plate (README, "Adhesive mount").
-tape_n = 3;
+tape_n = 4;
 
 // The wall plate: with the cups under the dovetails its middle carries
 // nothing, so one window takes it out, with 4 mm bands above and below: a

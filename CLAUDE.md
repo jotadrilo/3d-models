@@ -529,14 +529,17 @@ Research behind each component in `tools/scad/`, one entry per component.
     (dead) loads, **about 1 lb per 4 in² (≈1.7 kPa, ≈2.7 N per 40 × 40 mm square)**, a rule with
     a large margin; the dynamic strengths are a hundred times that (vendor guidance). Cheap EVA
     pads (HOMMAND, "3M adhesive", 3 mm, "65 lb per inch") have no creep data at all. So the count
-    comes from a **load test** on the real wall: one piece of tape with a head and a hanger
-    (`test_tape`, `test_hanger`), 24 h after sticking it, a known weight for 48 h.
-  - **Tape only where the wall pulls.** The piece's moment pulls the top of the frame off the wall
-    and pushes the bottom onto it: one row of tape at the top takes the weight (shear) and the
-    pull; the bottom only needs **feet** that bear on the wall. The feet need a spacer as thick as
-    the tape (a piece of it with its liner left on): without one the frame leans the tape's
-    thickness into the wall and peels the top row. Put the row as high as the piece allows: the
-    pull is the moment over the distance from the feet.
+    has to come from a margin over 3M's rule. A load test on the real wall (one piece, a known
+    weight, 48 h) would settle it, but the tape does not come off a slab cleanly, so it was not
+    run.
+  - **Tape where the wall pulls.** The piece's moment pulls the top of the frame off the wall
+    and pushes the bottom onto it: one row of squares at the top takes the pull; **feet** at the
+    bottom bear on the wall through a round piece of the same tape each, which also shares the
+    weight. Without something as thick as the tape there, the frame leans into the wall and peels
+    the top row. Put the row as high as the piece allows: the pull is the moment over the
+    distance from the feet. Sink organizers: 2 squares + 2 rounds for the soap caddy (≈10 N on
+    the row, ≈1.9× 3M's rule; its plate takes no more than 2 across), 4 + 2 for the cutlery
+    drainer (≈25 N, ≈2.3×), with the rounds' shear on top.
   - **Peel is what fails first.** A rigid frame spreads the load over the whole piece of tape;
     a thin bracket flexes and peels it from one edge. Bars 6.3 × 6, the tape bar a back plate with
     ribs. The heads' posts stand the piece's back face as far off the wall as the cups did

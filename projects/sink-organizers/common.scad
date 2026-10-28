@@ -46,9 +46,9 @@ pad_w = 22;          // pad width [18:1:40]
 /* [Adhesive mount] */
 mount = "cups";      // [cups, tape] what the plate's keyholes hang on: buttons on suction cups, or the heads of a frame stuck to the wall with foam tape (part="frame")
 tape = "square";     // [square, round] the tape pieces' shape
-tape_n = 2;          // pieces of tape in the row at the top of the frame: the fewest the load test allows (each piece set per piece) [1:1:5]
+tape_n = 2;          // pieces of tape in the row at the top of the frame (each piece sets its own) [1:1:5]
 tape_size = 0;       // the tape pieces' side or diameter; 0: 40 for squares, 30 for rounds (HOMMAND pads) [0:1:60]
-tape_foot_d = 30;    // the feet's spacers at the bottom: a round piece of the same tape, its liner left on, so it bears on the wall without sticking [15:1:40]
+tape_foot_d = 30;    // the feet at the bottom: a round piece of the same tape, stuck: it bears on the wall and shares the weight [15:1:40]
 tape_t = 3;          // tape thickness (HOMMAND pads: 3 mm): the frame stands this much off the wall, less its seats [0.4:0.1:5]
 tape_gap = 3;        // between the tape pieces in the row [2:0.5:10]
 tape_seat = 0.2;     // shallow seats for the tape pieces in the frame's back, to place them (1 layer) [0:0.2:0.6]
@@ -298,21 +298,6 @@ module install_jig(cups, bars, hw, z0, z1) {
 // ---------------------------------------------------------------- fit tests
 
 // A keyhole pad, printed flat, for a button.
-// Load test for the tape: one head on a frame for a single piece of tape
-// (tape, tape_size), to stick on the wall and load with test_hanger.
-module test_tape() let(t = tape_sz())
-    tape_mount([[0, 0]], t / 2 + 1, -(t / 2 + 1), tape_stand(), 1, tape, t, tape_gap, tape_foot_d, tape_seat,
-               tape_frame_d, pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
-// A keyhole pad that hangs a weight from a cord through its foot, for test_tape.
-module test_hanger() difference() {
-    union() {
-        translate([0, pad_t, 0]) pad_at(0, 0);
-        translate([-pad_w / 2, 0, -pad_lo - 20]) cube([pad_w, pad_t, 20 + eps]);
-    }
-    translate([0, pad_t, 0]) keyhole_at(0, 0);
-    translate([0, -1, -pad_lo - 10]) rotate([-90, 0, 0]) cylinder(d = 6, h = pad_t + 2);
-}
-
 module test_keyhole() difference() {
     translate([0, pad_t, 0]) pad_at(0, 0);
     translate([0, pad_t, 0]) keyhole_at(0, 0);
@@ -376,7 +361,7 @@ module tape_frame(top, cups) let(zc = tape_frame_zc(top), h = tape_frame_h(top))
     tape_mount([for (c = cups) [c[0], c[1] - zc]], h / 2, -h / 2, tape_stand(), tape_n, tape, tape_sz(), tape_gap, tape_foot_d, tape_seat,
                tape_frame_d, pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
 }
-// The frame on the wall, its tape and the feet's spacers
+// The frame on the wall and its tape
 module tape_frame_placed(top, cups, c) {
     zc = tape_frame_zc(top); h = tape_frame_h(top);
     hs = [for (k = cups) [k[0], k[1] - zc]];

@@ -132,12 +132,12 @@ module standoff_peg_hole(d = 6, depth = 5, fit = 0.1) translate([0, 0, -depth]) 
 // double-sided foam tape, carrying keyhole button heads where suction cups
 // would be, so a piece made for keyholes on cups hangs on it unchanged, its
 // heads exactly as far apart as the frame holds them (no jig).
-// The tape goes only where the wall has to hold the piece: a row of n pieces
-// at the top, which takes the weight (shear) and the pull of the piece's
-// turning moment. At the bottom the piece only pushes against the wall, so
-// two feet bear on it there through spacers as thick as the tape (a piece of
-// the same tape with its liner left on, so it does not stick). Without them
-// the frame would lean the tape's thickness into the wall and peel the top.
+// The tape goes where the wall has to hold the piece: a row of n pieces at
+// the top takes the pull of the piece's turning moment, and the weight
+// (shear) with two feet at the bottom. The bottom only pushes against the
+// wall, so the feet carry a piece of tape each (round, foot_d): it bears on
+// the wall and shares the weight. Without them the frame would lean the
+// tape's thickness into the wall and peel the top row.
 // In print orientation: the tape face on the bed (z = 0), the heads up, the
 // heads' flange plane (where the piece's back face rests) at z = stand.
 //   heads       [[x, y], ...] the head axes in the frame's plane
@@ -147,7 +147,7 @@ module standoff_peg_hole(d = 6, depth = 5, fit = 0.1) translate([0, 0, -depth]) 
 //               gap less what the tape adds (tape_t - seat_depth)
 //   n, tape, size, gap   the tape row: n "square" or "round" pieces, side
 //               or diameter `size`, `gap` apart, centred on x = 0
-//   foot_d      the feet's spacers (round, d), under the outermost heads
+//   foot_d      the feet's tape (round, d), under the outermost heads
 //               below the tape row (none if every head is in it)
 //   seat_depth  shallow seats for the tape and the spacers, to place them
 //   frame_d     depth of the bars; base_t the tape bar's back plate;
