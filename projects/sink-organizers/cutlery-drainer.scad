@@ -45,7 +45,7 @@ body_lift = 0;       // [0:1:200] body slid up off the plate (renders)
 frame_w = 210;       // width of the body, along the wall [120:1:300]
 bins = 3;            // number of bins [1:1:5]
 bin_d = 90;          // bin depth, front to back [50:1:120]
-bin_h = 200;         // bin height: deep enough for a chef's knife's blade (20 cm) [50:1:240]
+bin_h = 160;         // bin height: the chef's knife's blade (20 cm) mostly in [50:1:240]
 body_bin_h = 80;     // how far the body's side walls reach up the bins, above the rack floor [50:1:200]
 
 /* [Kitchen] */
@@ -77,7 +77,7 @@ bin_play = 0.25;     // room for each bin, per side, between the rack's fences a
 bin_fit = 0.1;       // clearance round each bin, per side, in that room: snug, so leaning cutlery does not rock the tall bins (test_bin) [0:0.025:0.5]
 
 /* [Risers] */
-risers = [120, 68, 0]; // riser height in each bin, left to right, 0 for none: the teaspoons (15 cm) on 120, the table cutlery on 68, the chef's knife (32 cm) on the floor
+risers = [80, 28, 0]; // riser height in each bin, left to right, 0 for none: the teaspoons (15 cm) on 80 (78 mm deep), the table cutlery on 28 (130 deep), the chef's knife (32 cm) on the floor
 riser_play = 0.3;    // clearance round a riser inside its bin, per side: it drops in loose [0.1:0.05:1]
 riser_n = 0;         // which bin's riser part="riser" exports [0:1:4]
 
