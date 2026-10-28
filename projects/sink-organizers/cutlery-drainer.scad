@@ -34,7 +34,7 @@
 // stand on their floors, the handle lies flat (its bending plane in XY).
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, rack, bin, riser, handle, button, jig, frame, test_pin, test_bin]
+part = "assembly";   // [assembly, plate, body, tray, rack, bin, riser, handle, button, adapter, jig, test_pin, test_bin]
 show_items = true;   // draw the wall, counter, suction cups, cutlery and towel (assembly only)
 section = "none";    // [none, keyhole, handle, bins] cut the assembly through a keyhole, level with the handle's pins, or through the middle of the bins (the risers), for the section renders
 with_handle = true;  // the towel handle (assembly only)
@@ -93,8 +93,8 @@ handle_play = 0.4;   // clearance between the handle's arms and the bosses, per 
 
 include <common.scad>
 
-// Pieces of tape on the adhesive frame (mount="tape"): 1 kg of cutlery and a wet towel, its moment over a short plate (README, "Adhesive mount").
-tape_n = 4;
+// Adhesive adapters (mount="tape"): a square of tape at the two upper keyholes, which the cutlery and the towel pull off the wall; rounds at the others (README, "Adhesive mount").
+tape_squares = 2;
 
 // The wall plate: with the cups under the dovetails its middle carries
 // nothing, so one window takes it out, with 4 mm bands above and below: a
@@ -379,7 +379,7 @@ else if (part == "riser") riser(riser_h(riser_n));
 else if (part == "handle") handle();
 else if (part == "button") button();
 else if (part == "jig") jig();
-else if (part == "frame") tape_frame(top, cups);
+else if (part == "adapter") tape_adapter();
 else if (part == "test_pin") test_pin();
 else if (part == "test_bin") test_bin();
 else if (part == "assembly") {

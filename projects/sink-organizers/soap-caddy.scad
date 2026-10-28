@@ -25,7 +25,7 @@
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, box, button, jig, frame, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
+part = "assembly";   // [assembly, plate, body, tray, box, button, adapter, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
@@ -87,8 +87,8 @@ return_w = 10;       // front returns that keep the bottle from tipping forward;
 
 include <common.scad>
 
-// Pieces of tape on the adhesive frame (mount="tape"): the bottle and a hand on the sponge (README, "Adhesive mount").
-tape_n = 2;
+// Adhesive adapters (mount="tape"): a square of tape at the top keyhole, which the bottle and a hand on the sponge pull off the wall; rounds at the others (README, "Adhesive mount").
+tape_squares = 1;
 use <../../tools/scad/print_aids.scad>
 
 // The wall plate's slot fields as windows, the upper ones with 20 mm solid
@@ -352,7 +352,7 @@ else if (part == "tray") soap_tray();
 else if (part == "box") bottle_box();
 else if (part == "button") button();
 else if (part == "jig") jig();
-else if (part == "frame") tape_frame(top, cups);
+else if (part == "adapter") tape_adapter();
 else if (part == "test_keyhole") test_keyhole();
 else if (part == "test_buttons") test_buttons();
 else if (part == "test_dovetail_housing") test_dovetail_housing();

@@ -25,9 +25,9 @@ caddy's body with the bottom of its box, and the handle's pins in a block.
 Plate 10: the sway test, two strips of the soap caddy's side wall as flexible
 as its body where it printed rough, one bare and one held by stabilizer fins.
 Plates 11 and 12: the installation jigs, for the suction cups.
-Plates 13 and 14: the adhesive mount (mount="tape", for walls where suction
-cups let go): a frame per piece, stuck to the wall with foam tape, with the
-heads the plates' keyholes hang on.
+Plate 13: the adhesive mount (mount="tape", for walls where suction cups let
+go): an adapter per keyhole, a button head on a piece of foam tape, three
+with a square and five with a round, for both pieces.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
@@ -136,13 +136,15 @@ def main():
     p = proj.plate("Cutlery drainer - installation jig")
     p.add("Cutlery drainer jig", drainer("jig", rotate=FLAT), 128, 128)
 
-    # The adhesive mount (mount="tape"): a frame per piece, stuck to the wall
-    # with foam tape, carrying the heads the plates' keyholes hang on
-    p = proj.plate("Soap caddy - adhesive frame")
-    p.add("Soap caddy adhesive frame", soap("frame"), 128, 136)
-
-    p = proj.plate("Cutlery drainer - adhesive frame")
-    p.add("Cutlery drainer adhesive frame", drainer("frame"), 128, 128)
+    # The adhesive mount (mount="tape"): an adapter per keyhole, stuck to the
+    # wall with foam tape, a square at the keyholes the pieces pull (1 on the
+    # soap caddy, 2 on the drainer) and a round at the others. They are the
+    # same for both pieces.
+    p = proj.plate("Adhesive adapters")
+    for i, x in enumerate((60, 110, 160)):
+        p.add(f"Adapter, square {i + 1}", soap("adapter", extra=['tape="square"']), x, 160)
+    for i, x in enumerate((50, 90, 130, 170, 210)):
+        p.add(f"Adapter, round {i + 1}", soap("adapter", extra=['tape="round"']), x, 95)
     proj.write(args.output)
 
 

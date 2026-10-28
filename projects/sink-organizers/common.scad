@@ -44,16 +44,14 @@ pad_t = 4.2;         // pad thickness around each keyhole (10 lines) [3.36:0.42:
 pad_w = 22;          // pad width [18:1:40]
 
 /* [Adhesive mount] */
-mount = "cups";      // [cups, tape] what the plate's keyholes hang on: buttons on suction cups, or the heads of a frame stuck to the wall with foam tape (part="frame")
-tape = "square";     // [square, round] the tape pieces' shape
-tape_n = 2;          // pieces of tape in the row at the top of the frame (each piece sets its own) [1:1:5]
-tape_size = 0;       // the tape pieces' side or diameter; 0: 40 for squares, 30 for rounds (HOMMAND pads) [0:1:60]
-tape_foot_d = 30;    // the feet at the bottom: a round piece of the same tape, stuck: it bears on the wall and shares the weight [15:1:40]
-tape_t = 3;          // tape thickness (HOMMAND pads: 3 mm): the frame stands this much off the wall, less its seats [0.4:0.1:5]
-tape_gap = 3;        // between the tape pieces in the row [2:0.5:10]
-tape_seat = 0.2;     // shallow seats for the tape pieces in the frame's back, to place them (1 layer) [0:0.2:0.6]
-tape_frame_d = 6;    // depth of the frame's bars [3:0.5:12]
-tape_inset = 2;      // the frame stays this far inside the plate's outline, hidden behind it [0:1:10]
+mount = "cups";      // [cups, tape] what the plate's keyholes hang on: buttons on suction cups, or adapters stuck to the wall with foam tape (part="adapter")
+tape = "square";     // [square, round] the adapter part="adapter" exports
+tape_squares = 1;    // adapters with a square of tape, at the highest keyholes, where the piece pulls off the wall; the others take a round (each piece sets its own) [0:1:4]
+tape_size = 40;      // the squares' side (HOMMAND pads) [20:1:60]
+tape_round_d = 30;   // the rounds' diameter [15:1:40]
+tape_t = 3;          // tape thickness (HOMMAND pads: 3 mm): the adapters stand this much off the wall, less their seats [0.4:0.1:5]
+tape_seat = 0.2;     // a shallow seat for the tape in the adapter's back, to place it (1 layer) [0:0.2:0.6]
+tape_base_d = 6;     // the adapter's base, back plate and rim [3:0.5:12]
 
 /* [Installation jig] */
 jig_bar_w = 6.3;     // the jig's bars, across (15 lines) [4.2:0.42:12.6]
@@ -347,33 +345,25 @@ module test_dovetail_tail() {
 // ---------------------------------------------------------------- assembly helpers
 
 // The suction cups and buttons at cups ([x, z] each), in colour c for the buttons.
-// The adhesive frame, in print orientation, for the plate (top: the plate's
-// top) and its keyholes' rest points (cups, [x, z] each): the tape row at the
-// top of the plate's outline, the feet at its bottom, hidden behind it, and
-// the heads where the buttons would be. Frame y = z - tape_frame_zc(top).
-function tape_sz() = tape_size > 0 ? tape_size : tape == "round" ? 30 : 40;
+// The adhesive adapter, in print orientation: a button head on a base for
+// one piece of tape (square or round), its tape face on the bed, holding the
+// plate as far off the wall as a cup and its button (tape_mount with one head
+// in tools/scad/mounts.scad). Placed with the installation jig, like the cups.
 function tape_stand() = wall_gap - (tape_t - tape_seat);   // tape face to the plate's back face
-function tape_frame_zc(top) = (top - dt_cap) / 2;
-function tape_frame_h(top) = top + dt_cap - 2 * tape_inset;
-module tape_frame(top, cups) let(zc = tape_frame_zc(top), h = tape_frame_h(top)) {
-    echo(str("tape frame: ", tape_n, " ", tape, " pieces of tape (", round(tape_area(tape_n, tape, tape_sz())), " cm²) at the top, ",
-             len(tape_feet_x([for (c = cups) [c[0], c[1] - zc]], h / 2 - 1 - tape_sz())), " feet; ", tape_stand() + head_front, " mm deep"));
-    tape_mount([for (c = cups) [c[0], c[1] - zc]], h / 2, -h / 2, tape_stand(), tape_n, tape, tape_sz(), tape_gap, tape_foot_d, tape_seat,
-               tape_frame_d, pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
+function tape_d(sq) = sq ? tape_size : tape_round_d;
+// a square at the tape_squares highest keyholes
+function tape_square_at(cups, c) = len([for (k = cups) if (k[1] > c[1] + 0.01) 1]) < tape_squares;
+module tape_adapter(sq = tape == "square") let(t = tape_d(sq))
+    tape_mount([[0, 0]], t / 2 + 1, -(t / 2 + 1), tape_stand(), 1, sq ? "square" : "round", t, 3, 30, tape_seat, tape_base_d,
+               pad_t = pad_t, shank_d = shank_d, head_d = head_d, axial_play = shank_play, head_cyl = head_cyl, chamfer = chamfer);
+// The adapters on the wall and their tape
+module tape_adapters(cups, c) for (k = cups) let(sq = tape_square_at(cups, k), t = tape_d(sq)) {
+    color(c) translate([k[0], wall_gap - tape_t + tape_seat, k[1]]) rotate([90, 0, 0]) tape_adapter(sq);
+    color("#E8E2D0") translate([k[0], wall_gap, k[1]]) rotate([90, 0, 0]) linear_extrude(tape_t)
+        tape_piece(sq ? "square" : "round", t);
 }
-// The frame on the wall and its tape
-module tape_frame_placed(top, cups, c) {
-    zc = tape_frame_zc(top); h = tape_frame_h(top);
-    hs = [for (k = cups) [k[0], k[1] - zc]];
-    ty = h / 2 - 1 - tape_sz() / 2;
-    color(c) translate([0, wall_gap - tape_t + tape_seat, zc]) rotate([90, 0, 0]) tape_frame(top, cups);
-    color("#E8E2D0") translate([0, wall_gap, zc]) rotate([90, 0, 0]) linear_extrude(tape_t) {
-        for (p = tape_row(tape_n, tape_sz(), tape_gap, ty)) translate(p) tape_piece(tape, tape_sz());
-        for (x = tape_feet_x(hs, ty - tape_sz() / 2)) translate([x, -h / 2 + 1 + tape_foot_d / 2]) circle(d = tape_foot_d);
-    }
-}
-// Whatever the plate hangs on, in colour c: the cups and their buttons, or the frame
-module mounts(top, cups, c) if (mount == "tape") tape_frame_placed(top, cups, c); else cups_and_buttons(cups, c);
+// Whatever the plate hangs on, in colour c: the cups and their buttons, or the adapters
+module mounts(top, cups, c) if (mount == "tape") tape_adapters(cups, c); else cups_and_buttons(cups, c);
 
 module cups_and_buttons(cups, c) for (p = cups) {
     color("#DDEEFF", 0.45) translate([p[0], wall_gap, p[1]]) rotate([90, 0, 0]) cylinder(d1 = cup_d, d2 = 14, h = cup_h);

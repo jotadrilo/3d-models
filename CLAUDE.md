@@ -518,9 +518,12 @@ Research behind each component in `tools/scad/`, one entry per component.
   flange ≈3 mm short of the cup. Measure the stud from the hub face (`stud_len`, 12 by
   default). Print the pad flat (the slot in XY) and the button standing; the loads are small
   and stay in compression or shear (soap-caddy README, "Strength and orientation").
-- **Adhesive mount** (`mounts.scad`, `tape_mount`, from sink-organizers): a ladder frame stuck
-  to the wall with double-sided foam tape, carrying keyhole button heads where suction cups would
-  be, so a piece made for cups hangs on it unchanged. It came from a wall where suction cups let
+- **Adhesive mount** (`mounts.scad`, `tape_mount`, from sink-organizers): button heads stuck to
+  the wall with double-sided foam tape where suction cups would be, so a piece made for cups hangs
+  on it unchanged: one **adapter** per keyhole (one head, one piece of tape, placed with the
+  cups' installation jig), or a ladder frame carrying several heads and a row of tape. The sink
+  organizers use the adapters: the same tape as the frame, less plastic, and the jig already
+  places them. It came from a wall where suction cups let
   go: the sink organizers' wall is the countertop slab, slightly textured, and every cup came off
   within ~5 h (2026-10), with the empty drainer asking only ~1 N of each. On a textured or porous
   wall, use tape (or screws), not cups.
@@ -532,14 +535,13 @@ Research behind each component in `tools/scad/`, one entry per component.
     has to come from a margin over 3M's rule. A load test on the real wall (one piece, a known
     weight, 48 h) would settle it, but the tape does not come off a slab cleanly, so it was not
     run.
-  - **Tape where the wall pulls.** The piece's moment pulls the top of the frame off the wall
-    and pushes the bottom onto it: one row of squares at the top takes the pull; **feet** at the
-    bottom bear on the wall through a round piece of the same tape each, which also shares the
-    weight. Without something as thick as the tape there, the frame leans into the wall and peels
-    the top row. Put the row as high as the piece allows: the pull is the moment over the
-    distance from the feet. Sink organizers: 2 squares + 2 rounds for the soap caddy (≈10 N on
-    the row, ≈1.9× 3M's rule; its plate takes no more than 2 across), 4 + 2 for the cutlery
-    drainer (≈25 N, ≈2.3×), with the rounds' shear on top.
+  - **Tape where the wall pulls.** The piece's moment pulls its upper mounts off the wall and
+    pushes the lower ones onto it: the big pieces of tape go at the top; at the bottom a smaller
+    piece bears on the wall and shares the weight (on a frame, at its feet: without something as
+    thick as the tape there, the frame leans into the wall and peels the top row). Sink
+    organizers (2026-10): the user chose the fewest pieces and to add more if one creeps: a 40 mm
+    square at the soap caddy's top keyhole (≈3 N pull, ≈0.7× 3M's rule) and at the drainer's two
+    upper ones (≈9 N pull each, ≈0.27×), Ø 30 rounds at the others. Record here how they hold.
   - **Peel is what fails first.** A rigid frame spreads the load over the whole piece of tape;
     a thin bracket flexes and peels it from one edge. Bars 6.3 × 6, the tape bar a back plate with
     ribs. The heads' posts stand the piece's back face as far off the wall as the cups did
