@@ -321,9 +321,13 @@ suction-cup version (`mount="cups"`, the default).
   soap caddy, its top keyhole; 2 on the cutlery drainer, both upper ones) and
   the others a Ø 30 round, which bears on the wall and shares the weight.
   Three squares and five rounds for both pieces.
-- **Tape:** HOMMAND pads (3M adhesive on 3 mm EVA foam). A shallow seat in
-  each adapter's back places the piece. The adapters are the same for both
-  pieces.
+- **Tape:** HOMMAND pads (3M adhesive on 3 mm EVA foam). The adapters are
+  the same for both pieces.
+- **The tape face is whole, on the plate** (`tape_seat` 0). The first
+  adapters had a one-layer seat for the tape: only a 1 mm rim printed on the
+  bed and the face inside was a bridge, with gaps between its lines. The
+  loaded cutlery drainer came down over a weekend (2026-11), the tape still
+  on the wall and the adapters off it.
 
 **How much tape.** The data sheet's strength ("65 lb per inch") comes from a
 fast test; what brought the cups down was a constant load over hours, and
@@ -341,8 +345,11 @@ creeps or comes down. From the FEA's cup forces:
   more adapters (`tape_squares`, set per piece in its .scad).
 
 To put it up:
-1. Stick the tape on the adapters and hang them in the jig, like the cups
-   (squares at the top keyholes).
+1. Wash the adapters' tape faces with water (glue stick from the plate comes
+   off with it), dry them and wipe them with alcohol. Stick the tape on them
+   and hang them in the jig, like the cups (squares at the top keyholes).
+   After a fall, fresh tape on the wall too: cut the old off from behind with
+   dental floss.
 2. Clean the wall with alcohol (no soap, no water), hold the jig where the
    piece goes with a spirit level on its bottom bar, and press each adapter
    hard for 30 s. Take the jig off.
@@ -553,7 +560,7 @@ pieces do not fit.
 | `shank_d`, `head_d`, `flange_d`, `keyhole_play`, `shank_play`, `drop`, `pad_t`, `pad_w` | 7, 12, 16, 0.3, 0.1, 12, 4.2, 22 | Buttons and keyholes |
 | `jig_bar_w`, `jig_bar_t`, `jig_rim` | 6.3, 2, 1.68 | Installation jigs: bars and outline frame, rim round the keyholes |
 | `mount` | cups | What the plates hang on: buttons on suction cups, or the adhesive adapters (`tape`) |
-| `tape_squares`, `tape`, `tape_size`, `tape_round_d`, `tape_t`, `tape_seat`, `tape_base_d` | 1 (soap caddy) / 2 (drainer), square, 40, 30, 3, 0.2, 6 | Adhesive adapters: how many (the highest keyholes) take a square, the others a round; the shape `part="adapter"` exports; the squares' side and the rounds' diameter; the tape's thickness; the seat's depth; the base's depth |
+| `tape_squares`, `tape`, `tape_size`, `tape_round_d`, `tape_t`, `tape_seat`, `tape_base_d` | 1 (soap caddy) / 2 (drainer), square, 40, 30, 3, 0, 6 | Adhesive adapters: how many (the highest keyholes) take a square, the others a round; the shape `part="adapter"` exports; the squares' side and the rounds' diameter; the tape's thickness; the seat's depth; the base's depth |
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |

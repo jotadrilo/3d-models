@@ -50,7 +50,7 @@ tape_squares = 1;    // adapters with a square of tape, at the highest keyholes,
 tape_size = 40;      // the squares' side (HOMMAND pads) [20:1:60]
 tape_round_d = 30;   // the rounds' diameter [15:1:40]
 tape_t = 3;          // tape thickness (HOMMAND pads: 3 mm): the adapters stand this much off the wall, less their seats [0.4:0.1:5]
-tape_seat = 0.2;     // a shallow seat for the tape in the adapter's back, to place it (1 layer) [0:0.2:0.6]
+tape_seat = 0;       // a shallow seat for the tape in the adapter's back, to place it (0: none; 0.2 left the tape face printed as a bridge, and the tape let go of it) [0:0.2:0.6]
 tape_base_d = 6;     // the adapter's base, back plate and rim [3:0.5:12]
 
 /* [Installation jig] */

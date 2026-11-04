@@ -548,8 +548,14 @@ Research behind each component in `tools/scad/`, one entry per component.
     (`stand` = wall gap − tape thickness + seat depth), so nothing in front changes.
   - **Applying it** (3M's guidance for foam tapes): clean with isopropyl alcohol and water, no
     soap; firm pressure for ~30 s; the bond builds over 24–72 h, so load it the next day; above
-    ~15 °C. The tape face prints on the textured plate; its shallow seats (one layer) place the
-    pieces.
+    ~15 °C. The tape face prints on the textured plate, whole: **no seat** (`seat_depth` 0).
+  - **How they held** (sink organizers, 2026-11): the loaded cutlery drainer came down over a
+    weekend, every piece of tape still stuck to the wall and the adapters off it. Their tape faces
+    had a one-layer seat (0.2) for the tape: only a 1 mm rim lay on the bed, and the 40 mm face
+    inside printed as a bridge (thin lines, gaps between them, sagging), so the tape held only on
+    the lines' crests. Now printed without the seat, the face whole on the plate; wash off any glue
+    stick (water) before the alcohol, and fresh tape on the wall, not the old tape's torn face.
+    How they hold this way is still to be recorded here.
 - **Stand-off peg** (`mounts.scad`): a post that rests on the wall in compression. It stops a
   piece hung on two side-by-side mounts from nodding forward. It goes into a through hole
   **from behind**, its shoulder on the piece's back face, so the wall only pushes it further in.

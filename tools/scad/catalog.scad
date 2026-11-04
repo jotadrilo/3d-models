@@ -38,7 +38,7 @@ ARROW = "#C12E1F";   // how it goes together
 // Shared sizes
 pad_t = 4.2; pad_w = 22; drop = 12; shank_d = 7; head_d = 12;   // keyhole, as in soap-caddy
 cup_h = 12;
-tape_t = 3; tape_seat = 0.2; tape_s = 40;   // a square of foam tape, and the frame's seat for it
+tape_t = 3; tape_seat = 0; tape_s = 40;   // a square of foam tape, and the frame's seat for it
 tape_stand = cup_h + keyhole_button_flange_t(pad_t, shank_d, head_d) - (tape_t - tape_seat);   // the piece as far off the wall as on a cup
 flange_t = keyhole_button_flange_t(pad_t, shank_d, head_d);
 peg_d = 6; peg_len = cup_h + flange_t; boss_t = pad_t;

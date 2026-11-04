@@ -149,7 +149,9 @@ module standoff_peg_hole(d = 6, depth = 5, fit = 0.1) translate([0, 0, -depth]) 
 //               or diameter `size`, `gap` apart, centred on x = 0
 //   foot_d      the feet's tape (round, d), under the outermost heads
 //               below the tape row (none if every head is in it)
-//   seat_depth  shallow seats for the tape and the spacers, to place them
+//   seat_depth  shallow seats for the tape and the spacers, to place them.
+//               0 by default: a seat leaves the tape face off the bed, printed
+//               as a bridge, and the tape let go of it (CLAUDE.md §4.7)
 //   frame_d     depth of the bars; base_t the tape bar's back plate;
 //               bar_w the bars' width; boss_d the posts that carry the heads
 // Head sizes (pad_t, shank_d, head_d, axial_play, head_cyl) as keyhole_button.
@@ -175,7 +177,7 @@ module keyhole_head(pad_t, shank_d = 7, head_d = 12, axial_play = 0.1, head_cyl 
 }
 
 module tape_mount(heads, top, bottom, stand, n = 2, tape = "square", size = 40, gap = 3, foot_d = 30,
-                  seat_depth = 0.2, frame_d = 6, base_t = 1.6, bar_w = 6.3, rib_t = 1.26, boss_d = 16,
+                  seat_depth = 0, frame_d = 6, base_t = 1.6, bar_w = 6.3, rib_t = 1.26, boss_d = 16,
                   pad_t = 4.2, shank_d = 7, head_d = 12, axial_play = 0.1, head_cyl = 1, chamfer = 0.6) {
     e = 0.01;
     ty = top - 1 - size / 2;                       // the tape row's centre line
