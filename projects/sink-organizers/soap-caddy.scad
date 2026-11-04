@@ -32,10 +32,10 @@ explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
 body_lift = 0;       // [0:1:300] body slid up off the plate (renders)
 
 /* [Bottle] */
-bottle_w = 90;       // widest part of the bottle, along the wall (its base) [50:0.5:120]
-bottle_d = 50;       // bottle depth, front to back [30:0.5:90]
+bottle_w = 85;       // widest part of the bottle, along the wall (its base) [50:0.5:120]
+bottle_d = 60;       // bottle depth, front to back [30:0.5:90]
 bottle_h = 210;      // total height with the cap: checks it fits under the cabinet [100:1:320]
-neck_d = 34;         // widest part that goes through the floor hole (cap, neck ring) [20:0.5:50]
+neck_d = 55;         // widest part that goes through the floor hole (cap, neck ring) [20:0.5:70]
 seat_to_tip = 35;    // how far the cap tip hangs below the floor, bottle resting [15:1:70]
 bottle_play = 1.5;   // clearance around the bottle, per side, at least [0.5:0.5:5]
 
@@ -265,7 +265,10 @@ module bottle_box() {
                 linear_extrude(eps) offset(r = -chamfer) plan(bw, box_d);
                 translate([0, 0, chamfer]) linear_extrude(floor_t - chamfer) plan(bw, box_d);
             }
-            translate([0, yc, 0]) cylinder(d = collar_d, h = collar_t);
+            intersection() {   // a wide cap's collar runs into the walls
+                translate([0, yc, 0]) cylinder(d = collar_d, h = collar_t);
+                linear_extrude(collar_t) plan(bw, box_d);
+            }
             linear_extrude(box_h) shell(bw, box_d, wall_t);
         }
         // open front between the returns, rounded at the top corners of the opening

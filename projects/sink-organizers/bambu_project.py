@@ -125,7 +125,7 @@ def main():
     p.add("Dovetail housing", soap("test_dovetail_housing"), 110, 60)
     p.add("Dovetail tail", soap("test_dovetail_tail"), 140, 60)
     p.add("Handle pin test", drainer("test_pin"), 200, 60)
-    p.add("Soap caddy width test", soap("test_width"), 108, 178, settings=FINS)
+    p.add("Soap caddy width test", soap("test_width"), 108, 172, settings=FINS)
 
     p = proj.plate("Sway test")
     p.add("Sway test", soap("test_sway"), 128, 128, settings=FINS)

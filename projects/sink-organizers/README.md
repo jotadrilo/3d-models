@@ -90,9 +90,13 @@ other.
 
 ![Section through the upper keyholes, on the wall](renders/soap-caddy-section-front.webp)
 
-Sized for the Bosque Verde 600 ml bottle (90 mm at its widest, 50 mm deep,
-210 mm tall) and the Bosque Verde scourer with nail guard (90 × 65 × 45 mm),
-both from Mercadona.
+Sized for the Fairy Maxi Poder 730 ml bottle, made to stand on its cap with
+an anti-drip valve in it (85 mm at its widest, 60 mm deep, a cylindrical cap
+Ø 55 × 30 mm), and the Bosque Verde scourer with nail guard (90 × 65 × 45 mm)
+from Mercadona. Its height is still the earlier bottle's 210 mm, which only
+checks the room under the cabinet. The first caddies held the Bosque Verde
+600 ml bottle (`-D bottle_w=90 -D bottle_d=50 -D neck_d=34`); its flip-top cap
+dripped onto the sponge.
 
 **Cups.** Four suction cups (Ø 50 mm with an M4 stud, e.g. DIYexpert on
 Amazon) hold the plate: two side by side low down, `lower_cup_span` (56 mm)
@@ -572,7 +576,7 @@ pieces do not fit.
 | `plate_window`, `plate_window_r`, `plate_window_inset` | [], 5, 0 | Wall plate: the slot zones (0 = the lowest) that get one window per field of slots instead, the windows' corner radius, and the solid bands above and below them (one value, or one per zone). The soap caddy sets [0, 1] and [0, 20], the cutlery drainer [0] and 4 |
 | `plate_slot_clear`, `plate_bridge`, `plate_slot_max_len` | 0, 0, 0 | Wall plate slots: extra clearance from the pads, wider bridges between segments, a shorter longest slot (0: `slot_max_len`). Variants of the FEA study, off by default |
 | **Soap caddy** | | |
-| `bottle_w`, `bottle_d`, `bottle_h`, `neck_d`, `seat_to_tip`, `bottle_play` | 90, 50, 210, 34, 35, 1.5 | The bottle |
+| `bottle_w`, `bottle_d`, `bottle_h`, `neck_d`, `seat_to_tip`, `bottle_play` | 85, 60, 210, 55, 35, 1.5 | The bottle |
 | `sponge_w`, `sponge_d`, `sponge_h`, `sponge_play`, `tip_gap` | 90, 65, 45, 2, 15 | The sponge; closed cap tip to sponge top |
 | `counter_gap`, `cabinet_h` | 12, 460 | Counter to the body; counter to the wall cabinet |
 | `cup_pitch`, `lower_cup_span` | 55, 56 | Upper cups one above the other; lower cups side by side |
