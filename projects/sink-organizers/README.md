@@ -523,19 +523,19 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 6 h 52 min, 135 g | 6 h 33 min, 138 g | 6 h 53 min, 148 g |
-| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 69 g | 3 h 06 min, 71 g | 3 h 22 min, 75 g |
+| 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 7 h 08 min, 140 g | 6 h 48 min, 143 g | 7 h 08 min, 153 g |
+| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 25 min, 73 g | 3 h 09 min, 74 g | 3 h 25 min, 79 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 25 min, 94 g | 4 h 04 min, 96 g | 4 h 25 min, 103 g |
 | 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
 | 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 14 min, 58 g | 2 h 08 min, 60 g | 2 h 14 min, 64 g |
 | 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 32 min, 174 g | 12 h 15 min, 178 g | 12 h 32 min, 191 g |
 | 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 12 min, 47 g | 3 h 01 min, 48 g | 3 h 12 min, 52 g |
 | 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 20 min, 18 g | 1 h 18 min, 19 g | 1 h 20 min, 20 g |
-| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 32 min, 36 g | 1 h 26 min, 36 g | 1 h 32 min, 39 g |
+| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 34 min, 37 g | 1 h 29 min, 38 g | 1 h 34 min, 40 g |
 | 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
 | 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
-| 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 36 min, 41 g | 1 h 32 min, 42 g | 1 h 36 min, 45 g |
+| 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 36 min, 43 g | 1 h 32 min, 44 g | 1 h 36 min, 47 g |
 
 Avoiding travel across walls costs 5–25 min on the other plates (the bins
 the most).
