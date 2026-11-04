@@ -195,6 +195,7 @@ class Plate:
     name: str
     prime_tower: tuple = (20, 30)     # front-left, clear of the excluded area
     objects: list = field(default_factory=list)
+    print_sequence: str = None        # "by object" prints each object whole, one after another (no prime tower)
 
     def add(self, name, mesh, x=BED_W / 2, y=BED_D / 2, settings=None, part_name=None, ranges=None):
         """Place `mesh` centred at (x, y) on this plate (default: the plate centre). `ranges`:
@@ -304,7 +305,10 @@ class Project:
                                  f'<metadata key="identify_id" value="{100 + k}"/></model_instance>')
             plates_cfg.append(f'<plate><metadata key="plater_id" value="{pi + 1}"/>'
                               f'<metadata key="plater_name" value="{_attr(plate.name)}"/>'
-                              f'<metadata key="locked" value="false"/>{"".join(instances)}</plate>')
+                              f'<metadata key="locked" value="false"/>'
+                              + (f'<metadata key="print_sequence" value="{_attr(plate.print_sequence)}"/>'
+                                 if plate.print_sequence else "")
+                              + f'{"".join(instances)}</plate>')
 
         with tempfile.TemporaryDirectory() as tmp:
             cfg, app = self._settings(tmp)
