@@ -69,7 +69,7 @@ to the 3MF (`key`).
 | Tool | Version / path |
 |---|---|
 | OpenSCAD | 2026.09.23 (snapshot). **Manifold is the default backend**; `--backend=Manifold` forces it |
-| Bambu Studio | 02.08.02.61, `/Applications/BambuStudio.app/Contents/MacOS/BambuStudio` |
+| Bambu Studio | 02.09.01.70, `/Applications/BambuStudio.app/Contents/MacOS/BambuStudio` |
 | Blender | 5.2.2 LTS, `/Applications/Blender.app` (`blender` on the PATH); Cycles on Metal |
 | System presets | `/Applications/BambuStudio.app/Contents/Resources/profiles/BBL/{machine,process,filament}` |
 | Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28`; the start G-code draws its nozzle load line along the front edge (`y 1..11`), so parts keep clear of `y < 12` |
@@ -215,6 +215,10 @@ Every project's `bambu_project.py` is a short description built on the shared mo
   that leave the bed, overlap each other or touch the excluded corner.
 - Full settings come from running the Bambu Studio CLI on a dummy model with the system presets.
   Bed type, filament colours, flush matrix and prime tower position (per plate) are set on top.
+- `process_overrides` are also listed in `different_settings_to_system`: without that the GUI
+  slices with the plain system preset, while the CLI (`make report`) still applies them. Printed
+  G-code from before the fix had grid infill and no avoid-crossing-walls. To check what a project
+  really prints with, read the settings in a G-code sliced from the GUI, not from the CLI.
 - Plates are placed on Bambu's plate grid, so multi-plate projects open and slice correctly
   (`remote-stand` has two).
 - `make report` (`python3 ../../tools/bambu3mf.py report <project>-p1s.3mf`) slices every plate with the

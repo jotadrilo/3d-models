@@ -427,6 +427,10 @@ class Project:
         nozzle_count = max(1, len(cfg.get("nozzle_diameter") or []))
         matrix = [str(flush(a, b)) for a in colours for b in colours]
         cfg.update(self.process_overrides)
+        # The GUI reloads a project's system presets and keeps only the keys listed here (process
+        # first, then each filament, then the printer); the CLI reads every value, so a project
+        # that leaves its overrides out slices right on the CLI and prints without them.
+        cfg["different_settings_to_system"][0] = ";".join(sorted(self.process_overrides))
         for key in ("flush_multiplier", "flush_multiplier_fast"):
             if isinstance(cfg.get(key), list) and cfg[key]:
                 cfg[key] = (cfg[key] * nozzle_count)[:nozzle_count]
