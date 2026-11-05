@@ -514,9 +514,11 @@ Textured PEI plate:
   tools/scad/print_aids.scad), 20 mm out from its side walls and tied to
   them by tabs one line wide and 2 layers tall every 20 mm (Arachne walls
   on the objects with fins: Classic drops tabs that thin); plate 1 holds it
-  turned a quarter to fit them.
-  Its walls print at 60 mm/s (outer) and 80 (inner) above 100 mm (a height
-  range modifier), and the project avoids travel across walls, where PETG
+  turned a quarter to fit them. Each fin stands on a rounded foot 10 mm
+  wide and 3 layers tall, which comes off with it.
+  Its walls print at 60 mm/s (outer) and 80 (inner) below 5 mm, where the fins
+  have only their feet to hold them, and above 100 mm (height range
+  modifiers), and the project avoids travel across walls, where PETG
   strings. After printing, bend the fins off; if a tab leaves a bump, a
   knife takes it off.
 
@@ -524,19 +526,19 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 7 h 08 min, 140 g | 6 h 48 min, 143 g | 7 h 08 min, 153 g |
-| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 25 min, 73 g | 3 h 09 min, 74 g | 3 h 25 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 25 min, 94 g | 4 h 04 min, 96 g | 4 h 25 min, 103 g |
+| 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 7 h 16 min, 140 g | 6 h 57 min, 143 g | 7 h 16 min, 153 g |
+| 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 24 min, 72 g | 3 h 08 min, 74 g | 3 h 24 min, 79 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 24 min, 94 g | 4 h 03 min, 96 g | 4 h 24 min, 103 g |
 | 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
-| 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 14 min, 58 g | 2 h 08 min, 60 g | 2 h 14 min, 64 g |
-| 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 32 min, 174 g | 12 h 15 min, 178 g | 12 h 32 min, 191 g |
-| 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 12 min, 47 g | 3 h 01 min, 48 g | 3 h 12 min, 52 g |
-| 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 20 min, 18 g | 1 h 18 min, 19 g | 1 h 20 min, 20 g |
-| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 34 min, 37 g | 1 h 29 min, 38 g | 1 h 34 min, 40 g |
-| 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 19 g |
-| 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
+| 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 13 min, 58 g | 2 h 08 min, 60 g | 2 h 13 min, 64 g |
+| 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 30 min, 174 g | 12 h 13 min, 178 g | 12 h 30 min, 190 g |
+| 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 11 min, 47 g | 3 h 00 min, 48 g | 3 h 11 min, 52 g |
+| 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 19 min, 18 g | 1 h 18 min, 19 g | 1 h 19 min, 20 g |
+| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width (with fin tabs), handle pins | 1 h 34 min, 37 g | 1 h 28 min, 38 g | 1 h 34 min, 40 g |
+| 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 18 g |
+| 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 35 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
-| 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 36 min, 43 g | 1 h 32 min, 44 g | 1 h 36 min, 47 g |
+| 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 35 min, 43 g | 1 h 31 min, 44 g | 1 h 35 min, 47 g |
 
 On the X2D (`sink-organizers-x2d*.3mf`) the plates are the same, except that it cannot use the
 left 20.5 mm of the bed: the widest plates sit further right, and the towel handle, the rack and
@@ -544,19 +546,19 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 
 | Plate | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|
-| 1 · Soap caddy: body and wall plate | 7 h 13 min, 139 g | 6 h 54 min, 143 g | 7 h 24 min, 153 g |
-| 2 · Soap caddy: tray, box and buttons | 3 h 33 min, 72 g | 3 h 20 min, 74 g | 3 h 38 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | 4 h 30 min, 94 g | 4 h 10 min, 96 g | 4 h 37 min, 103 g |
+| 1 · Soap caddy: body and wall plate | 7 h 26 min, 140 g | 7 h 08 min, 143 g | 7 h 36 min, 153 g |
+| 2 · Soap caddy: tray, box and buttons | 3 h 35 min, 72 g | 3 h 22 min, 74 g | 3 h 40 min, 79 g |
+| 3 · Cutlery drainer: body and wall plate | 4 h 32 min, 94 g | 4 h 13 min, 96 g | 4 h 39 min, 103 g |
 | 4 · Cutlery drainer: tray | 1 h 58 min, 35 g | 1 h 41 min, 36 g | 1 h 59 min, 39 g |
-| 5 · Cutlery drainer: rack, handle and buttons | 2 h 18 min, 58 g | 2 h 14 min, 60 g | 2 h 23 min, 64 g |
-| 6 · Cutlery drainer: bins | 12 h 59 min, 174 g | 12 h 51 min, 178 g | 13 h 37 min, 190 g |
-| 7 · Cutlery drainer: risers | 3 h 19 min, 47 g | 3 h 10 min, 48 g | 3 h 25 min, 52 g |
-| 8 · Cutlery drainer: bin fit test | 1 h 21 min, 18 g | 1 h 21 min, 19 g | 1 h 25 min, 20 g |
-| 9 · Fit tests | 1 h 36 min, 37 g | 1 h 31 min, 38 g | 1 h 40 min, 40 g |
+| 5 · Cutlery drainer: rack, handle and buttons | 2 h 24 min, 58 g | 2 h 20 min, 60 g | 2 h 29 min, 64 g |
+| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 51 min, 190 g |
+| 7 · Cutlery drainer: risers | 3 h 20 min, 47 g | 3 h 11 min, 48 g | 3 h 26 min, 52 g |
+| 8 · Cutlery drainer: bin fit test | 1 h 23 min, 18 g | 1 h 22 min, 19 g | 1 h 26 min, 20 g |
+| 9 · Fit tests | 1 h 38 min, 37 g | 1 h 34 min, 38 g | 1 h 42 min, 40 g |
 | 10 · Sway test | 2 h 32 min, 17 g | 2 h 13 min, 17 g | 2 h 31 min, 18 g |
 | 11 · Soap caddy: installation jig | 39 min, 13 g | 38 min, 14 g | 40 min, 15 g |
 | 12 · Cutlery drainer: installation jig | 43 min, 15 g | 42 min, 16 g | 45 min, 17 g |
-| 13 · Adhesive adapters | 1 h 36 min, 43 g | 1 h 33 min, 44 g | 1 h 41 min, 47 g |
+| 13 · Adhesive adapters | 1 h 43 min, 43 g | 1 h 41 min, 44 g | 1 h 47 min, 47 g |
 
 The fit tests were tuned on the P1S; the X2D may print the fits a little differently, so print
 plate 9 (and 8) on it before the big plates.
@@ -608,6 +610,7 @@ pieces do not fit.
 | `slat_pitch` | 9 | Slat spacing |
 | `box_play`, `box_h`, `wall_t`, `floor_t`, `collar_t`, `return_w` | 0.25, 90, 1.68, 2, 4, 10 | The box |
 | `fin_w`, `fin_t`, `fin_gap`, `fin_flange`, `fin_sides` | 20, 1.26, 0.3, 0, [-1, 1] | The body's printing fins (0: none), a flange on their outer edge (for fins with no tabs), which side walls get them |
+| `fin_foot` | 10 | Width of the rounded foot under each of the body's fins (0: none) |
 | `tab_w`, `tab_h`, `tab_pitch` | 0.42, 0.4, 20 | Tabs tying the fins to the walls (0 tall: none, and the fins only stop the walls leaning their way) |
 | `test_sway_h`, `test_sway_len`, `test_sway_fin` | 100, 40, 12 | The sway test's strips and fins |
 | `side_add`, `side_add_z`, `frame_t`, `back_wall` | 0, 0, 1.68, 0 | Thicker side walls (from a height), front frame, a slotted back wall. Variants of the print stiffness study, off by default |

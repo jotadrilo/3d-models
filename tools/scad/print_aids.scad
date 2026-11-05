@@ -20,8 +20,15 @@ use <basics.scad>
 //   tab_w      tab width along the wall (1 line: it snaps off flush)
 //   tab_h      tab height (0: no tabs)
 //   tab_pitch  tab spacing up the fin
-module stabilizer_fin(h, w = 20, t = 1.26, gap = 0.3, flange = 0, tab_w = 0.42, tab_h = 0.4, tab_pitch = 20) {
+//   foot_w     width of a rounded foot under the fin, for its grip on the bed
+//              (0: none): the bare fin holds on by about 20 mm²
+//   foot_h     foot height (whole layers)
+//   foot_in    how far the foot starts from the fin's inner end, clear of the wall and what is beside it
+module stabilizer_fin(h, w = 20, t = 1.26, gap = 0.3, flange = 0, tab_w = 0.42, tab_h = 0.4, tab_pitch = 20,
+                      foot_w = 0, foot_h = 0.6, foot_in = 1.5) {
     box([gap, -t / 2, 0], [gap + w, t / 2, h]);
+    if (foot_w > 0) linear_extrude(foot_h) hull()
+        for (x = [gap + foot_in + foot_w / 2, gap + w - foot_w / 2]) translate([x, 0]) circle(d = foot_w);
     if (flange > 0) box([gap + w - t, -flange / 2, 0], [gap + w, flange / 2, h]);
     if (tab_h > 0) for (z = [tab_pitch : tab_pitch : h - tab_h])
         box([-0.01, -tab_w / 2, z], [gap + 0.01, tab_w / 2, z + tab_h]);

@@ -519,6 +519,13 @@ Research behind each component in `tools/scad/`, one entry per component.
     1.68 mm wall with a fin on each face printed clean to the top; the one-line tabs held all
     the way and snapped off with no mark. The bare strip swayed visibly under the nozzle and
     came out rough above ~85 mm, where the FEA put it at 24 mm/N.
+  - **Its grip on the bed.** A bare fin holds on by about 20 mm² (two lines 20 mm long) and gets
+    no automatic brim. On the soap caddy's body in PETG Matte (2026-11) a fin had come off and
+    another was tangled by z = 1.4 mm, while the same fins held in PETG HF; why the two filaments
+    differ is unknown. `foot_w` adds a rounded foot, 3 layers tall (the body: 10 mm wide, about
+    170 mm²), that comes off with the fin, clear of the wall and of anything beside it, with the
+    walls at 60/80 mm/s below 5 mm. How it holds is still to be recorded here. Not a brim per
+    object: that would also run around the dovetail tails.
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left

@@ -5,7 +5,8 @@ Plate 1: the soap caddy's body standing on its floor (its dovetail tails
 along Z), turned a quarter so its printing fins fit beside the wall plate,
 and its wall plate flat on its back (the keyholes' slots and the housings'
 flanks in XY). Above SLOW_Z the body's walls print slower: its thin walls
-sway under the nozzle up there (fea/README.md, "Print stiffness").
+sway under the nozzle up there (fea/README.md, "Print stiffness"). Below FOOT_Z
+too: the nozzle tore the fins off the bed at full speed.
 Plate 2: the soap caddy's tray on its back, the box on its floor and the four
 buttons on their flanges.
 Plate 3: the cutlery drainer's body standing and its wall plate flat.
@@ -44,6 +45,7 @@ SOAP = os.path.join(HERE, "soap-caddy.scad")
 DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
 FLAT = (-90, 0, 0)   # the plates and trays on their backs
 SLOW_Z = 100         # the soap caddy body's walls print slower above this
+FOOT_Z = 5           # and below this, while its fins have little to hold them down
 SLOW = {"outer_wall_speed": "60", "inner_wall_speed": "80"}
 # The stabilizer fins' tabs are one line wide: Classic walls drop them (no room
 # for a loop in and out), Arachne prints them as a single bead
@@ -96,7 +98,7 @@ def main():
 
     p = proj.plate("Soap caddy - body and wall plate")
     p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 81 if x2d else 75, 128, settings=FINS,
-          ranges=[(SLOW_Z, 250, SLOW)])
+          ranges=[(0, FOOT_Z, SLOW), (SLOW_Z, 250, SLOW)])
     p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 198 if x2d else 192, 128)
 
     p = proj.plate("Soap caddy - tray, box and buttons")

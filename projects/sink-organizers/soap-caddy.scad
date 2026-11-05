@@ -64,6 +64,7 @@ frame_t = 1.68;      // the front returns and the bar across the top (4 lines) [
 fin_w = 20;          // fins beside the side walls, printed with the body and lifted off after (0: none): without them its 1.68 mm walls swayed under the nozzle above ~165 mm [0:1:40]
 fin_t = 1.26;        // fin thickness (3 lines) [0.84:0.42:2.52]
 fin_flange = 0;      // flange across each fin's outer edge, for fins with no tabs [0:1:30]
+fin_foot = 10;       // width of the rounded foot under each body fin, 3 layers tall (0: none): bare, the fins' 20 mm² on the bed tore off in PETG Matte [0:1:14]
 fin_gap = 0.3;       // gap between the fins and the side walls, bridged by the tabs [0.1:0.05:0.6]
 fin_sides = [-1, 1]; // which side walls get fins
 tab_w = 0.42;        // tabs tying the fins to the walls: width along the wall (1 line), so they snap off flush [0.42:0.42:1.68]
@@ -203,7 +204,7 @@ module body(fins = false) {
 module stabilizer_fins() for (s = [-1, 1], y = [-(body_in + 0.52), -(ud - 1 - fin_t / 2)])
     if (len([for (f = fin_sides) if (f == s) f]) > 0)
         translate([s * (hx + side_add), y, 0]) mirror([s < 0 ? 1 : 0, 0, 0])
-            stabilizer_fin(top, fin_w, fin_t, fin_gap, fin_flange, tab_w, tab_h, tab_pitch);
+            stabilizer_fin(top, fin_w, fin_t, fin_gap, fin_flange, tab_w, tab_h, tab_pitch, foot_w = fin_foot);
 
 module body_core() difference() {
     union() {
