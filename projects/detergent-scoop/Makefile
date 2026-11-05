@@ -9,6 +9,7 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
+PRINTERS       ?= p1s x2d
 
 .DEFAULT_GOAL := all
 .PHONY: all stl project report render check clean help
@@ -18,11 +19,14 @@ all: stl ## Build everything (same as stl)
 stl: ## Export detergent-scoop.stl
 	$(SCAD) -o detergent-scoop.stl $(SRC)
 
-project: ## Build detergent-scoop-p1s.3mf, the ready-to-print Bambu Studio project
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o detergent-scoop-p1s.3mf $(DEFS)
+project: ## Build the ready-to-print Bambu Studio projects, one per printer in PRINTERS: detergent-scoop-p1s.3mf and detergent-scoop-x2d.3mf
+	@set -e; for p in $(PRINTERS); do \
+		echo "python3 bambu_project.py --printer $$p"; \
+		OPENSCAD=$(OPENSCAD) python3 bambu_project.py --printer $$p $(DEFS); \
+	done
 
-report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../../tools/bambu3mf.py report detergent-scoop-p1s.3mf
+report: project ## Rebuild the projects, slice them and print time and filament per plate
+	@set -e; for p in $(PRINTERS); do echo "== detergent-scoop-$$p.3mf"; python3 ../../tools/bambu3mf.py report detergent-scoop-$$p.3mf; done
 
 check: ## Print the cavity volume up to the fill line
 	$(SCAD) -D 'part="cavity"' --export-format=asciistl -o cavity.stl $(SRC)
@@ -40,6 +44,6 @@ clean: ## Remove exported files (the committed Bambu project and renders are kep
 	rm -f detergent-scoop.stl cavity.stl
 
 help: ## Show this help
-	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@printf '\nUsage: make \033[36m<target>\033[0m [PRINTERS="p1s x2d"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	@printf '\nExamples:\n  make DEFS="-D cap_d=38"\n  make DEFS="-D capacity_ml=150 -D inner_l=65"\n  make check\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n\n'

@@ -12,7 +12,7 @@ on both faces. The front window sits at 9 o'clock and the back one at
 the ring by its ridged edge on top and the disc by the knob on the front.
 
 ```sh
-make project                                # -> cosmere-tracker-p1s.3mf (Bambu Studio, ready to print)
+make project                                # -> cosmere-tracker-p1s.3mf and -x2d.3mf (Bambu Studio, ready to print)
 make report                                 # rebuild it, slice it, print time and filament
 make                                        # -> frame.3mf front.3mf wheels.3mf stand.3mf
 make DEFS='-D show_investiture=false'       # only Health and Focus
@@ -96,16 +96,22 @@ Sizes from the console.
 tracker: above `digit_h=7` with three stats the plate no longer fits, so use
 `make` and lay out the parts yourself.
 
-## Printing (multi-colour, e.g. Bambu P1S + AMS)
+## Printing (multi-colour, Bambu P1S or X2D + AMS)
 
-`make project` builds `cosmere-tracker-p1s.3mf`, a Bambu Studio project with
-every part on one plate (3 rings, 3 discs, front, frame and stand) and each
-colour already assigned to a filament: P1S 0.4 nozzle, *0.20mm Standard*
+`make project` builds one Bambu Studio project per printer, `cosmere-tracker-p1s.3mf`
+and `cosmere-tracker-x2d.3mf`, with every part on one plate (3 rings, 3 discs,
+front, frame and stand) and each colour already assigned to a filament: 0.4
+nozzle, *0.20mm Standard*
 with the Arachne wall generator and no elephant foot compensation (so the
 thin strokes of the first-layer labels survive), Textured PEI plate, Bambu PLA Basic in slots 1 (body), 2 (labels) and 3
 (digits and rims). Colours only change in the first three layers and in the
 top three of the wheels, so one plate costs about ten filament changes:
-roughly 3 h 30 min and 112 g. Map the three slots to your AMS when sending
+roughly 3 h 30 min and 112 g on the P1S, 3 h 27 min and 112 g on the X2D. The
+X2D cannot use the left 20.5 mm of its bed, so there the front plate, frame and
+stand lie turned a quarter, side by side, with the rings in a column beside
+them. Every filament prints on the left nozzle (direct drive): the right one, a
+Bowden, would save 3 g of purge but print the thin first-layer labels worse
+(CLAUDE.md §6.4). Map the three slots to your AMS when sending
 it. It needs Bambu Studio installed (its CLI fills in the full presets).
 
 To build your own plate instead:

@@ -32,13 +32,13 @@ with a square and five with a round, for both pieces.
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
 
-    python3 bambu_project.py [-o sink-organizers-p1s.3mf] [--hf | --matte] [-D var=val ...]
+    python3 bambu_project.py [--printer p1s|x2d] [-o out.3mf] [--hf | --matte] [-D var=val ...]
 """
 import argparse, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
-from bambu3mf import PETG_BASIC, PETG_HF, PETG_MATTE, Filament, Project, load_scad  # noqa: E402
+from bambu3mf import PRINTERS, Filament, Project, load_scad  # noqa: E402
 
 SOAP = os.path.join(HERE, "soap-caddy.scad")
 DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
@@ -52,20 +52,26 @@ FINS = {"wall_generator": "arachne"}
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("-o", "--output", default=os.path.join(HERE, "sink-organizers-p1s.3mf"))
+    ap.add_argument("--printer", choices=sorted(PRINTERS), default="p1s")
+    ap.add_argument("-o", "--output")
     kind = ap.add_mutually_exclusive_group()
     kind.add_argument("--hf", action="store_true", help="PETG HF instead of PETG Basic")
     kind.add_argument("--matte", action="store_true", help="PETG Matte instead of PETG Basic")
     ap.add_argument("-D", dest="defs", action="append", default=[], help="OpenSCAD override")
     args = ap.parse_args()
+    pr = PRINTERS[args.printer]
 
-    title, petg = ("Sink organizers (PETG HF)", PETG_HF) if args.hf else \
-        ("Sink organizers (PETG Matte)", PETG_MATTE) if args.matte else ("Sink organizers", PETG_BASIC)
+    title, petg, suffix = ("Sink organizers (PETG HF)", "Bambu PETG HF", "-hf") if args.hf else \
+        ("Sink organizers (PETG Matte)", "Bambu PETG Matte", "-matte") if args.matte else \
+        ("Sink organizers", "Bambu PETG Basic", "")
+    process, overrides = pr.process("0.20mm Standard")
     proj = Project(
         title,
-        process="0.20mm Standard @BBL X1C",
-        filaments=[Filament(petg, "#000000")],
+        process=process,
+        filaments=[Filament(pr.preset("filament", petg), "#000000")],
+        printer=pr,
         process_overrides={
+            **overrides,
             "sparse_infill_pattern": "gyroid",
             "seam_position": "back",
             "precise_outer_wall": "1",
@@ -76,6 +82,12 @@ def main():
         },
     )
 
+    # The X2D cannot use the left 20.5 mm: the widest plates move right, and the towel handle,
+    # the rack and the drainer's jig (up to 239 mm wide) turn a quarter (still flat, the same
+    # loads in XY)
+    x2d = pr.tag == "x2d"
+    turn = (0, 0, 90) if x2d else (0, 0, 0)
+
     def soap(name, extra=(), **kw):
         return load_scad(SOAP, name, args.defs + list(extra), colour=False, **kw)
 
@@ -83,8 +95,9 @@ def main():
         return load_scad(DRAINER, name, args.defs + list(extra), colour=False, **kw)
 
     p = proj.plate("Soap caddy - body and wall plate")
-    p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 75, 128, settings=FINS, ranges=[(SLOW_Z, 250, SLOW)])
-    p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 192, 128)
+    p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 81 if x2d else 75, 128, settings=FINS,
+          ranges=[(SLOW_Z, 250, SLOW)])
+    p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 198 if x2d else 192, 128)
 
     p = proj.plate("Soap caddy - tray, box and buttons")
     p.add("Soap caddy tray", soap("tray", rotate=FLAT), 128, 95)
@@ -94,21 +107,29 @@ def main():
         p.add(f"Soap caddy button {i + 1}", button, x, 40)
 
     p = proj.plate("Cutlery drainer - body and wall plate")
-    p.add("Cutlery drainer body", drainer("body"), 128, 74)
-    p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), 128, 190)
+    x = 137 if x2d else 128
+    p.add("Cutlery drainer body", drainer("body"), x, 74)
+    p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), x, 190)
 
     p = proj.plate("Cutlery drainer - tray")
     p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 128)
 
     p = proj.plate("Cutlery drainer - rack, handle and buttons")
-    p.add("Cutlery drainer rack", drainer("rack"), 128, 160)
-    p.add("Towel handle", drainer("handle"), 128, 80)
-    for i, x in enumerate((92, 116, 140, 164)):
-        p.add(f"Cutlery drainer button {i + 1}", button, x, 40)
+    if x2d:
+        p.add("Cutlery drainer rack", drainer("rack", rotate=turn), 125, 128)
+        p.add("Towel handle", drainer("handle", rotate=turn), 50, 128)
+        for i, y in enumerate((80, 104, 128, 152)):
+            p.add(f"Cutlery drainer button {i + 1}", button, 195, y)
+    else:
+        p.add("Cutlery drainer rack", drainer("rack"), 128, 160)
+        p.add("Towel handle", drainer("handle"), 128, 80)
+        for i, x in enumerate((92, 116, 140, 164)):
+            p.add(f"Cutlery drainer button {i + 1}", button, x, 40)
 
     p = proj.plate("Cutlery drainer - bins")
     bin_ = drainer("bin")
-    for i, x in enumerate((52, 128, 204)):
+    columns = (60, 135, 210) if x2d else (52, 128, 204)
+    for i, x in enumerate(columns):
         p.add(f"Cutlery drainer bin {i + 1}", bin_, x, 128)
 
     p = proj.plate("Cutlery drainer - risers")
@@ -116,7 +137,7 @@ def main():
         p.add(f"Cutlery drainer riser {i + 1} ({name})", drainer("riser", extra=[f"riser_n={i}"]), x, 128)
 
     p = proj.plate("Cutlery drainer - bin fit test")
-    for x, fit in ((52, "0.05"), (128, "0.1"), (204, "0.15")):
+    for x, fit in zip(columns, ("0.05", "0.1", "0.15")):
         p.add(f"Bin fit {fit}", drainer("test_bin", extra=[f"bin_fit={fit}"]), x, 128)
 
     p = proj.plate("Fit tests")
@@ -134,7 +155,8 @@ def main():
     p.add("Soap caddy jig", soap("jig", rotate=FLAT), 128, 136)
 
     p = proj.plate("Cutlery drainer - installation jig")
-    p.add("Cutlery drainer jig", drainer("jig", rotate=FLAT), 128, 128)
+    jig = drainer("jig", rotate=(FLAT[0], 0, turn[2]))   # on its back, then the quarter turn
+    p.add("Cutlery drainer jig", jig, 128, 128)
 
     # The adhesive mount (mount="tape"): an adapter per keyhole, stuck to the
     # wall with foam tape, a square at the keyholes the pieces pull (1 on the
@@ -145,7 +167,7 @@ def main():
         p.add(f"Adapter, square {i + 1}", soap("adapter", extra=['tape="square"']), x, 160)
     for i, x in enumerate((50, 90, 130, 170, 210)):
         p.add(f"Adapter, round {i + 1}", soap("adapter", extra=['tape="round"']), x, 95)
-    proj.write(args.output)
+    proj.write(args.output or os.path.join(HERE, f"sink-organizers-{pr.tag}{suffix}.3mf"))
 
 
 if __name__ == "__main__":

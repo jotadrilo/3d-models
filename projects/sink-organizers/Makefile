@@ -12,9 +12,8 @@ COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D '
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
+PRINTERS       ?= p1s x2d
 PROJECT        := sink-organizers-p1s.3mf
-PROJECT_HF     := sink-organizers-p1s-hf.3mf
-PROJECT_MATTE  := sink-organizers-p1s-matte.3mf
 
 .DEFAULT_GOAL := all
 .PHONY: all stl project report render clean help
@@ -31,15 +30,16 @@ stl: ## Export each part of both pieces as an STL, soap-caddy-<part>.stl and cut
 		$(SCAD) -D "part=\"$$p\"" -o cutlery-drainer-$$p.stl cutlery-drainer.scad; \
 	done
 
-project: ## Build the ready-to-print Bambu Studio projects, sink-organizers-p1s.3mf (PETG Basic), sink-organizers-p1s-hf.3mf (PETG HF) and sink-organizers-p1s-matte.3mf (PETG Matte): one plate per piece and kind, and the fit tests
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o $(PROJECT) $(DEFS)
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py --hf -o $(PROJECT_HF) $(DEFS)
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py --matte -o $(PROJECT_MATTE) $(DEFS)
+project: ## Build the ready-to-print Bambu Studio projects, one set per printer in PRINTERS: sink-organizers-<printer>.3mf (PETG Basic), -<printer>-hf.3mf (PETG HF) and -<printer>-matte.3mf (PETG Matte): one plate per piece and kind, and the fit tests
+	@set -e; for p in $(PRINTERS); do for k in "" --hf --matte; do \
+		echo "python3 bambu_project.py --printer $$p $$k"; \
+		OPENSCAD=$(OPENSCAD) python3 bambu_project.py --printer $$p $$k $(DEFS); \
+	done; done
 
 report: project ## Rebuild the projects, slice them and print time and filament per plate
-	python3 ../../tools/bambu3mf.py report $(PROJECT)
-	python3 ../../tools/bambu3mf.py report $(PROJECT_HF)
-	python3 ../../tools/bambu3mf.py report $(PROJECT_MATTE)
+	@set -e; for p in $(PRINTERS); do for k in "" -hf -matte; do \
+		echo "== sink-organizers-$$p$$k.3mf"; python3 ../../tools/bambu3mf.py report sink-organizers-$$p$$k.3mf; \
+	done; done
 
 render: project ## Render both pieces (bare, on the wall, taken apart, sections) and the print plates into renders/ with Blender
 	mkdir -p renders
@@ -80,6 +80,6 @@ clean: ## Remove exported files (the committed Bambu project and renders are kep
 	rm -f assembly.3mf $(SOAP_PARTS:%=soap-caddy-%.stl) $(DRAINER_PARTS:%=cutlery-drainer-%.stl)
 
 help: ## Show this help
-	@printf '\nUsage: make \033[36m<target>\033[0m [SOAP_PARTS="body tray ..."] [DRAINER_PARTS="body bin ..."] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@printf '\nUsage: make \033[36m<target>\033[0m [SOAP_PARTS="body tray ..."] [DRAINER_PARTS="body bin ..."] [PRINTERS="p1s x2d"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	@printf '\nExamples:\n  make project DEFS="-D bottle_w=86 -D bottle_d=54 -D neck_d=32"   # your bottle\n  make project DEFS="-D cup_h=10 -D dt_play=0.3"                  # shared values apply to both pieces\n  make report\n  make stl SOAP_PARTS="test_keyhole button test_dovetail_housing test_dovetail_tail" DRAINER_PARTS="test_pin"   # fit tests only\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n\n'

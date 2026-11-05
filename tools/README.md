@@ -42,15 +42,22 @@ A project's `bambu_project.py` is then a short description:
 
 ```python
 sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
-from bambu3mf import PLA_MATTE, Filament, Project, load_scad
+from bambu3mf import PRINTERS, Filament, Project, load_scad
 
-proj = Project("Detergent scoop", process="0.20mm Standard @BBL X1C",
-               filaments=[Filament(PLA_MATTE, "#A3D8E1")],
-               process_overrides={"sparse_infill_pattern": "gyroid"})
+pr = PRINTERS[args.printer]                     # --printer p1s|x2d
+process, overrides = pr.process("0.20mm Standard")
+proj = Project("Detergent scoop", process=process, printer=pr,
+               filaments=[Filament(pr.preset("filament", "Bambu PLA Matte"), "#A3D8E1")],
+               process_overrides={**overrides, "sparse_infill_pattern": "gyroid"})
 scoop = load_scad("detergent-scoop.scad", "scoop", rotate=(180, 0, 0), colour=False)
 proj.plate("Detergent scoop").add("Detergent scoop", scoop)
-proj.write("detergent-scoop-p1s.3mf")
+proj.write(f"detergent-scoop-{pr.tag}.3mf")
 ```
+
+Every project builds one 3MF per printer: `make project` loops over `PRINTERS ?= p1s x2d` and
+runs `bambu_project.py --printer <tag>`, which writes `<project>-<tag>.3mf`. Presets are named
+by their base (`"Bambu PETG HF"`, `"0.20mm Strength"`) and resolved for the printer, never
+written with an `@BBL ...` suffix.
 
 Main pieces:
 
@@ -58,11 +65,13 @@ Main pieces:
 |---|---|
 | `load_scad(scad, part, defs, rotate, colour=True)` | Mesh grouped by colour. `colour=False` for single-colour models (otherwise uncoloured faces get OpenSCAD's preview colours) |
 | `Project(title, process, filaments, process_overrides, colour_map)` | Process preset name, `Filament(preset, "#RRGGBB")` list (slot order) |
-| `proj.plate(name, prime_tower=(20, 30))` | New plate |
+| `proj.plate(name, prime_tower=None)` | New plate; the prime tower defaults to the printer's corner, (20, 30) on the P1S and (25, 30) on the X2D, clear of its keep-clear areas |
 | `plate.add(name, mesh, x, y, settings={...}, ranges=[...])` | Object centred at (x, y), default the plate centre; `settings` are per-object overrides; `ranges` are height range modifiers, `[(z0, z1, {key: value})]` from the bed (`layer_config_ranges.xml`; each range also gets the layer height and extruder, which the CLI needs). Speeds work per range, accelerations do not (they are global) |
 | `proj.write(path)` | Checks the layout and names and writes the 3MF |
-| `Project(..., printer=X2D)`, `PRINTERS` | Target printer: `P1S` (default) or `X2D`. `printer.preset(kind, base)` finds the system preset made for it, e.g. `X2D.preset("filament", "Bambu PLA Matte")` |
-| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC`, `PETG_MATTE` | Filament preset names for the P1S 0.4 |
+| `Project(..., printer=X2D)`, `PRINTERS` | Target printer: `P1S` (default) or `X2D`, by tag in `PRINTERS`. `printer.preset(kind, base)` finds the system preset made for it, e.g. `X2D.preset("filament", "Bambu PLA Matte")` |
+| `Filament(preset, colour, nozzle="left")` | Dual nozzle (X2D): the nozzle each filament prints on, `"left"` (direct drive, default) or `"right"` (Bowden); written to every plate as a *Manual* map. Each filament's settings are written per extruder variant, as the GUI saves them (CLAUDE.md §6.4) |
+| `printer.process(base)` | `(preset, overrides)` for a process. The X2D has no Strength, Optimal or Fine: it gets its 0.20 Standard with 6 walls and 25 % infill, its 0.16 Standard, and its 0.12 High Quality. Merge the overrides under the project's own |
+| `PLA_BASIC`, `PLA_MATTE`, `PETG_HF`, `PETG_BASIC`, `PETG_MATTE` | Filament preset names for the P1S 0.4 (kept for old scripts; projects use `printer.preset`) |
 
 Run as a script to slice every plate and print time and grams per plate and slot (the figures in
 each README):

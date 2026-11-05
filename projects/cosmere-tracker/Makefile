@@ -10,6 +10,7 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
+PRINTERS       ?= p1s x2d
 
 # lazy-union keeps every colour as its own object in the 3MF.
 LAZY := --enable=lazy-union -O export-3mf/color-mode=model
@@ -31,11 +32,14 @@ stl: ## Export each part in PARTS as a single-colour STL
 		$(SCAD) -D "part=\"$$p\"" -o $$p.stl $(SRC); \
 	done
 
-project: ## Build cosmere-tracker-p1s.3mf, the ready-to-print Bambu Studio project
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o cosmere-tracker-p1s.3mf $(DEFS)
+project: ## Build the ready-to-print Bambu Studio projects, one per printer in PRINTERS: cosmere-tracker-p1s.3mf and cosmere-tracker-x2d.3mf
+	@set -e; for p in $(PRINTERS); do \
+		echo "python3 bambu_project.py --printer $$p"; \
+		OPENSCAD=$(OPENSCAD) python3 bambu_project.py --printer $$p $(DEFS); \
+	done
 
-report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../../tools/bambu3mf.py report cosmere-tracker-p1s.3mf
+report: project ## Rebuild the projects, slice them and print time and filament per plate
+	@set -e; for p in $(PRINTERS); do echo "== cosmere-tracker-$$p.3mf"; python3 ../../tools/bambu3mf.py report cosmere-tracker-$$p.3mf; done
 
 render: project ## Render the assembly and the print plate into renders/ with Blender, in the project's filaments
 	mkdir -p renders
@@ -48,6 +52,6 @@ clean: ## Remove exported files (the committed Bambu projects and renders are ke
 	rm -f assembly.3mf $(PARTS:=.3mf) $(PARTS:=.stl)
 
 help: ## Show this help
-	@printf '\nUsage: make \033[36m<target>\033[0m [PARTS="frame front wheels stand"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@printf '\nUsage: make \033[36m<target>\033[0m [PARTS="frame front wheels stand"] [PRINTERS="p1s x2d"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-	@printf '\nExamples:\n  make project\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n  make 3mf PARTS=front\n  make DEFS="-D show_investiture=false -D digit_h=6"\n\n'
+	@printf '\nExamples:\n  make project\n  make project PRINTERS=x2d\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n  make 3mf PARTS=front\n  make DEFS="-D show_investiture=false -D digit_h=6"\n\n'

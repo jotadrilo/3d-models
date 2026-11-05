@@ -6,7 +6,7 @@ follow the wall curvature. Printable without supports.
 ![Lattice bowl](renders/lattice-bowl-hero.webp)
 
 ```sh
-make project                                   # -> lattice-bowl-p1s.3mf (Bambu Studio, ready to print)
+make project                                   # -> lattice-bowl-p1s.3mf and -x2d.3mf (Bambu Studio, ready to print)
 make report                                    # rebuild it, slice it, print time and filament
 make                                           # -> lattice_bowl.stl
 make DEFS='-D top_diameter=200 -D rod_width=2.5'
@@ -67,13 +67,15 @@ times in the default project scale with size: for the large ones consider
 | Orchid pot / plant basket | `-D top_diameter=150 -D base_diameter=120 -D height=130 -D curvature=1.2 -D opening_size=6 -D rod_width=2 -D bottom_band_height=2` | Ø150 × 130 mm; the openings start just above the floor so water drains and roots breathe. Use PETG for outdoor or humid spots |
 | LED tea-light lantern | `-D top_diameter=90 -D base_diameter=80 -D height=75 -D curvature=1.5 -D opening_size=5` | Ø90 × 75 mm, throws a diamond pattern of light. **LED candles only**: PLA softens at ~55 °C |
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `lattice-bowl-p1s.3mf`, a Bambu Studio project with the
-bowl standing on its base on a Textured PEI plate: P1S 0.4 nozzle,
-*0.16mm Optimal* with Precise wall, Bambu PLA Basic in slot 1. The thinner
+`make project` builds one Bambu Studio project per printer, `lattice-bowl-p1s.3mf`
+and `lattice-bowl-x2d.3mf`, with the bowl standing on its base on a Textured PEI
+plate: 0.4 nozzle, *0.16mm Optimal* (on the X2D, which has no Optimal, its
+*0.16mm Standard*) with Precise wall, Bambu PLA Basic in slot 1. The thinner
 layers show less stepping on the flared wall and hold the diamond edges
-better. About 7 h and 81 g with the default parameters (`make report`
+better. About 6 h 40 min on the P1S and 7 h 20 min on the X2D, 81 g, with the
+default parameters (`make report`
 prints the figures for your parameters). It needs Bambu Studio installed.
 
 ## Renders

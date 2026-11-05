@@ -9,7 +9,7 @@ scoop can be stored sitting on top of the bottle.
 ![Detergent scoop](renders/detergent-scoop-hero.webp)
 
 ```sh
-make project                                   # -> detergent-scoop-p1s.3mf (Bambu Studio, ready to print)
+make project                                   # -> detergent-scoop-p1s.3mf and -x2d.3mf (Bambu Studio, ready to print)
 make report                                    # rebuild it, slice it, print time and filament
 make                                           # -> detergent-scoop.stl
 make DEFS='-D cap_d=38'                        # fit it to your bottle cap
@@ -83,13 +83,13 @@ real volume).
 For food, see the food-contact notes in the root `CLAUDE.md` (§8): PLA or PETG,
 occasional use, and the layer lines are hard to clean.
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `detergent-scoop-p1s.3mf`, a Bambu Studio project with
-the scoop already upside down (rim and handle on the bed, collar on top) on a
-Textured PEI plate: P1S 0.4 nozzle, *0.20mm Standard* with gyroid infill,
-Bambu PLA Matte Ice Blue in slot 1. No supports needed. About 1 h and 51 g with the
-default parameters (`make report` prints the figures for your parameters). It
+`make project` builds one Bambu Studio project per printer, `detergent-scoop-p1s.3mf`
+and `detergent-scoop-x2d.3mf`, with the scoop already upside down (rim and handle on
+the bed, collar on top) on a Textured PEI plate: 0.4 nozzle, *0.20mm Standard* with
+gyroid infill, Bambu PLA Matte Ice Blue in slot 1. No supports needed. About 1 h and
+51 g on the P1S, 1 h and 53 g on the X2D, with the default parameters (`make report` prints the figures for your parameters). It
 needs Bambu Studio installed.
 
 The floor of the cup prints as a bridge over the cavity. For a detergent that

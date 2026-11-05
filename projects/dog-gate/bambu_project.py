@@ -43,13 +43,9 @@ def main():
     out = args.output or os.path.join(HERE, f"dog-gate-{pr.tag}.3mf")
 
     # 0.20mm Strength (6 walls, 25 %): the members are walls, not infill. The X2D has no Strength
-    # preset: its Standard with the same walls and infill
-    strength = {"sparse_infill_pattern": "gyroid"}
-    try:
-        process = pr.preset("process", "0.20mm Strength")
-    except SystemExit:
-        process = pr.preset("process", "0.20mm Standard")
-        strength.update({"wall_loops": "6", "sparse_infill_density": "25%"})
+    # preset: its Standard with the same walls and infill (Printer.process)
+    process, strength = pr.process("0.20mm Strength")
+    strength["sparse_infill_pattern"] = "gyroid"
     proj = Project(
         "Dog gate brackets",
         process=process,

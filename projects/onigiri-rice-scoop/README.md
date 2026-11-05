@@ -9,7 +9,7 @@ gram of brown rice.
 ![Onigiri rice scoop](renders/onigiri-rice-scoop-hero.webp)
 
 ```sh
-make project                                    # -> onigiri-rice-scoop-p1s.3mf (both scoops, ready to print)
+make project                                    # -> onigiri-rice-scoop-p1s.3mf and -x2d.3mf (both scoops, ready to print)
 make report                                     # rebuild it, slice it, print time and filament
 make check                                      # each scoop's real volume up to the rim
 make project DEFS='-D basmati_density=0.80'     # after weighing your rice (below)
@@ -72,16 +72,19 @@ All lengths in mm. Override any of them with `make … DEFS='-D name=value'`.
 | **Colours** | | `rice_color`, `nori_color`, `cheek_color` (they pick the filament in the project) |
 | `part` | `scoop` | `scoop` (coloured), `body` (one colour) or `cavity` (used by `make check`) |
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `onigiri-rice-scoop-p1s.3mf`: both scoops on one Textured PEI plate,
+`make project` builds one project per printer, `onigiri-rice-scoop-p1s.3mf` and
+`onigiri-rice-scoop-x2d.3mf`: both scoops on one Textured PEI plate,
 **upside down** (rim and handle on the bed). The cup needs no supports, and the face, nori and
 cheeks are 0.6 mm inlays in the first three layers. Both scoops change colour at the same
 heights, so sharing the plate costs nothing extra (CLAUDE.md §3.1).
 
-- Process: *0.20mm Standard @BBL X1C*, gyroid infill, Arachne walls (thin strokes in the first
-  layers), elephant foot compensation 0.
-- **2 h 29 min, 80.2 g** for both (`make report`).
+- Process: *0.20mm Standard* (`@BBL X1C` on the P1S, `@BBL X2D`), gyroid infill, Arachne walls
+  (thin strokes in the first layers), elephant foot compensation 0.
+- **2 h 29 min, 80.2 g** for both on the P1S, **2 h 28 min, 79.8 g** on the X2D (`make report`).
+  On the X2D every filament prints on the left nozzle (direct drive): the right one, a Bowden,
+  would save 2 g of purge but print the thin face strokes worse (CLAUDE.md §6.4). The figures below are the P1S's.
 
 | AMS slot | Filament | Colour | Used |
 |---|---|---|---|

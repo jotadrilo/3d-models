@@ -50,6 +50,19 @@ class Printer:
     tag: str                       # short name, used in file names: <project>-<tag>.3mf
     keep_clear: tuple = ()         # bed areas kept clear, ((x0, y0, x1, y1), ...)
     height: float = 250
+    nozzles: int = 1
+    prime_tower: tuple = (20, 30)  # default prime tower corner, clear of the keep-clear areas
+    # process presets this machine lacks: base -> (its closest preset, overrides that make up the rest)
+    stand_ins: tuple = ()
+
+    def process(self, base):
+        """(preset, overrides) for process `base` ("0.20mm Strength"): the system preset made
+        for this machine, or its stand-in with the overrides that turn it into `base`."""
+        stand_ins = dict(self.stand_ins)
+        if base in stand_ins:
+            other, extra = stand_ins[base]
+            return self.preset("process", other), dict(extra)
+        return self.preset("process", base), {}
 
     def preset(self, kind, base):
         """System preset `base @BBL ...` (e.g. "Bambu PLA Matte", "0.16mm High
@@ -68,9 +81,34 @@ LOAD_LINE = (0, 0, BED_W, 12)
 P1S = Printer("Bambu Lab P1S 0.4 nozzle", "p1s", keep_clear=(EXCLUDED, LOAD_LINE), height=250)
 # Two nozzles; the right one cannot reach x < 20.5 ("Left nozzle only area"), so
 # layouts keep that strip clear and either nozzle can print any plate.
-X2D = Printer("Bambu Lab X2D 0.4 nozzle", "x2d", keep_clear=((0, 0, 20.5, BED_D),), height=261)
+# Its system processes have no Strength, Optimal or Fine: Strength is Standard with 6 walls and
+# 25 % infill (what the X1C one changes besides speeds), Optimal its 0.16 Standard, Fine its 0.12
+# High Quality (the X2D's only 0.12 for a 0.4 nozzle: slower outer walls).
+X2D = Printer("Bambu Lab X2D 0.4 nozzle", "x2d", keep_clear=((0, 0, 20.5, BED_D),), height=261, nozzles=2,
+              prime_tower=(25, 30),
+              stand_ins=(("0.20mm Strength", ("0.20mm Standard", (("wall_loops", "6"), ("sparse_infill_density", "25%")))),
+                         ("0.16mm Optimal", ("0.16mm Standard", ())),
+                         ("0.12mm Fine", ("0.12mm High Quality", ()))))
 PRINTERS = {p.tag: p for p in (P1S, X2D)}
 PRINTER = P1S.machine
+
+# Filament settings kept once per extruder variant on dual-nozzle machines (the keys a Bambu
+# Studio 02.08 GUI-saved H2D project lists per (filament, variant)).
+VARIANT_KEYS = (
+    "filament_adaptive_volumetric_speed", "filament_bridge_speed", "filament_cooling_before_tower",
+    "filament_deretraction_speed", "filament_dev_ams_drying_ams_limitations", "filament_enable_overhang_speed",
+    "filament_flow_ratio", "filament_flush_temp", "filament_flush_volumetric_speed",
+    "filament_long_retractions_when_cut", "filament_max_volumetric_speed", "filament_overhang_1_4_speed",
+    "filament_overhang_2_4_speed", "filament_overhang_3_4_speed", "filament_overhang_4_4_speed",
+    "filament_overhang_totally_speed", "filament_pre_cooling_temperature", "filament_pre_cooling_temperature_nc",
+    "filament_ramming_travel_time", "filament_ramming_travel_time_nc", "filament_ramming_volumetric_speed",
+    "filament_ramming_volumetric_speed_nc", "filament_retract_before_wipe", "filament_retract_length_nc",
+    "filament_retract_restart_extra", "filament_retract_when_changing_layer",
+    "filament_retraction_distances_when_cut", "filament_retraction_length", "filament_retraction_minimum_travel",
+    "filament_retraction_speed", "filament_wipe", "filament_wipe_distance", "filament_z_hop", "filament_z_hop_types",
+    "long_retractions_when_ec", "nozzle_temperature", "nozzle_temperature_initial_layer",
+    "override_process_overhang_speed", "retraction_distances_when_ec", "slow_down_min_speed",
+    "volumetric_speed_coefficients")
 
 NS = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
       'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
@@ -177,6 +215,9 @@ def _dedup(verts, tris):
 class Filament:
     preset: str               # Bambu system filament preset
     colour: str               # "#RRGGBB"; also used to match OpenSCAD colours
+    # Dual-nozzle machines (X2D): "left" (direct drive, the default) or "right" (Bowden, slower
+    # and less precise). Only where its quality does not matter or the parts are coarse (CLAUDE.md §6.4)
+    nozzle: str = "left"
 
 
 @dataclass
@@ -193,7 +234,7 @@ class Object:
 @dataclass
 class Plate:
     name: str
-    prime_tower: tuple = (20, 30)     # front-left, clear of the excluded area
+    prime_tower: tuple = None         # None: the printer's default (front-left, clear of its keep-clear areas)
     objects: list = field(default_factory=list)
     print_sequence: str = None        # "by object" prints each object whole, one after another (no prime tower)
 
@@ -215,6 +256,8 @@ class Project:
 
     def plate(self, name, **kw):
         p = Plate(name, **kw)
+        if p.prime_tower is None:
+            p.prime_tower = self.printer.prime_tower
         self.plates.append(p)
         return p
 
@@ -308,6 +351,11 @@ class Project:
                               f'<metadata key="locked" value="false"/>'
                               + (f'<metadata key="print_sequence" value="{_attr(plate.print_sequence)}"/>'
                                  if plate.print_sequence else "")
+                              # the nozzle of each filament, fixed (Manual): Bambu's auto modes move
+                              # inks to the right nozzle to save purge, whatever it does to them
+                              + ('<metadata key="filament_map_mode" value="Manual"/>'
+                                 f'<metadata key="filament_maps" value="{" ".join(self._nozzle_map())}"/>'
+                                 if self.printer.nozzles > 1 else "")
                               + f'{"".join(instances)}</plate>')
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -382,7 +430,7 @@ class Project:
         for key in ("flush_multiplier", "flush_multiplier_fast"):
             if isinstance(cfg.get(key), list) and cfg[key]:
                 cfg[key] = (cfg[key] * nozzle_count)[:nozzle_count]
-        cfg.update(curr_bed_type=self.bed, filament_colour=colours, filament_map=["1"] * len(colours),
+        cfg.update(curr_bed_type=self.bed, filament_colour=colours, filament_map=self._nozzle_map(),
                    flush_volumes_matrix=matrix * nozzle_count,
                    wipe_tower_x=[str(p.prime_tower[0]) for p in self.plates],
                    wipe_tower_y=[str(p.prime_tower[1]) for p in self.plates])
@@ -393,7 +441,37 @@ class Project:
             cfg["extruder_nozzle_stats"] = [f"{t}#1" for t in nozzles]
         if n > 1 and isinstance(cfg.get("wipe_tower_rotation_angle"), list):
             cfg["wipe_tower_rotation_angle"] = cfg["wipe_tower_rotation_angle"][:1] * n
+        if len(nozzles) > 1:
+            self._filament_variants(cfg)
         return cfg, app.group(1) if app else "BambuStudio"
+
+    def _nozzle_map(self):
+        """Extruder per filament, "1" left, "2" right."""
+        for f in self.filaments:
+            if f.nozzle not in ("left", "right") or (f.nozzle == "right" and self.printer.nozzles < 2):
+                sys.exit(f"{self.title}: nozzle '{f.nozzle}' for {f.colour} on the {self.printer.tag}")
+        return ["2" if f.nozzle == "right" else "1" for f in self.filaments]
+
+    def _filament_variants(self, cfg):
+        """Each filament's settings for every extruder of a dual-nozzle machine, as the GUI saves
+        them: one entry per (filament, extruder variant), `filament_self_index` 1, 1, 2, 2, ...
+        The CLI keeps only the first extruder's (the X2D's left, direct drive), and a filament
+        the slicer then puts on the right, Bowden, nozzle prints with its retraction (PLA 0.4 mm
+        where its preset says 3)."""
+        machine = _flatten("machine", self.printer.machine)
+        variants = machine["printer_extruder_variant"]           # the order of the presets' lists
+        mounted = [f"{t} {v}" for t, v in zip(cfg["extruder_type"], cfg["nozzle_volume_type"])]
+        mounted = list(dict.fromkeys(mounted))                   # e.g. Direct Drive Standard, Bowden Standard
+        presets = [_flatten("filament", f.preset) for f in self.filaments]
+        nfil = len(self.filaments)
+        for key in VARIANT_KEYS:
+            old = cfg.get(key)
+            if not isinstance(old, list) or len(old) != nfil:
+                continue
+            cfg[key] = [p[key][variants.index(v)] if isinstance(p.get(key), list) and len(p[key]) == len(variants)
+                        else old[i] for i, p in enumerate(presets) for v in mounted]
+        cfg["filament_extruder_variant"] = [v for _ in presets for v in mounted]
+        cfg["filament_self_index"] = [str(i + 1) for i in range(nfil) for _ in mounted]
 
 
 def flush(src, dst):

@@ -21,9 +21,10 @@ to the 3MF (`key`).
      edges, or when STEP output is needed.
    - **Blender**: organic or sculpted shapes.
    - OpenSCAD suits prismatic, CSG, parametric parts, which is almost everything here.
-3. **Every project ships with a Bambu Studio project** (`<project>-p1s.3mf`) built by
-   `make project`. It must be ready to print: parts oriented, laid out on plates, filaments
-   assigned per part and colour, process preset chosen, per-object settings applied. See §3.
+3. **Every project ships with a Bambu Studio project per printer** (`<project>-p1s.3mf` and
+   `<project>-x2d.3mf`) built by `make project`. It must be ready to print: parts oriented, laid
+   out on plates, filaments assigned per part and colour, process preset chosen, per-object
+   settings applied. See §3.
 4. **Repository layout: projects in `projects/`, shared components and scripts in `tools/`.**
    Every model is a folder `projects/<project>/`; nothing project-specific goes in `tools/`, and
    no functional component is designed only inside a project (§4.6).
@@ -32,10 +33,10 @@ to the 3MF (`key`).
    projects/<project>/
      <project>.scad        # parametric model, Customizer parameters at the top
      Makefile              # all / stl / 3mf / project / report / render / clean / help (+ check)
-     bambu_project.py      # builds <project>-p1s.3mf with tools/bambu3mf.py (§3)
+     bambu_project.py      # builds <project>-<printer>.3mf with tools/bambu3mf.py (§3), --printer p1s|x2d
      README.md             # what it is, make commands, parts table, how to print, assembly
      .gitignore            # *.stl, assembly.3mf (exports are not committed; the Bambu projects and renders are)
-     <project>-*.3mf       # the Bambu Studio project(s), `make project`, committed
+     <project>-*.3mf       # the Bambu Studio projects, one per printer, `make project`, committed
      renders/<name>-<view>.webp   # studio renders, `make render` (§3.3), linked from the README
    ```
    The root `.gitignore` already ignores macOS metadata (`.DS_Store`, `._*`) everywhere.
@@ -74,6 +75,7 @@ to the 3MF (`key`).
 | Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28`; the start G-code draws its nozzle load line along the front edge (`y 1..11`), so parts keep clear of `y < 12` |
 | Other printer | `Bambu Lab X2D 0.4 nozzle` (`printer=X2D` in `bambu3mf.py`): bed 256×256, height 261, two nozzles; layouts keep clear the 20.5 mm left strip the right nozzle cannot reach ("Left nozzle only area"); its own `@BBL X2D` presets |
 | Processes compatible with the P1S 0.4 | the `@BBL X1C` ones (0.08 Extra Fine/High Quality, 0.12 Fine/HQ, 0.16 Optimal/HQ, 0.20 Standard/Strength, 0.24 Draft, 0.28 Extra Draft) |
+| Processes for the X2D 0.4 | its own `@BBL X2D` ones (0.08 HQ, 0.12 HQ, 0.16 Standard/HQ, 0.20 Standard/HQ, 0.24 Standard); no Strength, Optimal or Fine, so `Printer.process` stands in (Standard + 6 walls 25 %, 0.16 Standard, 0.12 HQ) |
 | Filaments | `Bambu PLA Basic @BBL P1S 0.4 nozzle`, `… PLA Matte …`, `… PLA Silk+ …`, `… PETG HF …`, `Bambu PETG Basic @BBL X1C` (the P1S uses the X1C preset), `… ABS …`, `Bambu TPU 95A HF @BBL P1S` |
 
 ---
@@ -196,6 +198,13 @@ simulation in its `videos/`, committed.
 Every project's `bambu_project.py` is a short description built on the shared module
 `tools/bambu3mf.py`: `Project` (title, process preset, `process_overrides`, `Filament`s), one
 `plate()` per plate, and `plate.add(name, load_scad(...), x, y, settings=...)` per object.
+- **One 3MF per printer.** `bambu_project.py --printer p1s|x2d` writes `<project>-<tag>.3mf`, and
+  `make project` / `make report` loop over `PRINTERS ?= p1s x2d`. Name presets by their base and
+  resolve them for the printer (`pr.preset("filament", "Bambu PETG HF")`,
+  `pr.process("0.20mm Strength")`, which returns the stand-in and its overrides where the X2D
+  lacks the preset). A layout must pass both printers' keep-clear checks (the X2D's left strip
+  `x < 20.5`); give a printer its own positions only when one layout cannot fit both
+  (`dog-gate`). Renders use the P1S project; the README lists time and grams for both.
 - `load_scad(scad, part, defs, rotate=(rx, ry, rz), colour=True)` exports from OpenSCAD with
   `lazy-union`, groups the triangles by colour, applies the print orientation and centres the part
   on z = 0. Pass `colour=False` for single-colour models: otherwise OpenSCAD tags uncoloured faces
@@ -730,6 +739,35 @@ Research behind each component in `tools/scad/`, one entry per component.
   with multiple parts**. Assign filaments with keys 1–9. The colour painting tool has "Gap Fill" to
   clean up tiny islands that cause pointless changes.
 
+### 6.4 Two nozzles (X2D)
+**Quality comes before saving filament.** Every filament prints on the left nozzle unless the
+right one cannot hurt the part. `Filament(preset, colour, nozzle="left")` is the default and
+`bambu3mf` writes each plate's map as *Manual*, so Bambu's auto modes do not move it.
+- The left nozzle is direct drive and reaches the whole bed. The right one is **Bowden**: it
+  cannot reach `x < 20.5`, retracts slowly (PLA Basic 3 mm against 0.4) and prints much slower:
+  with the body on it, cosmere-tracker took 5 h 19 min instead of 3 h 27. Thin strokes, small
+  text, sharp colour edges and visible faces stay on the left.
+- Bambu's default, *Auto For Flush*, moves the inks to the right to save purge. On this repo's
+  inlay projects it saved 1–3 g (cosmere 3 g, onigiri 2 g, keyboard-leg 1 g), with no time saved,
+  and put the first-layer labels and faces on the Bowden. Not worth it.
+- **When to use the right nozzle** (`nozzle="right"`), each case checked with `make report`
+  against everything on the left:
+  1. **Support interface in another material** (§7: PETG under PLA, or Bambu Support For
+     PLA-PETG). It never shows, and on one nozzle every interface layer costs two changes and a
+     purge. The clearest case.
+  2. **A second material** that should not share a nozzle with the first (a different
+     temperature, PETG beside PLA): each keeps its own nozzle, with no purge or temperature
+     swings between them. Not TPU: flexible filament does not feed through a Bowden.
+  3. **Coarse colour regions with many changes**: areas several mm wide, no strokes under
+     ~1.5 mm, changing colour on many layers (stripes, colour bands up a wall). There the purge
+     is tens of grams and hours, and a Bowden prints wide areas as well as the left nozzle.
+  4. **Hidden or filler regions**: a colour inside the part or on a face nobody sees.
+- Each filament carries settings per extruder variant (retraction, volumetric speed…).
+  `bambu3mf` writes both, as the GUI does (`filament_self_index` 1, 1, 2, 2…); the CLI alone keeps
+  only the left's, and a filament on the right then prints with the direct-drive retraction.
+- When the print is sent, every filament has to be loaded where its nozzle can take it (its AMS
+  or feeder).
+
 ---
 
 ## 7. Supports
@@ -737,7 +775,10 @@ Research behind each component in `tools/scad/`, one entry per component.
 - Top Z distance = one layer height (0.2 mm) with the same material.
 - **PLA ↔ PETG interface trick**: they barely bond to each other. Use the other material **only for
   the interface** (`support_interface_filament`) with Top Z distance 0 for an almost smooth
-  surface. Keep the door open.
+  surface. Keep the door open. On the P1S every interface layer costs two filament changes; on the
+  X2D put the interface filament on the right nozzle (`nozzle="right"`, §6.4: no purge, only a
+  nozzle swap), which makes it the default way to support a PLA or PETG part there. Bambu Support For PLA-PETG is made for it.
+  None of the current projects use supports (all designed out, §4.1), so none use it yet.
 - Paint enforcers and blockers instead of raising the global threshold. Better still, design so
   they are not needed (§4.1).
 

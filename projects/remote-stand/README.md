@@ -11,7 +11,7 @@ same body:
   them, under a smooth rounded rim.
 
 ```sh
-make project                                   # -> remote-stand-p1s.3mf (Bambu Studio, ready to print)
+make project                                   # -> remote-stand-p1s.3mf and -x2d.3mf (Bambu Studio, ready to print)
 make report                                    # rebuild it, slice it, print time and filament per plate
 make                                           # -> remote-stand.stl + remote-stand-v2.stl
 make v2 DEFS='-D back_count=3 -D back_remote_w=45'
@@ -85,14 +85,14 @@ P1S bed. Use `make v1 DEFS=…`, `make v2 DEFS=…` or `make project DEFS=…`.
 | Tea box | `-D front_count=3 -D front_remote_w=72 -D front_remote_t=40 -D front_wall_h=50 -D back_count=3 -D back_remote_w=72 -D back_remote_t=40 -D back_wall_h=80 -D back_floor_h=30` | 234 × 97 × 80 mm: six stacks of tea bags (≈70 mm wide), the back three raised so their labels show |
 | Desk organiser | `-D front_count=3 -D front_remote_w=30 -D front_remote_t=30 -D front_wall_h=60 -D back_count=1 -D back_remote_w=80 -D back_remote_t=14 -D back_wall_h=70 -D back_floor_h=20` | 108 × 61 × 70 mm: three pen cups in front and a phone slot behind |
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `remote-stand-p1s.3mf`, a Bambu Studio project with one
-plate per version (print whichever one you want), each standing upright on a
-Textured PEI plate: P1S 0.4 nozzle, *0.20mm Standard* with the seam at the
-back, Bambu PLA Basic in slot 1. No supports needed. With the default
-parameters v1 takes about 4 h 20 min and 156 g, v2 about 5 h 35 min and
-169 g. It needs Bambu Studio installed.
+`make project` builds one Bambu Studio project per printer, `remote-stand-p1s.3mf`
+and `remote-stand-x2d.3mf`, with one plate per version (print whichever one you
+want), each standing upright on a Textured PEI plate: 0.4 nozzle, *0.20mm Standard*
+with the seam at the back, Bambu PLA Basic in slot 1. No supports needed. With the
+default parameters v1 takes about 4 h 20 min and 156 g, v2 about 5 h 40 min and
+169 g, on either printer. It needs Bambu Studio installed.
 
 ## Renders
 

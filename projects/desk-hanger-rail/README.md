@@ -8,7 +8,7 @@ for a hanger hook to go on and off. No screws, no tools.
 ![Desk hanger rail](renders/desk-hanger-rail-hero.webp)
 
 ```sh
-make project                                   # -> desk-hanger-rail-p1s.3mf (Bambu Studio, ready to print)
+make project                                   # -> desk-hanger-rail-p1s.3mf and -x2d.3mf (Bambu Studio, ready to print)
 make report                                    # rebuild it, slice it, print time and filament per plate
 make                                           # -> one STL per part (rail and fit test)
 make stl PARTS="test_socket test_bar test_clip"  # fit test only
@@ -120,18 +120,19 @@ with the same filament and settings:
   desk edge. It should need a firm push and not slide along the edge. Too
   hard: lower `grip_squeeze` (0 = no squeeze); loose: raise it.
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `desk-hanger-rail-p1s.3mf`, on a Textured PEI plate:
-P1S 0.4 nozzle, *0.20mm Strength* (6 walls) with 100 % rectilinear infill and
-the seam at the back, Bambu PETG Basic (255 °C, bed 70 °C) in slot 1. No
-supports. With the default parameters:
+`make project` builds one project per printer, `desk-hanger-rail-p1s.3mf` and
+`desk-hanger-rail-x2d.3mf`, on a Textured PEI plate: 0.4 nozzle, *0.20mm Strength*
+(6 walls) with 100 % rectilinear infill and the seam at the back, Bambu PETG Basic
+(255 °C, bed 70 °C) in slot 1. The X2D has no Strength preset: its 0.20mm Standard
+with the same 6 walls. No supports. With the default parameters:
 
-| Plate | Contents | Time | Filament |
+| Plate | Contents | P1S | X2D |
 |---|---|---|---|
-| 1 · Desk hanger rail | two brackets + bar | 3 h 06 min | 112 g |
-| 2 · Socket fit test | socket ring, short bar | 19 min | 4 g |
-| 3 · Clip fit test | clip slice | 6 min | 3 g |
+| 1 · Desk hanger rail | two brackets + bar | 3 h 10 min, 112 g | 2 h 56 min, 112 g |
+| 2 · Socket fit test | socket ring, short bar | 25 min, 4 g | 25 min, 4 g |
+| 3 · Clip fit test | clip slice | 12 min, 3 g | 11 min, 3 g |
 
 PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.

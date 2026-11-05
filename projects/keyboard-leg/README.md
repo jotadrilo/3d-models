@@ -8,7 +8,7 @@ between two slots clicks it open or shut with the ridge on its tip.
 The K120 is sold with two legs; a broken one is the usual reason to print this.
 
 ```sh
-make project      # -> keyboard-leg-p1s.3mf (Bambu Studio, ready to print)
+make project      # -> keyboard-leg-p1s.3mf and keyboard-leg-x2d.3mf (Bambu Studio, ready to print)
 make report       # rebuild it, slice it, print time and filament per plate
 make              # -> keyboard-leg.stl
 make DEFS='-D pin_d=1.9'   # thinner pins, if they bind in the recess
@@ -63,20 +63,22 @@ All lengths in mm. Override any of them with `make DEFS='-D name=value'` (also
 | `ridge_back` | 2 | Length of the ridge on the tongue's tip |
 | `rib_y`, `rib_w`, `rib_h` | 20.25, 0.84, 3 | Rib across the plate (`rib_y=0`: none) |
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds `keyboard-leg-p1s.3mf` on a Textured PEI plate, P1S 0.4
-nozzle, *0.12mm Fine* (fine layers for the 2 mm pins), 4 walls, 40 % gyroid,
-the seam at the foot end. The legs lie flat, the plate face on the bed. No
+`make project` builds one project per printer, `keyboard-leg-p1s.3mf` and
+`keyboard-leg-x2d.3mf`, on a Textured PEI plate, 0.4 nozzle, *0.12mm Fine* (fine
+layers for the 2 mm pins; on the X2D, which has no Fine, its *0.12mm High Quality*),
+4 walls, 40 % gyroid, the seam at the foot end. The legs lie flat, the plate face on the bed. No
 supports.
 
-| Plate | What | Filaments (AMS slot) | Time | Filament |
+| Plate | What | Filaments (AMS slot) | P1S | X2D |
 |---|---|---|---|---|
-| 1 Colour samples | 8 legs, 2 per filament, printed **by object** (each leg whole, one after another): 3 filament changes and no prime tower, instead of 4 colours on every layer | 1 PETG HF blue, 2 PETG Translucent, 3 PETG Matte black, 4 PETG Basic black | 1 h 06 min | 9.7 g |
-| 2 Pair | the 2 legs a keyboard needs | 3 PETG Matte black | 16 min | 2.3 g |
+| 1 Colour samples | 8 legs, 2 per filament, printed **by object** (each leg whole, one after another): 3 filament changes and no prime tower, instead of 4 colours on every layer | 1 PETG HF blue, 2 PETG Translucent, 3 PETG Matte black, 4 PETG Basic black | 1 h 06 min, 9.7 g | 1 h 10 min, 9.8 g |
+| 2 Pair | the 2 legs a keyboard needs | 3 PETG Matte black | 16 min, 2.3 g | 16 min, 2.2 g |
 
 By object needs the legs far enough apart for the toolhead (57 mm clearance
-radius) to clear those already printed, so they sit 85 mm apart; plate 1 keeps
+radius on the P1S, 13 on the X2D) to clear those already printed, so they sit
+85 mm apart; plate 1 keeps
 the back-right spot free. To print a pair in another filament, change the
 filament of plate 2 in Bambu Studio. PETG on the textured plate: a glue stick as
 release layer (CLAUDE.md §5.3), and let it cool before taking the legs off.

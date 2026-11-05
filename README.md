@@ -2,7 +2,7 @@
 
 | | Project |
 |---|---|
-| <a href="projects/dog-gate/"><img src="projects/dog-gate/renders/dog-gate-hero.webp" width="240" alt="Dog gate"></a> | [dog-gate](projects/dog-gate/) — a plywood board across a stair tread on two printed brackets, nothing fixed to the stair: a simple version that stands it in bolted shoes over 275 mm feet, and a reinforced one hooked under an open stair's tray tread, with battens, that holds a leaning dog; tipping by statics and MuJoCo, the board and bracket by FEA; P1S and X2D (OpenSCAD) |
+| <a href="projects/dog-gate/"><img src="projects/dog-gate/renders/dog-gate-hero.webp" width="240" alt="Dog gate"></a> | [dog-gate](projects/dog-gate/) — a plywood board across a stair tread on two printed brackets, nothing fixed to the stair: a simple version that stands it in bolted shoes over 275 mm feet, and a reinforced one hooked under an open stair's tray tread, with battens, that holds a leaning dog; tipping by statics and MuJoCo, the board and bracket by FEA (OpenSCAD) |
 | <a href="projects/onigiri-rice-scoop/"><img src="projects/onigiri-rice-scoop/renders/onigiri-rice-scoop-hero.webp" width="240" alt="Onigiri rice scoop"></a> | [onigiri-rice-scoop](projects/onigiri-rice-scoop/) — a kawaii onigiri scoop that holds 100 g of rice levelled off, one per rice (basmati, brown), face and nori as multi-colour inlays, PLA Pure for food contact (OpenSCAD) |
 | <a href="projects/sink-organizers/"><img src="projects/sink-organizers/renders/soap-caddy-hero.webp" width="240" alt="Sink organizers"></a> | [sink-organizers](projects/sink-organizers/) — a soap caddy and a cutlery drainer for either side of the tap, on one pattern: a wall plate on suction cups and a body slid onto it on dovetails, with lift-out boxes and bins over drip trays that drain into the sink (OpenSCAD) |
 | <a href="projects/desk-hanger-rail/"><img src="projects/desk-hanger-rail/renders/desk-hanger-rail-hero.webp" width="240" alt="Desk hanger rail"></a> | [desk-hanger-rail](projects/desk-hanger-rail/) — clip-on rail under the desk edge for coat hangers, two C brackets and a bar (OpenSCAD) |
@@ -12,8 +12,8 @@
 | <a href="projects/cosmere-tracker/"><img src="projects/cosmere-tracker/renders/cosmere-tracker-hero.webp" width="240" alt="Cosmere tracker"></a> | [cosmere-tracker](projects/cosmere-tracker/) — two-sided Health / Focus / Investiture wheels for the Cosmere RPG, multi-colour inlays (OpenSCAD) |
 
 The models live in [`projects/`](projects/), one folder each. Everything they share lives in
-[`tools/`](tools/): `bambu3mf.py` builds each project's ready-to-print Bambu Studio 3MF
-(`make project`, `make report`), `render_studio.py` renders it in Blender (`make render`), and
+[`tools/`](tools/): `bambu3mf.py` builds each project's ready-to-print Bambu Studio 3MF, one per
+printer, Bambu Lab P1S (`-p1s.3mf`) and X2D (`-x2d.3mf`) (`make project`, `make report`), `render_studio.py` renders it in Blender (`make render`), and
 [`tools/scad/`](tools/scad/) is the OpenSCAD library of functional components (mounts, joints,
 holes, the house style), each one researched, documented in [CLAUDE.md](CLAUDE.md) and printable
 as a sample. [`tools/fea/`](tools/fea/) is the load analysis (gmsh + CalculiX) for parts that

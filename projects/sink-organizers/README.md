@@ -15,7 +15,7 @@ every piece that gets wet comes out on its own, to wash it or reprint it.
 ![Soap caddy](renders/soap-caddy-hero.webp) ![Cutlery drainer](renders/cutlery-drainer-hero.webp)
 
 ```sh
-make project                       # -> sink-organizers-p1s.3mf (PETG Basic), -p1s-hf.3mf (PETG HF) and -p1s-matte.3mf (PETG Matte)
+make project                       # -> sink-organizers-<p1s|x2d>.3mf (PETG Basic), -<p1s|x2d>-hf.3mf (PETG HF) and -<p1s|x2d>-matte.3mf (PETG Matte)
 make report                        # rebuild them, slice them, print time and filament per plate
 make                               # -> one STL per part, soap-caddy-<part>.stl and cutlery-drainer-<part>.stl
 make project DEFS='-D bottle_w=86 -D bottle_d=54 -D neck_d=32'   # your bottle
@@ -495,10 +495,11 @@ soap caddy's tray alone, then each piece whole on its cups.
 | `handle` | the towel on a 230 mm bar: ≈0.1 N·m at mid-span | flat: the U in XY | no | > 50× |
 | `button` | shear on the shank and pull on the head, ≤10 N | standing on its flange | yes | > 50× |
 
-## Printing (Bambu P1S)
+## Printing (Bambu P1S and X2D)
 
-`make project` builds the three projects on a Textured PEI plate:
-- **Settings:** P1S 0.4 nozzle, *0.20mm Standard* with gyroid infill, the
+`make project` builds the three projects for each printer (`-p1s` and `-x2d` in the names) on a
+Textured PEI plate:
+- **Settings:** 0.4 nozzle, *0.20mm Standard* with gyroid infill, the
   seam at the back, scarf seam and precise outer walls.
 - **Filament:** black Bambu PETG in slot 1: `sink-organizers-p1s.3mf` for
   PETG Basic, `sink-organizers-p1s-hf.3mf` for PETG HF and
@@ -536,6 +537,29 @@ With the default parameters:
 | 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 36 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
 | 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 36 min, 43 g | 1 h 32 min, 44 g | 1 h 36 min, 47 g |
+
+On the X2D (`sink-organizers-x2d*.3mf`) the plates are the same, except that it cannot use the
+left 20.5 mm of the bed: the widest plates sit further right, and the towel handle, the rack and
+the drainer's jig are turned a quarter (still flat, the loads still in XY). Its times:
+
+| Plate | PETG Basic | PETG HF | PETG Matte |
+|---|---|---|---|
+| 1 · Soap caddy: body and wall plate | 7 h 13 min, 139 g | 6 h 54 min, 143 g | 7 h 24 min, 153 g |
+| 2 · Soap caddy: tray, box and buttons | 3 h 33 min, 72 g | 3 h 20 min, 74 g | 3 h 38 min, 79 g |
+| 3 · Cutlery drainer: body and wall plate | 4 h 30 min, 94 g | 4 h 10 min, 96 g | 4 h 37 min, 103 g |
+| 4 · Cutlery drainer: tray | 1 h 58 min, 35 g | 1 h 41 min, 36 g | 1 h 59 min, 39 g |
+| 5 · Cutlery drainer: rack, handle and buttons | 2 h 18 min, 58 g | 2 h 14 min, 60 g | 2 h 23 min, 64 g |
+| 6 · Cutlery drainer: bins | 12 h 59 min, 174 g | 12 h 51 min, 178 g | 13 h 37 min, 190 g |
+| 7 · Cutlery drainer: risers | 3 h 19 min, 47 g | 3 h 10 min, 48 g | 3 h 25 min, 52 g |
+| 8 · Cutlery drainer: bin fit test | 1 h 21 min, 18 g | 1 h 21 min, 19 g | 1 h 25 min, 20 g |
+| 9 · Fit tests | 1 h 36 min, 37 g | 1 h 31 min, 38 g | 1 h 40 min, 40 g |
+| 10 · Sway test | 2 h 32 min, 17 g | 2 h 13 min, 17 g | 2 h 31 min, 18 g |
+| 11 · Soap caddy: installation jig | 39 min, 13 g | 38 min, 14 g | 40 min, 15 g |
+| 12 · Cutlery drainer: installation jig | 43 min, 15 g | 42 min, 16 g | 45 min, 17 g |
+| 13 · Adhesive adapters | 1 h 36 min, 43 g | 1 h 33 min, 44 g | 1 h 41 min, 47 g |
+
+The fit tests were tuned on the P1S; the X2D may print the fits a little differently, so print
+plate 9 (and 8) on it before the big plates.
 
 Avoiding travel across walls costs 5–25 min on the other plates (the bins
 the most).

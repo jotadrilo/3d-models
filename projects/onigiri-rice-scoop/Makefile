@@ -9,6 +9,7 @@ SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 BLENDER        ?= blender
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
+PRINTERS       ?= p1s x2d
 RICES          := basmati integral
 
 .DEFAULT_GOAL := all
@@ -22,11 +23,14 @@ stl: ## Export one single-colour STL per rice (onigiri-rice-scoop-<rice>.stl)
 3mf: ## Export one multi-colour 3MF per rice (onigiri-rice-scoop-<rice>.3mf)
 	for r in $(RICES); do $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D "rice=\"$$r\"" -o onigiri-rice-scoop-$$r.3mf $(SRC); done
 
-project: ## Build onigiri-rice-scoop-p1s.3mf, the ready-to-print Bambu Studio project
-	OPENSCAD=$(OPENSCAD) python3 bambu_project.py -o onigiri-rice-scoop-p1s.3mf $(DEFS)
+project: ## Build the ready-to-print Bambu Studio projects, one per printer in PRINTERS: onigiri-rice-scoop-p1s.3mf and onigiri-rice-scoop-x2d.3mf
+	@set -e; for p in $(PRINTERS); do \
+		echo "python3 bambu_project.py --printer $$p"; \
+		OPENSCAD=$(OPENSCAD) python3 bambu_project.py --printer $$p $(DEFS); \
+	done
 
-report: project ## Rebuild the project, slice it and print time and filament per plate
-	python3 ../../tools/bambu3mf.py report onigiri-rice-scoop-p1s.3mf
+report: project ## Rebuild the projects, slice them and print time and filament per plate
+	@set -e; for p in $(PRINTERS); do echo "== onigiri-rice-scoop-$$p.3mf"; python3 ../../tools/bambu3mf.py report onigiri-rice-scoop-$$p.3mf; done
 
 check: ## Print each scoop's volume up to the rim and the grams of rice it holds
 	@for r in $(RICES); do \
@@ -46,6 +50,6 @@ clean: ## Remove exported files (the committed Bambu project and renders are kep
 	rm -f onigiri-rice-scoop-*.stl onigiri-rice-scoop-basmati.3mf onigiri-rice-scoop-integral.3mf cavity.stl
 
 help: ## Show this help
-	@printf '\nUsage: make \033[36m<target>\033[0m [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
+	@printf '\nUsage: make \033[36m<target>\033[0m [PRINTERS="p1s x2d"] [DEFS="-D name=value ..."] [OPENSCAD_FLAGS=...]\n\nTargets:\n'
 	@awk 'BEGIN { FS = ":.*## " } /^[A-Za-z0-9_-]+:.*## / { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	@printf '\nExamples:\n  make check\n  make project DEFS="-D basmati_density=0.80"   # after weighing your rice\n  make report\n  make render RENDER_FLAGS="--samples 32 --scale 0.25"   # quick draft\n\n'
