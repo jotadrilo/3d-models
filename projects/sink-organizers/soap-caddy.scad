@@ -36,6 +36,7 @@ bottle_w = 85;       // widest part of the bottle, along the wall (its base) [50
 bottle_d = 60;       // bottle depth, front to back [30:0.5:90]
 bottle_h = 210;      // total height with the cap: checks it fits under the cabinet [100:1:320]
 neck_d = 55;         // widest part that goes through the floor hole (cap, neck ring) [20:0.5:70]
+neck_play = 1;       // clearance round the neck in the floor hole, per side: 0.5 jammed the Fairy cap in PETG Matte (the hole prints small) [0.25:0.25:3]
 seat_to_tip = 35;    // how far the cap tip hangs below the floor, bottle resting [15:1:70]
 bottle_play = 1.5;   // clearance around the bottle, per side, at least [0.5:0.5:5]
 
@@ -133,7 +134,7 @@ box_d = inner_d + 2 * wall_t;
 up_d = -box_y0 + box_d;                        // the box's front, from y = 0
 ud = up_d + frame_t;                           // body depth at the box: the front stands in front of the box
 y_bc = box_y0 - wall_t - inner_d / 2;          // bottle axis
-hole_d = neck_d + 1;
+hole_d = neck_d + 2 * neck_play;
 collar_d = hole_d + 12;
 ret = box_play + wall_t + return_w;            // the body's front returns, in line with the box's
 open_hw = ix - ret;                            // half width of the opening between them

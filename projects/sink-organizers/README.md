@@ -528,7 +528,7 @@ With the default parameters:
 |---|---|---|---|---|
 | 1 · Soap caddy: body and wall plate | body (standing, with fins), plate (flat) | 7 h 16 min, 140 g | 6 h 57 min, 143 g | 7 h 16 min, 153 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 24 min, 72 g | 3 h 08 min, 74 g | 3 h 24 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 24 min, 94 g | 4 h 03 min, 96 g | 4 h 24 min, 103 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 24 min, 94 g | 4 h 03 min, 96 g | 4 h 25 min, 103 g |
 | 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
 | 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 13 min, 58 g | 2 h 08 min, 60 g | 2 h 13 min, 64 g |
 | 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 30 min, 174 g | 12 h 13 min, 178 g | 12 h 30 min, 190 g |
@@ -546,12 +546,12 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 
 | Plate | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|
-| 1 · Soap caddy: body and wall plate | 7 h 26 min, 140 g | 7 h 08 min, 143 g | 7 h 36 min, 153 g |
+| 1 · Soap caddy: body and wall plate | 7 h 25 min, 140 g | 7 h 08 min, 143 g | 7 h 36 min, 153 g |
 | 2 · Soap caddy: tray, box and buttons | 3 h 35 min, 72 g | 3 h 22 min, 74 g | 3 h 40 min, 79 g |
 | 3 · Cutlery drainer: body and wall plate | 4 h 32 min, 94 g | 4 h 13 min, 96 g | 4 h 39 min, 103 g |
 | 4 · Cutlery drainer: tray | 1 h 58 min, 35 g | 1 h 41 min, 36 g | 1 h 59 min, 39 g |
 | 5 · Cutlery drainer: rack, handle and buttons | 2 h 24 min, 58 g | 2 h 20 min, 60 g | 2 h 29 min, 64 g |
-| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 51 min, 190 g |
+| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 50 min, 190 g |
 | 7 · Cutlery drainer: risers | 3 h 20 min, 47 g | 3 h 11 min, 48 g | 3 h 26 min, 52 g |
 | 8 · Cutlery drainer: bin fit test | 1 h 23 min, 18 g | 1 h 22 min, 19 g | 1 h 26 min, 20 g |
 | 9 · Fit tests | 1 h 38 min, 37 g | 1 h 34 min, 38 g | 1 h 42 min, 40 g |
@@ -603,6 +603,7 @@ pieces do not fit.
 | `plate_slot_clear`, `plate_bridge`, `plate_slot_max_len` | 0, 0, 0 | Wall plate slots: extra clearance from the pads, wider bridges between segments, a shorter longest slot (0: `slot_max_len`). Variants of the FEA study, off by default |
 | **Soap caddy** | | |
 | `bottle_w`, `bottle_d`, `bottle_h`, `neck_d`, `seat_to_tip`, `bottle_play` | 85, 60, 210, 55, 35, 1.5 | The bottle |
+| `neck_play` | 1 | Clearance round the neck in the box's floor hole, per side (0.5 jammed the cap) |
 | `sponge_w`, `sponge_d`, `sponge_h`, `sponge_play`, `tip_gap` | 90, 65, 45, 2, 15 | The sponge; closed cap tip to sponge top |
 | `counter_gap`, `cabinet_h` | 12, 460 | Counter to the body; counter to the wall cabinet |
 | `cup_pitch`, `lower_cup_span` | 55, 56 | Upper cups one above the other; lower cups side by side |
