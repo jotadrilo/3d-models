@@ -346,7 +346,8 @@ side, top). The renders go in "Model images".
   stiffness FEA (§2.3, [tools/fea](tools/fea/README.md#print-stiffness)) put its top layer at
   33 mm/N sideways; it printed clean up to ~17 mm/N. Aim for ≤10 mm/N at every height. A wall
   across (XZ for walls in YZ) works best; thicker walls help less than t³ says (2.52 mm: 1.8×,
-  not 3.4×). When the part cannot change, `stabilizer_fin()` (§4.7) holds it while it prints.
+  not 3.4×). The soap caddy's body now has a slotted back wall for this. When the part cannot
+  change, `stabilizer_fin()` (§4.7) holds it while it prints.
 - **Tie open-fronted walls across the front.** Two side walls joined only by a back plate spread,
   and whatever rests on ledges between them drops or slides out (the soap caddy's frame). When
   the part prints on its back, a front bar is a long bridge: tie them with a plate that is
@@ -524,8 +525,13 @@ Research behind each component in `tools/scad/`, one entry per component.
     another was tangled by z = 1.4 mm, while the same fins held in PETG HF; why the two filaments
     differ is unknown. `foot_w` adds a rounded foot, 3 layers tall (the body: 10 mm wide, about
     170 mm²), that comes off with the fin, clear of the wall and of anything beside it, with the
-    walls at 60/80 mm/s below 5 mm. How it holds is still to be recorded here. Not a brim per
-    object: that would also run around the dovetail tails.
+    walls at 60/80 mm/s below 5 mm. The tower still failed with it (how is not recorded), and
+    the body now closes its U with a slotted back wall instead (below). Not a brim per object:
+    that would also run around the dovetail tails.
+  - **Prefer changing the part.** Fins are the last resort: two prints of the soap caddy's body
+    failed with them in PETG Matte, and a slotted back wall (the U closed into a tube, ≤7.2 mm/N
+    at every height in the FEA, +31 g) leaves nothing to snap off. Use fins only when no wall
+    across can be added.
 - **Keyhole + button** (`mounts.scad`, from soap-caddy): the entry takes the head plus
   `play` 0.3 per side, and the slot takes the shank. A 45° countersink at the front seats a cone
   head, which pulls the piece against the button flange. Axial play `shank_play` 0.1: 0.2 left

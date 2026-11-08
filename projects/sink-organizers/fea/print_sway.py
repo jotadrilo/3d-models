@@ -24,13 +24,16 @@ VARIANTS = {                      # one change per variant from the reference
     'D walls 2.52 above the step': ['fin_w=0', 'side_add=0.84', 'side_add_z=60'],
     'E back wall 1.68': ['fin_w=0', 'back_wall=1.68'],
     'F sacrificial fins 20 mm, tabs 0.84 x 1.6 every 10': ['tab_w=0.84', 'tab_h=1.6', 'tab_pitch=10'],
-    'F2 fins 20 mm, tabs 0.42 x 0.4 every 20 (the default)': [],
+    'F2 fins 20 mm, tabs 0.42 x 0.4 every 20 (the default until 2026-11)': [],
     # Fins with no tabs, a gap and a flange: the walls rest on them only once they lean their
     # way, so one side at a time, tabs standing in for the contact (LEFT=1: the left wall
     # pushed +x leans onto them too)
     'G fins 20 mm + flange 12, contact': ['fin_sides=[1]', 'fin_flange=12', 'tab_w=0.84', 'tab_h=1.6', 'tab_pitch=10'],
     'H fins 12 mm + flange 12, contact': ['fin_sides=[1]', 'fin_flange=12', 'tab_w=0.84', 'tab_h=1.6', 'tab_pitch=10', 'fin_w=12'],
 }
+# The reference is the body as printed in 2026-10 (no back wall, fins 20 mm with no foot); the
+# defaults have changed since (E is the default now), so every variant starts from it
+VARIANTS = {k: ['back_wall=0', 'fin_w=20', 'fin_foot=0'] + v for k, v in VARIANTS.items()}
 CUTS = [int(c) for c in os.environ.get('CUTS', '60,100,130,150,170,190,209').split(',')]
 H = 2.0
 PIECE = os.environ.get('PIECE', 'soap')

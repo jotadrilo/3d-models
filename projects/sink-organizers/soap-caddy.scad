@@ -62,7 +62,7 @@ bar_h = 6;           // bar across the top of the front, over the box [4:1:20]
 side_add = 0;        // extra thickness on the side walls' outer faces, in front of the dovetails: the body prints standing, and its thin walls sway under the nozzle higher up [0:0.42:3.36]
 side_add_z = 0;      // where the extra thickness starts, 45° below it [0:1:200]
 frame_t = 1.68;      // the front returns and the bar across the top (4 lines) [1.26:0.42:4.2]
-fin_w = 20;          // fins beside the side walls, printed with the body and lifted off after (0: none): without them its 1.68 mm walls swayed under the nozzle above ~165 mm [0:1:40]
+fin_w = 0;           // fins beside the side walls, printed with the body and lifted off after (0: none): without them its 1.68 mm walls swayed under the nozzle above ~165 mm [0:1:40] Off since the back wall (back_wall) closes the U: in PETG Matte they tore off the bed
 fin_t = 1.26;        // fin thickness (3 lines) [0.84:0.42:2.52]
 fin_flange = 0;      // flange across each fin's outer edge, for fins with no tabs [0:1:30]
 fin_foot = 10;       // width of the rounded foot under each body fin, 3 layers tall (0: none): bare, the fins' 20 mm² on the bed tore off in PETG Matte [0:1:14]
@@ -74,7 +74,7 @@ tab_pitch = 20;      // tab spacing, up the fins [4:1:40]
 test_sway_h = 120;   // test_sway: height of its two strips: bare, the top bends 17 mm/N at ~78 mm, 24 at ~88 and 33 at ~98 (the body from 150 to 190 mm) and 60 at 120 [40:5:200]
 test_sway_len = 40;  // test_sway: their length [20:5:80]
 test_sway_fin = 12;  // test_sway: how far its fins stand out [6:1:20]
-back_wall = 0;       // a slotted wall across the back, in front of the plate's housings and button heads (0: none); the tray and the box move forward by it [0:0.42:2.52]
+back_wall = 1.68;    // a slotted wall across the back, in front of the plate's housings and button heads (0: none): it closes the U into a tube, so the side walls do not sway as it prints (fea/README.md); the tray and the box move forward by it [0:0.42:2.52]
 
 /* [Tray] */
 slat_pitch = 9;      // slat spacing [5:0.5:15]

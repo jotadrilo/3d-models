@@ -3,7 +3,7 @@ with the one contact that case needs, for plate variants from variants.py.
 
 The joints stay bonded (the trays and the box on their ledges, the tails in
 the housings). Only the box's back wall gets contact, frictionless, with what
-it can close on: the heads of the upper buttons (rigid discs, 12 mm, 1.9 mm
+it can close on: the body's back wall (back_wall > 0, 0.5 mm behind it), the heads of the upper buttons (rigid discs, 12 mm, 1.9 mm
 behind it, held in space as their cups hold them) and the plate's front
 faces (pads, plate, the housings' lips). Loads: the bottle on its seat
 (6.5 N), 30 N pushing it towards the wall on the inside of the box's back
@@ -72,6 +72,8 @@ def main():
         back = model.faces('box', lambda p: abs(p[1] - cm.TRAY_Y0) < T)
         wall_side = model.faces('plate', lambda p: p[2] >= cm.Z_SEAT - 2 and (
             abs(p[1] + cm.BACK_T) < T or abs(p[1] + cm.PAD_T) < T or abs(p[1] + cm.BACK_T + cm.HOUSE_D) < T))
+        # the body's back wall (back_wall > 0), 0.5 mm behind the box: the box closes on it first
+        wall_side += model.faces('body', lambda p: p[2] >= cm.Z_SEAT - 2 and abs(p[1] - (cm.TRAY_Y0 + 0.5)) < T)
         hn, he, hfront, y1 = heads(max(model.X), model.max_eid + 1000)
         print('box back %d faces, plate front %d faces, head fronts %d faces' % (len(back), len(wall_side), len(hfront)), flush=True)
         with open(os.path.join(d, 'squeeze.inp'), 'w') as f:
