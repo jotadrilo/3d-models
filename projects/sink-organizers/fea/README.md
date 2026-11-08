@@ -97,9 +97,11 @@ nothing in the model keeps them apart. A cut through the upper buttons shows it,
 
 **With contact** (`squeeze_contact.py`):
 - the joints stay bonded;
-- contact only between the box's back wall and what it can close on: the upper buttons' heads
-  (rigid discs, 1.9 mm behind it) and the plate's front faces;
-- it converges in 4 increments (≈ 25 min).
+- contact only between the box's back wall and what it can close on: the body's back wall
+  (`back_wall`, 0.5 mm behind it), the upper buttons' heads (rigid discs) and the plate's front
+  faces;
+- it converges in 4 increments (≈ 25 min without the body's back wall, ≈ 2 h with it: far more
+  surface in contact).
 
 | Bonded: the box goes through the plate | With contact: it rests on the button heads |
 |---|---|
@@ -117,6 +119,24 @@ nothing in the model keeps them apart. A cut through the upper buttons shows it,
 - **Why it is accepted:** 30 N is a firm squeeze, and the wall is held by the button before it
   goes further.
 - **If it ever cracks there:** a rib on the box's back, level with the top button, is the fix.
+
+**With the body's back wall** (2026-11, `back_wall = 1.68`, which moves the box 2 mm forward):
+the box closes its 0.5 mm gap and rests on that wall, which bends back onto the heads.
+
+| Squeeze | No back wall (above) | Body's back wall |
+|---|---|---|
+| The box's back wall moves | 3.11 mm | 4.06 mm (the body's wall 3.62) |
+| The button heads take | 15.5 N | 3.3 N |
+| Box p99 / peak | 7.7 / 13.7 MPa | 6.0 / 11.8 MPa |
+| Box, vertical (across its layers) | ≈ 13.7 MPa | 9.7 MPa |
+| The body's back wall: p99 / peak / vertical | — | 5.4 / 8.4 / 6.8 MPa |
+| The plate moves | 1.18 mm | 1.66 mm |
+
+- **The box is safer:** ≈ 2.0× against 19 MPa across its layers, from ≈ 1.4×. It now bears on
+  a wall, not on a 12 mm disc.
+- **The body's back wall** carries the squeeze to the side walls and the plate at ≈ 2.8×.
+- **It moves further** (the whole caddy leans more onto the plate), but nothing is near its
+  limit.
 
 ## 4. The wall plate: one variable at a time
 

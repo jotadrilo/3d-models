@@ -452,7 +452,7 @@ Decided per CLAUDE.md §2.3:
 | Trigger | Analysis | Result |
 |---|---|---|
 | Loads with margins near 5× and a tangled load path (plate, tray, cups) | FEA, single parts and the assembly on the wall | Done: [Strength and orientation](#strength-and-orientation), [fea/README.md](fea/README.md) |
-| Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With the fins, ≤1.3 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)). Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
+| Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With a slotted back wall closing its U, ≤7.2 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)); fins (≤1.3) did the same in PETG HF but tore off the bed in PETG Matte. Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
 | The tall bins and risers, printed standing on 1.26–2.10 mm slotted walls | Print stiffness FEA (`PIECE=bin`) | Done at 200 mm and a 120 mm riser, before the bins came down to 160 (shorter is stiffer): worst at the middle of the bin's long wall, pushed across it. At 1.26 mm walls, 4.2 mm/N; at 1.68 (the default), 1.9; at 2.10, 1.0. All are well under the ≤10 aim: a closed box is stiff where the open soap caddy body was not. No fins ([fea/README.md](fea/README.md#cutlery-drainer-bins-while-they-print)) |
 | Free-standing piece | Stability | Not needed: both pieces hang on suction cups. The bins stand loose on the rack, but its fences and the side walls cage their feet, so a leaning knife only tilts a bin by its play (`bin_fit`, [Bins](#cutlery-drainer)) |
 | Leaning cutlery on the rack's fences | By hand | Not needed: a 200 g knife leaning on a rim puts ≈0.1 N·m on its bin. The 15 mm fence takes it as ≈7 N over 68 mm, ≈2 MPa across the fence's layers: 6× PETG's Z strength derated to 40 %. The bins weigh ≈100 g more than before against the 1 kg of cutlery the wall FEA carries; their weight sits no further from the wall |
@@ -471,8 +471,8 @@ soap caddy's tray alone, then each piece whole on its cups.
 - **Soap caddy, daily use:** the top cup pulls off the wall with ≈14 N while a hand presses
   the sponge, and ≈3 N under the bottle alone, all day. The cup under it hardly works; the
   lower ones press and carry the weight.
-- **Squeezing the bottle:** the box's back wall closes its 1.9 mm gap and rests on the
-  upper buttons' heads.
+- **Squeezing the bottle:** the box's back wall closes its 0.5 mm gap and rests on the
+  body's back wall, which bends back onto the upper buttons' heads (they take ≈3 of the 30 N).
 - **Cutlery drainer, daily use:** with 1 kg of cutlery and a wet towel the towel bar drops
   0.7 mm and each upper cup pulls ≈9 N all day. A 20 N pull on the towel at one end takes the
   worst cup to ≈43 N, and 23 N sideways, for a moment. The first layout (cups 120 mm apart)
@@ -492,7 +492,7 @@ soap caddy's tray alone, then each piece whole on its cups.
 | tray slats | the hand on the sponge: ≈4.3 N per slat over ≈35 mm | on its back, slats along Z | yes | ≈5× (FEA: 3.9 MPa across the layers) |
 | tray front tie | carries the slats' front ends across the 94 mm between the side rims; sags ≈2 mm (FEA) | on its back, the tie along X | no | ≈4.7× (FEA: 10 MPa) |
 | soap caddy `plate` | bends across, held by the upper cups in the middle, pulled by the housings at its edges | flat | no | ≈4.7× (FEA: 10.2 MPa peak by the top keyhole, 16.9 with the old slots) |
-| soap caddy `box` back wall | squeezing the bottle: 30 N towards the wall, onto the upper buttons' heads | standing: the wall bends across its layers | yes | ≈1.4× at the head, ≈2.5× around it (FEA: 13.7 / p99 7.7 MPa). Squeeze gently |
+| soap caddy `box` back wall | squeezing the bottle: 30 N towards the wall, onto the body's back wall | standing: the wall bends across its layers | yes | ≈2.0× across its layers (FEA: 9.7 MPa vertical, peak 11.8 / p99 6.0); the body's back wall ≈2.8× (6.8 MPa) |
 | `handle` | the towel on a 230 mm bar: ≈0.1 N·m at mid-span | flat: the U in XY | no | > 50× |
 | `button` | shear on the shank and pull on the head, ≤10 N | standing on its flange | yes | > 50× |
 
