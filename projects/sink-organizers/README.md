@@ -73,6 +73,12 @@ The dovetails are `dovetail_tail` and `dovetail_housing` from
   With the bigger head, 0.05 on the flanks and 0.2 at the floor still
   rocked; 0.025 and 0 slides smoothly with almost no play (two play
   ladders, tools/README.md "Tested fits").
+- **On the real joints**: 0.025 on a 20 mm strip went in very tight on the
+  100–200 mm joints (soap caddy, X2D, 2026-11). The plates were already
+  printed, so the bodies' tails take 0.05 more on the flanks
+  (`dt_tail_play`, taken off the tail: about 0.03 on the head's sides, none
+  at the floor). Plate 15 has a ladder of tail strips (0.025, 0.05, 0.075) to
+  slide into the printed plate.
 - **Holding**: the tail cannot pull forward out of the housing (the head is
   wider than the neck) or move sideways. It slides only along the wall's
   height and stops on the housing's 2 mm bottom (`dt_cap`).
@@ -455,6 +461,11 @@ without cracking.
   the upper ring over each: use the tightest it goes onto by hand without
   forcing and sits flush on, all round, with `-D split_play=…`. If the faces
   do not line up (a step at the reveal), the collar is too loose.
+- **The tails' extra play** (plate 15): three tail strips with
+  `dt_tail_play` 0.025, 0.05 and 0.075 (1 to 3 notches on the return). Slide
+  each down a housing of the wall plate you already printed: use the
+  tightest that slides all the way without forcing and without rocking,
+  with `-D dt_tail_play=…`, before printing the bodies.
 
 ## Parts
 
@@ -631,7 +642,8 @@ pieces do not fit.
 | `back_t`, `side_t` | 1.68, 1.68 | Wall plate; the body's walls (and the tails' necks) |
 | `tie_t`, `drip_clear` | 1.6, 5 | The body's floor; how far it stops behind the tray's front edge |
 | `ledge_w`, `ledge_h`, `ledge_stop` | 3.36, 4, 2 | Ledges under the tray; the bump at their front ends |
-| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.025, 0, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks and at the floor, housing lip and side, closed bottom |
+| `dt_w`, `dt_d`, `dt_play`, `dt_floor`, `dt_lip`, `dt_side`, `dt_cap` | 1.68, 4, 0.025, 0, 1.26, 1.68, 2 | Dovetails: widening, depth, play on the flanks (in the housing) and at the floor, housing lip and side, closed bottom |
+| `dt_tail_play` | 0.05 | Extra play on the flanks taken off the bodies' tails, for plates already printed: 0.025 alone was very tight on the full-length joints |
 | `sink_dist`, `drip_over` | 120, 10 | Wall to the sink bowl; how far the trays reach past it |
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope`, `drip_lip` | 0.25, 1.26, 1.68, 6, 1.5 | Tray: clearance in the body, floor, rims, slope, the drip lip under its front edge |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |

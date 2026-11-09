@@ -77,6 +77,7 @@ plate_window_inset = 0; // solid band left above and below each window, inside i
 dt_w = 1.68;         // how far the tails widen on each side, at 45° (4 lines: 1.26 printed round, standing) [0.84:0.42:2.52]
 dt_d = 4;            // tail depth, from its wide face to the neck [2:0.5:6]
 dt_play = 0.025;     // clearance on the flanks, per side (tested in PETG: 0 rubs, 0.025 slides, 0.05 rocks) [0:0.025:0.5]
+dt_tail_play = 0.05; // extra clearance on the flanks, taken off the bodies' tails (the plates keep dt_play): 0 fitted very tight on the real 100–200 mm joints [0:0.025:0.2]
 dt_floor = 0;        // clearance between the tails and the plate: 0 or whole layers (0.2 let them rock) [0:0.2:0.6]
 dt_lip = 1.26;       // housing in front of the flanks (3 lines) [0.84:0.42:2.52]
 dt_side = 1.68;      // housing beside the tails (4 lines) [1.26:0.42:3.36]
@@ -200,7 +201,7 @@ module plate_window_cut(x0, x1, z0, z1) let(r = min(plate_window_r, (x1 - x0) / 
 
 // The tails on the side walls' back edges, from z = 0 to h.
 module body_tails(h) for (s = [-1, 1]) translate([s * (hx - side_t / 2), -back_t, 0])
-    dovetail_tail(h, side_t, dt_w, dt_d, dt_floor, dt_lip);
+    dovetail_tail(h, side_t, dt_w, dt_d, dt_floor, dt_lip, play = dt_tail_play);
 
 // The tray's ledges, following its underside, with a bump at the front, out
 // to y_front; and the floor under the tray, slotted between the ledges.
@@ -336,11 +337,20 @@ module test_dovetail_housing() {
             cube([1, back_t + 2, 3]);
     }
 }
-module test_dovetail_tail() {
-    dovetail_tail(test_dt_h, side_t, dt_w, dt_d, dt_floor, dt_lip);
-    translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([side_t, 20, test_dt_h]);
-    translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([10, side_t, test_dt_h]);
+module test_dovetail_tail(play = dt_tail_play, notches = 0) difference() {
+    union() {
+        dovetail_tail(test_dt_h, side_t, dt_w, dt_d, dt_floor, dt_lip, play = play);
+        translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([side_t, 20, test_dt_h]);
+        translate([-side_t / 2, -dt_floor - dt_d - 20, 0]) cube([10, side_t, test_dt_h]);
+    }
+    // 1 to n notches in the return's top edge, to tell the ladder apart
+    for (k = [0 : notches - 1]) translate([3 + 2 * k, -dt_floor - dt_d - 20 - 1, test_dt_h - 1.5]) cube([1, side_t + 2, 2]);
 }
+// The tails' extra play, as a ladder of tail strips to slide into a plate
+// already printed: dt_tail_play 0.025, 0.05 and 0.075.
+test_tail_plays = [0.025, 0.05, 0.075];
+test_tail_k = 1;     // which of test_tail_plays test_dovetail_tail_play prints [0:1:2]
+module test_dovetail_tail_play() test_dovetail_tail(test_tail_plays[test_tail_k], test_tail_k + 1);
 
 // ---------------------------------------------------------------- assembly helpers
 

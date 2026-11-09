@@ -27,7 +27,7 @@
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, body_lower, body_upper, tray, box, button, adapter, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway, test_split_lower, test_split_upper]
+part = "assembly";   // [assembly, plate, body, body_lower, body_upper, tray, box, button, adapter, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_dovetail_tail_play, test_width, test_sway, test_split_lower, test_split_upper]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
@@ -420,7 +420,8 @@ else if (part == "adapter") tape_adapter();
 else if (part == "test_keyhole") test_keyhole();
 else if (part == "test_buttons") test_buttons();
 else if (part == "test_dovetail_housing") test_dovetail_housing();
-else if (part == "test_dovetail_tail") test_dovetail_tail();
+else if (part == "test_dovetail_tail") test_dovetail_tail(0);   // the housing ladder's mate, as tested
+else if (part == "test_dovetail_tail_play") test_dovetail_tail_play();
 else if (part == "test_width") test_width();
 else if (part == "test_sway") test_sway();
 else if (part == "assembly") {

@@ -477,7 +477,11 @@ Research behind each component in `tools/scad/`, one entry per component.
     plate, off its flanks, and tilt there. The floor is the flat plate's top face: 0 or a whole layer. A second ladder with no
     floor play: **0.025 on the flanks and 0 at the floor slides smoothly with almost no play**
     (the default); 0 / 0 works but rubs, too tight for joints 100–200 mm long
-    (tools/README.md, "Tested fits").
+    (tools/README.md, "Tested fits"). **On the real 100–209 mm joints 0.025 went in very
+    tight** (sink-organizers, X2D, 2026-11): a short strip does not show a long joint's
+    bows, seams and blobs. With the plates printed, the tails took 0.05 more
+    (`dovetail_tail` `play`, taken off the tail); test full length, or add ≈0.05 to the strip's
+    result.
   - **Head**: widening 1.26 per side, 3 deep, printed standing, came out round (outer and
     inner perimeters meet, the 45° corners fill in), so it caught little of the lip. Now 1.68
     per side (4 lines), 4 deep. Neck = the wall (1.68); lip in front of the flanks ≥1.26,

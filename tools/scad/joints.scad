@@ -147,9 +147,13 @@ module stepped_chamfer(z0, z1, lead, layer = 0.2) {
 }
 
 // The tail, from z = 0 to h, its tip chamfered; its wall carries on towards
-// -y past the housing (neck).
-module dovetail_tail(h, t = 1.68, w = 1.68, d = 4, play_floor = 0, lip = 1.26, neck = 2, lead = 0.8, layer = 0.2)
-    translate([0, -play_floor, 0]) stepped_chamfer(0, h, lead, layer) dovetail_profile(t, w, d, lip + neck);
+// -y past the housing (neck). play: extra clearance on the flanks, taken
+// off the tail (for a housing already printed): the profile shrinks by
+// play / (1 + 1/sqrt(2)) all round and slides back onto the plate, so the
+// flanks gain `play`, the head's sides about 0.6 of it and the floor none.
+module dovetail_tail(h, t = 1.68, w = 1.68, d = 4, play_floor = 0, lip = 1.26, neck = 2, lead = 0.8, layer = 0.2, play = 0)
+    let(trim = play / (1 + 1 / sqrt(2)))
+    translate([0, -play_floor + trim, 0]) stepped_chamfer(0, h, lead, layer) dovetail_profile(t, w, d, lip + neck, -trim);
 
 // The housing: a block on the plate's face with the tail's cavity, the play
 // all round, closed below z = 0 by cap and open at z = h with a lead-in.

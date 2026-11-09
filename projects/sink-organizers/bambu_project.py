@@ -31,7 +31,8 @@ with a square and five with a round, for both pieces.
 Plate 14: the upper part of the soap caddy's body, standing on its cut, a
 closed tube with the thumb window in its front.
 Plate 15: the fit test for the cut: the upper part's foot and the lower
-part's top with its collar at three plays.
+part's top with its collar at three plays; and three tail strips with
+dt_tail_play 0.025, 0.05 and 0.075, to slide into a wall plate already printed.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
@@ -180,6 +181,10 @@ def main():
     p.add("Split upper ring", soap("test_split_upper"), 74, 70)
     for (x, y), k in zip(((186, 70), (74, 175), (186, 175)), range(3)):
         p.add(f"Split lower ring, play {('0.05', '0.1', '0.15')[k]}", soap("test_split_lower", extra=[f"test_split_k={k}"]), x, y)
+    # the tails' extra play: three tail strips to slide into the wall plate already printed
+    for k, x in enumerate((100, 128, 156)):
+        p.add(f"Tail, extra play {('0.025', '0.05', '0.075')[k]}", soap("test_dovetail_tail_play", extra=[f"test_tail_k={k}"],
+              rotate=(0, 0, 90)), x, 122)
     proj.write(args.output or os.path.join(HERE, f"sink-organizers-{pr.tag}{suffix}.3mf"))
 
 

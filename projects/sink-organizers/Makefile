@@ -5,7 +5,7 @@
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SOAP_PARTS     ?= plate body_lower body_upper tray box button adapter jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width test_split_upper test_split_lower
+SOAP_PARTS     ?= plate body_lower body_upper tray box button adapter jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width test_split_upper test_split_lower test_dovetail_tail_play
 DRAINER_PARTS  ?= plate body tray rack bin riser handle jig test_pin test_bin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'

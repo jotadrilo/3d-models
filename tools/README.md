@@ -190,6 +190,7 @@ Add a row whenever a fit test settles or rules out a value (CLAUDE.md §4.6).
 | | | 0.4 | Measured ≈0.5: loose | | |
 | `dovetail_housing` | `play` (flanks, per side) / `play_floor`, head `w` 1.68 × `d` 4, 20 mm long | **0.025 / 0** | Works: slides in smoothly, almost no play | PETG Basic, P1S, 0.20 | sink-organizers, 2026-10 |
 | | | 0 / 0 | Works: rubs noticeably, no play at all. Too tight for long joints | | |
+| | | 0.025 / 0, on the real 100–209 mm joints | Very tight: goes in, but hard. The 20 mm strip does not show what a long joint does. The bodies' tails take 0.05 more on the flanks (`dovetail_tail` `play`, for plates already printed); the ladder (0.025, 0.05, 0.075) is on sink-organizers' plate 15 | PETG, X2D, 0.20 | sink-organizers, 2026-11 |
 | | | 0.05 / 0 | Ruled out | | |
 | | | 0.05 / 0.2 | Rocks slightly (the floor play lets the tail come off its flanks and tilt) | | |
 | | | 0.10, 0.15, 0.20 / 0.2 | Loose | | |
