@@ -570,9 +570,9 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: lower body and wall plate | the body's lower part (standing), plate (flat) | 4 h 17 min, 102 g | 3 h 57 min, 104 g | 4 h 17 min, 111 g |
+| 1 · Soap caddy: lower body and wall plate | the body's lower part (standing), plate (flat) | 4 h 23 min, 102 g | 4 h 03 min, 104 g | 4 h 23 min, 111 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 72 g | 3 h 06 min, 74 g | 3 h 22 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 25 min, 94 g | 4 h 03 min, 96 g | 4 h 24 min, 103 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 29 min, 94 g | 4 h 08 min, 96 g | 4 h 29 min, 103 g |
 | 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
 | 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 13 min, 58 g | 2 h 08 min, 60 g | 2 h 13 min, 64 g |
 | 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 30 min, 174 g | 12 h 13 min, 178 g | 12 h 30 min, 190 g |
@@ -583,8 +583,8 @@ With the default parameters:
 | 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 35 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
 | 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 35 min, 43 g | 1 h 31 min, 44 g | 1 h 35 min, 47 g |
-| 14 · Soap caddy: upper body | the body's upper part (standing on its cut) | 2 h 37 min, 51 g | 2 h 23 min, 52 g | 2 h 37 min, 56 g |
-| 15 · Soap caddy: split fit test | the upper part's foot, the lower part's top at 3 plays | 44 min, 22 g | 41 min, 23 g | 44 min, 24 g |
+| 14 · Soap caddy: upper body | the body's upper part (standing on its cut) | 2 h 43 min, 51 g | 2 h 28 min, 52 g | 2 h 43 min, 56 g |
+| 15 · Soap caddy: split fit test | the upper part's foot, the lower part's top at 3 plays, 3 tail strips | 1 h 04 min, 26 g | 59 min, 27 g | 1 h 04 min, 29 g |
 
 On the X2D (`sink-organizers-x2d*.3mf`) the plates are the same, except that it cannot use the
 left 20.5 mm of the bed: the widest plates sit further right, and the towel handle, the rack and
@@ -592,12 +592,12 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 
 | Plate | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|
-| 1 · Soap caddy: lower body and wall plate | 4 h 22 min, 102 g | 4 h 04 min, 104 g | 4 h 30 min, 111 g |
+| 1 · Soap caddy: lower body and wall plate | 4 h 29 min, 102 g | 4 h 11 min, 104 g | 4 h 37 min, 111 g |
 | 2 · Soap caddy: tray, box and buttons | 3 h 33 min, 72 g | 3 h 20 min, 74 g | 3 h 37 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | 4 h 32 min, 94 g | 4 h 13 min, 96 g | 4 h 39 min, 103 g |
+| 3 · Cutlery drainer: body and wall plate | 4 h 37 min, 94 g | 4 h 18 min, 96 g | 4 h 44 min, 103 g |
 | 4 · Cutlery drainer: tray | 1 h 58 min, 35 g | 1 h 41 min, 36 g | 1 h 59 min, 39 g |
 | 5 · Cutlery drainer: rack, handle and buttons | 2 h 24 min, 58 g | 2 h 20 min, 60 g | 2 h 29 min, 64 g |
-| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 51 min, 190 g |
+| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 50 min, 190 g |
 | 7 · Cutlery drainer: risers | 3 h 20 min, 47 g | 3 h 11 min, 48 g | 3 h 26 min, 52 g |
 | 8 · Cutlery drainer: bin fit test | 1 h 23 min, 18 g | 1 h 22 min, 19 g | 1 h 26 min, 20 g |
 | 9 · Fit tests | 1 h 37 min, 37 g | 1 h 32 min, 38 g | 1 h 41 min, 41 g |
@@ -605,8 +605,8 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 | 11 · Soap caddy: installation jig | 39 min, 13 g | 38 min, 14 g | 40 min, 15 g |
 | 12 · Cutlery drainer: installation jig | 43 min, 15 g | 42 min, 16 g | 45 min, 17 g |
 | 13 · Adhesive adapters | 1 h 43 min, 43 g | 1 h 41 min, 44 g | 1 h 47 min, 47 g |
-| 14 · Soap caddy: upper body | 2 h 43 min, 51 g | 2 h 30 min, 52 g | 2 h 45 min, 56 g |
-| 15 · Soap caddy: split fit test | 43 min, 22 g | 41 min, 23 g | 46 min, 24 g |
+| 14 · Soap caddy: upper body | 2 h 50 min, 50 g | 2 h 37 min, 52 g | 2 h 52 min, 55 g |
+| 15 · Soap caddy: split fit test | 1 h 04 min, 26 g | 1 h 00 min, 27 g | 1 h 07 min, 29 g |
 
 The fit tests were tuned on the P1S; the X2D may print the fits a little differently, so print
 plate 9 (and 8) on it before the big plates.
