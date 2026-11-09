@@ -5,7 +5,7 @@
 OPENSCAD       ?= openscad
 OPENSCAD_FLAGS ?=
 DEFS           ?=
-SOAP_PARTS     ?= plate body tray box button adapter jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width
+SOAP_PARTS     ?= plate body_lower body_upper tray box button adapter jig test_keyhole test_buttons test_dovetail_housing test_dovetail_tail test_width test_split_upper test_split_lower
 DRAINER_PARTS  ?= plate body tray rack bin riser handle jig test_pin test_bin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'
@@ -49,6 +49,8 @@ render: project ## Render both pieces (bare, on the wall, taken apart, sections)
 	$(RENDER) $(PROJECT) renders/soap-caddy-wall --model assembly.3mf --views hero $(RENDER_FLAGS)
 	$(COLOUR) -D 'show_items=false' -D 'explode=1' -D 'body_lift=240' -o assembly.3mf soap-caddy.scad
 	$(RENDER) $(PROJECT) renders/soap-caddy-apart --model assembly.3mf --views hero $(RENDER_FLAGS)
+	$(COLOUR) -D 'show_items=false' -D 'upper_lift=50' -o assembly.3mf soap-caddy.scad
+	$(RENDER) $(PROJECT) renders/soap-caddy-split --model assembly.3mf --views hero $(RENDER_FLAGS)
 	$(COLOUR) -D 'section="upper"' -o assembly.3mf soap-caddy.scad
 	$(RENDER) $(PROJECT) renders/soap-caddy-section --model assembly.3mf --front=+x --views front $(RENDER_FLAGS)
 	$(COLOUR) -D 'section="lower"' -o assembly.3mf soap-caddy.scad

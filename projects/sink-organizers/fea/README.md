@@ -297,6 +297,16 @@ the end, ≤2.9 at the middle, 18 mm from them.
 rough above ≈85 mm, where the model has it at 24 mm/N; the strip with fins came out clean to
 the top, and its one-line tabs held all the way and snapped off with no mark.
 
+**E printed rough (X2D, PETG, 2026-11-09).** The body with its slotted back wall came out rough,
+blobby and stringy round the front's top corners, from where the 45° corners of the opening start
+(≈171 mm) to the bar. Rerun at 165, 180, 190, 200, 203 and 209 mm with a load on the corners' free
+tip, which the study above never loaded (it moves in from the return as the layers rise): the
+worst was 4.6, 5.2, 5.6, 6.1, 6.6 and 1.1 mm/N, the side walls' front edges sideways (5–6) and
+the corner's tip forwards (6.6 at 203); a 2.52 mm front gained 5–15 %. All under what printed clean
+before (≈17), yet it printed rough: the model reads this body too stiff, or the threshold does not
+carry over, and it no longer decides it. The body now prints in two parts of 111 and 102 mm, the
+upper one a closed tube (README, "The body in two parts"), under what always printed clean.
+
 **The cutlery drainer's body**, the same check (`PIECE=drainer`, cut at 40, 70, 95 and 114 mm):
 0.4, 3.6, 9.2 and 11.9 mm/N, its worst at the front's middle, along x. Shorter (114 mm) and
 tied by the rack's ledges and the handle's bosses, it stays inside what printed clean on the

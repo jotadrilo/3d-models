@@ -166,3 +166,50 @@ module dovetail_cavity(t = 1.68, w = 1.68, d = 4, play = 0.025, play_floor = 0, 
     translate([0, -play_floor]) dovetail_profile(t, w, d, lip + 1, play);
     translate([-t / 2 - w - play, -play_floor]) square([t + 2 * (w + play), play_floor + 0.01]);
 }
+
+// ---------------------------------------------------------------- split collar
+
+// Joins a thin-walled piece (a box, a tower) cut across its height into a
+// lower and an upper part, both printed standing. The lower part carries a
+// collar on the inside of its walls that rises into the upper one: it lines
+// the walls up so their outer faces stay flush, and stops the upper part
+// moving across them. Each part's weight (and the load on it) keeps it seated;
+// nothing pulls them apart along the cut. A V reveal round the outside turns
+// the cut into a shadow line. Rules and sources in CLAUDE.md §4.7.
+// Both modules take as 2D children an outline at the cut and build in layer
+// steps (the outlines need not be convex):
+//   b      collar thickness, into the piece from the walls' inner faces
+//   h      how far it rises above the cut
+//   play   between the collar and the upper part's inner faces
+//   lead   45° lead-in on the collar's top edge, against the upper part
+//   c      depth of the reveal on each side of the cut
+
+// The collar, for the lower part. Children: the hollow the walls enclose at
+// the cut (for an open U, extend it past the open side and clip the result).
+// Under the cut, a 45° corbel off the walls' inner faces, so it prints
+// standing; above it, the lip, `play` clear of the upper part's walls.
+module split_collar(b = 1.68, h = 4, play = 0.1, lead = 0.6, layer = 0.2) {
+    n = max(1, round(b / layer));
+    for (k = [0 : n - 1]) translate([0, 0, -b + k * b / n]) linear_extrude(b / n + 0.01) difference() {
+        children();
+        offset(delta = -(k + 1) * b / n) children();
+    }
+    m = max(1, round(lead / layer));
+    linear_extrude(h - lead + 0.01) difference() { offset(delta = -play) children(); offset(delta = -b) children(); }
+    for (k = [1 : m]) translate([0, 0, h - lead + (k - 1) * lead / m]) linear_extrude(lead / m + 0.01) difference() {
+        offset(delta = -play - k * lead / m) children();
+        offset(delta = -b) children();
+    }
+}
+
+// The V reveal round the outside, to subtract from both parts. Children: the
+// piece's outer outline at the cut, filled. On the upper part it is also the
+// bottom chamfer that takes the elephant foot.
+module split_reveal(c = 0.6, layer = 0.2) {
+    n = max(1, round(c / layer));
+    for (k = [0 : n - 1], s = [-1, 1]) translate([0, 0, s > 0 ? k * c / n : -(k + 1) * c / n])
+        linear_extrude(c / n + 0.01) difference() {
+            offset(delta = 1) children();
+            offset(delta = -(c - k * c / n)) children();
+        }
+}

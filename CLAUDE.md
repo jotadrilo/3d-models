@@ -346,7 +346,9 @@ side, top). The renders go in "Model images".
   stiffness FEA (§2.3, [tools/fea](tools/fea/README.md#print-stiffness)) put its top layer at
   33 mm/N sideways; it printed clean up to ~17 mm/N. Aim for ≤10 mm/N at every height. A wall
   across (XZ for walls in YZ) works best; thicker walls help less than t³ says (2.52 mm: 1.8×,
-  not 3.4×). The soap caddy's body now has a slotted back wall for this. When the part cannot
+  not 3.4×). The soap caddy's body took a slotted back wall for this, and still came out rough round the
+  front's top corners with the model at ≈7 mm/N (X2D, 2026-11-09): the FEA reads such bodies too
+  stiff. It now prints in two parts (`split_collar`, §4.7). When the part cannot
   change, `stabilizer_fin()` (§4.7) holds it while it prints.
 - **Tie open-fronted walls across the front.** Two side walls joined only by a back plate spread,
   and whatever rests on ledges between them drops or slides out (the soap caddy's frame). When
@@ -490,6 +492,34 @@ Research behind each component in `tools/scad/`, one entry per component.
   - A detent, if one is ever needed, must sit unloaded once seated: PETG creeps under load,
     faster when warm (UTS creep study; Polymers 2025).
 
+- **Split collar** (`joints.scad`, `split_collar` / `split_reveal`, from sink-organizers): a
+  thin-walled piece too tall to print standing cut across its height into two parts, both
+  printed standing. The lower part carries a collar inside its walls that rises into the upper
+  one; a V reveal round the outside turns the cut into a shadow line. It came from the soap
+  caddy's body: 209 mm standing, it swayed at the top with fins and with a back wall, and two
+  ≈105 mm parts sit under what always printed clean.
+  - **Sources:** no published test of a printed split joint; maker guides only (Sovol,
+    Makers101, DigiKey Maker.io, Hackaday): an inner lip or stepped ledge as a locating stop,
+    the cut on a line the piece already has, a lead-in on the mating edge, and a printed test
+    joint before the parts, since no clearance carries over between printers (their figures,
+    0.15–0.25, are for pins). So the defaults come from this repo's fits; the fit test decides.
+  - **Collar inside the walls, not a lap within them:** a half-and-half lap leaves 0.84 mm
+    halves, minus the play on one of them, which Classic walls print as one line and gap fill,
+    and leaves the upper part standing on 0.84 mm of wall. The collar keeps the upper part's
+    whole wall on the bed and its faces flush with the lower's. It needs the inside free
+    for `h` above the cut and `b` under it (the soap caddy cuts under the box's ledges, as the
+    box sits 0.25 from the walls), and a 45° corbel under it so it prints standing.
+  - **Defaults:** `b` 1.68 (4 lines), `h` 4, `lead` 0.6 at 45° on its top edge, `play` 0.1 per
+    side (between the dovetail's 0.025, which slides over 200 mm, and the 0.25 of a part
+    sliding between walls: the collar is short and only has to drop on); `c` 0.6 for the reveal,
+    which on the upper part is also its bottom chamfer against elephant foot.
+  - **Loads:** none along the cut by design: the upper part's weight and what it carries seat
+    it, in compression along Z, and a wall-hung piece's moment goes into the plate through each
+    part's own anchors. The collar only lines the walls up and stops the upper part moving
+    across them. A part that something could lift needs its own hold (both parts' dovetails in
+    the same housings, on the soap caddy).
+  - **Untested:** the soap caddy's fit test (`test_split_*`, a ring of each part, the collar at
+    0.05/0.1/0.15) settles `play`; record it in tools/README.md, "Tested fits".
 - **Stabilizer fin** (`print_aids.scad`, from sink-organizers): a printing aid, not part of
   the piece. A plate standing on the bed in the XZ plane, beside a thin wall that prints
   standing, tied to its face by tabs; in its own plane it is far stiffer than the wall

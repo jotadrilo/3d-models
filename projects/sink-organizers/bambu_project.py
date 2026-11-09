@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Build a ready-to-print Bambu Studio project for the sink organizers.
 
-Plate 1: the soap caddy's body standing on its floor (its dovetail tails
-along Z), turned a quarter beside the wall plate, and its wall plate flat on
-its back (the keyholes' slots and the housings' flanks in XY). Above SLOW_Z
-the body's walls print slower: thin walls sway under the nozzle up there
-(fea/README.md, "Print stiffness"), less since its back wall closes the U.
+Plate 1: the lower part of the soap caddy's body standing on its floor (its
+dovetail tails along Z), turned a quarter beside the wall plate, and its wall
+plate flat on its back (the keyholes' slots and the housings' flanks in XY).
+Above SLOW_Z its walls print slower. The body is in two parts: printed
+whole, 209 mm standing, its walls swayed under the nozzle at the top.
 Plate 2: the soap caddy's tray on its back, the box on its floor and the four
 buttons on their flanges.
 Plate 3: the cutlery drainer's body standing and its wall plate flat.
@@ -28,6 +28,10 @@ Plates 11 and 12: the installation jigs, for the suction cups.
 Plate 13: the adhesive mount (mount="tape", for walls where suction cups let
 go): an adapter per keyhole, a button head on a piece of foam tape, three
 with a square and five with a round, for both pieces.
+Plate 14: the upper part of the soap caddy's body, standing on its cut, a
+closed tube with the thumb window in its front.
+Plate 15: the fit test for the cut: the upper part's foot and the lower
+part's top with its collar at three plays.
 
 Black PETG (Basic, HF with --hf or Matte with --matte) on 0.20mm Standard with gyroid infill, the seam at the back,
 a scarf seam and precise walls: they hang in plain sight.
@@ -94,8 +98,8 @@ def main():
     def drainer(name, extra=(), **kw):
         return load_scad(DRAINER, name, args.defs + list(extra), colour=False, **kw)
 
-    p = proj.plate("Soap caddy - body and wall plate")
-    p.add("Soap caddy body", soap("body", rotate=(0, 0, 90)), 81 if x2d else 75, 128,
+    p = proj.plate("Soap caddy - lower body and wall plate")
+    p.add("Soap caddy body, lower part", soap("body_lower", rotate=(0, 0, 90)), 81 if x2d else 75, 128,
           ranges=[(SLOW_Z, 250, SLOW)])
     p.add("Soap caddy wall plate", soap("plate", rotate=FLAT), 198 if x2d else 192, 128)
 
@@ -167,6 +171,15 @@ def main():
         p.add(f"Adapter, square {i + 1}", soap("adapter", extra=['tape="square"']), x, 160)
     for i, x in enumerate((50, 90, 130, 170, 210)):
         p.add(f"Adapter, round {i + 1}", soap("adapter", extra=['tape="round"']), x, 95)
+    # The soap caddy body's upper part, a closed tube standing on its cut (appended, so the
+    # plates above keep their numbers), and the fit test for the cut between the two parts
+    p = proj.plate("Soap caddy - upper body")
+    p.add("Soap caddy body, upper part", soap("body_upper", rotate=(0, 0, 90)), 128, 128)
+
+    p = proj.plate("Soap caddy - split fit test")
+    p.add("Split upper ring", soap("test_split_upper"), 74, 70)
+    for (x, y), k in zip(((186, 70), (74, 175), (186, 175)), range(3)):
+        p.add(f"Split lower ring, play {('0.05', '0.1', '0.15')[k]}", soap("test_split_lower", extra=[f"test_split_k={k}"]), x, y)
     proj.write(args.output or os.path.join(HERE, f"sink-organizers-{pr.tag}{suffix}.3mf"))
 
 

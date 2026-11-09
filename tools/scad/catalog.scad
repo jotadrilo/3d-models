@@ -19,8 +19,8 @@ use <hardware.scad>
 use <boards.scad>
 use <print_aids.scad>
 
-part = "all";   // [all, keyhole_pad, keyhole_button, tape_mount, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, house_box, board_bracket, board_bracket_hook, stabilizer]
-demo = "none";  // [none, keyhole, tape, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, bracket, bracket_hook, stabilizer]
+part = "all";   // [all, keyhole_pad, keyhole_button, tape_mount, standoff_peg, peg_block, screw_plate, holes, diamond_female, diamond_male, tongue_female, tongue_male, lead_in_female, lead_in_male, handle_block, handle, dovetail_housing, dovetail_tail, split_lower, split_upper, house_box, board_bracket, board_bracket_hook, stabilizer]
+demo = "none";  // [none, keyhole, tape, standoff_peg, screw, holes, diamond, tongue, lead_in, handle, dovetail, split, bracket, bracket_hook, stabilizer]
 assembled = false;
 section = false;
 
@@ -48,6 +48,7 @@ hb_w = 30; hb_d = 20; hb_h = 16;   // block between a sprung handle's arms
 h_play = 0.4; h_reach = 14;
 dt_h = 30; dt_plate = 2.1; dt_wall = 20;   // sliding dovetail: length, the plate under the housing, the wall behind the tail
 bb_reach = 60; bb_h = 70; bb_w = 20; bb_m = 6.3; bb_bolts = [18, 40]; bb_t = 10;   // a small board bracket, M6, on a 10 mm board
+sp_w = 40; sp_d = 30; sp_t = 1.68; sp_h = 14;   // a short square tube cut in two, joined by a split collar
 st_h = 40; st_w = 10; st_len = 30;   // a strip of 1.68 mm wall with a stabilizer fin on each face
 bh_heel = 35; bh_edge = 20; bh_sheet = 2; bh_shoe = 10.6; bh_lip = 6.3;              // the same with a shoe and a hook under a 20 mm flange
 
@@ -125,6 +126,21 @@ module dovetail_tail_sample()      // a strip of wall standing on its end, the t
         dovetail_tail(dt_h);
         translate([-1.68 / 2, -dovetail_housing_d() - dt_wall, 0]) cube([1.68, dt_wall, dt_h]);
     }
+module sp_outline() square([sp_w, sp_d], center = true);
+module sp_hollow() offset(delta = -sp_t) sp_outline();
+module split_lower_sample()        // the lower part standing, the cut at its top, the collar rising out of it
+    difference() {
+        union() {
+            chamfered_prism(sp_h) difference() { sp_outline(); sp_hollow(); }
+            translate([0, 0, sp_h]) split_collar() sp_hollow();
+        }
+        translate([0, 0, sp_h]) split_reveal() sp_outline();
+    }
+module split_upper_sample()        // the upper part standing on the cut
+    difference() {
+        linear_extrude(sp_h) difference() { sp_outline(); sp_hollow(); }
+        split_reveal() sp_outline();
+    }
 module stabilizer_wall() {         // a strip of wall standing on a return, along y
     translate([-1.68 / 2, -st_len / 2, 0]) cube([1.68, st_len, st_h]);
     translate([-1.68 / 2, st_len / 2 - 1.68, 0]) cube([12, 1.68, st_h]);
@@ -177,6 +193,8 @@ module sample(p) {
     else if (p == "handle") handle_sample();
     else if (p == "dovetail_housing") dovetail_housing_sample();
     else if (p == "dovetail_tail") dovetail_tail_sample();
+    else if (p == "split_lower") split_lower_sample();
+    else if (p == "split_upper") split_upper_sample();
     else if (p == "stabilizer") stabilizer_sample();
     else if (p == "house_box") house_box_sample();
     else if (p == "board_bracket") board_bracket_sample();
@@ -316,6 +334,13 @@ module demo_part(name, role) {
         }
         if (role == "arrow") arrow([8, -dt_plate - 10, dt_h + 40], [8, -dt_plate - 10, dt_h + 6]);
     }
+    else if (name == "split") {
+        // a tube cut in two: the upper part drops over the lower one's collar
+        // (cut through the middle, from the side)
+        if (role == "piece") split_lower_sample();
+        if (role == "mate") translate([0, 0, sp_h + 14 * X]) split_upper_sample();
+        if (role == "arrow") arrow([0, -sp_d / 2 - 10, 2 * sp_h + 30], [0, -sp_d / 2 - 10, 2 * sp_h + 16]);
+    }
     else if (name == "bracket") {
         // a board standing on the floor, a bracket on each face, the same two
         // bolts through both legs and the board (cut through the bolts)
@@ -361,7 +386,7 @@ module demo_part(name, role) {
 
 names = ["keyhole_pad", "keyhole_button", "tape_mount", "standoff_peg", "peg_block", "screw_plate", "holes",
          "diamond_female", "diamond_male", "tongue_female", "tongue_male", "lead_in_female",
-         "lead_in_male", "dovetail_housing", "dovetail_tail", "house_box"];
+         "lead_in_male", "dovetail_housing", "dovetail_tail", "split_lower", "split_upper", "house_box"];
 
 if (demo != "none") {
     color(PIECE) cut(demo) demo_part(demo, "piece");

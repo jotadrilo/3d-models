@@ -9,27 +9,30 @@
 //     and of a hand pressing the sponge: the top cups pull, the bottom ones
 //     press.
 //   - body: two side walls, deep at the bottom round the tray and as deep as
-//     the box above it with a rounded step between them, the floor under the
-//     tray, ledges for the tray and the box, and at the front of the box two
-//     returns and a bar across the top, which keep the box in and tie the
-//     side walls. It slides down onto the plate's dovetails.
+//     the box above it with a rounded step between them, a slotted back
+//     wall, the floor under the tray, ledges for the tray and the box, and a
+//     closed front round the box with a window for the thumb. Printed in two
+//     parts cut under the box's ledges (lower: the tray's part; upper: a
+//     closed tube round the box), joined by a split collar; both slide down
+//     onto the plate's dovetails.
 //   - tray: a slatted cradle for the sponge over a floor that slopes forward
 //     and spills into the sink. Lift its front over the bumps at the ends of
 //     the ledges and it slides out.
 //   - box: an open-front box that holds the bottle upside down, its cap
 //     through a hole in the floor, right over the sponge. It drops in from
 //     the top onto its ledges and lifts out; the bottle drops into it from
-//     the top, and the open front is where you squeeze it.
+//     the top, and you squeeze it through the body's thumb window.
 //
 // Coordinates and print orientation: see common.scad. The box stands on its
 // floor.
 
 /* [Part] */
-part = "assembly";   // [assembly, plate, body, tray, box, button, adapter, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway]
+part = "assembly";   // [assembly, plate, body, body_lower, body_upper, tray, box, button, adapter, jig, test_keyhole, test_buttons, test_dovetail_housing, test_dovetail_tail, test_width, test_sway, test_split_lower, test_split_upper]
 show_items = true;   // draw the bottle, sponge, cups, wall and counter (assembly only)
 section = "none";    // [none, upper, lower] cut the assembly through the upper keyholes (x = 0) or a lower one, for the section renders
 explode = 0;         // [0:0.1:1] tray slid out, box and bottle lifted (renders)
 body_lift = 0;       // [0:1:300] body slid up off the plate (renders)
+upper_lift = 0;      // [0:1:300] the body's upper part lifted off the lower one (renders)
 
 /* [Bottle] */
 bottle_w = 85;       // widest part of the bottle, along the wall (its base) [50:0.5:120]
@@ -58,10 +61,9 @@ lower_cup_span = 56; // horizontal distance between the lower two cups [50:1:90]
 /* [Body] */
 sponge_rim = 12;     // the side walls' deep part rises this much above the slats [0:1:40]
 step_r = 10;         // radius of the step between the deep and the shallow part of the side walls [2:1:20]
-bar_h = 6;           // bar across the top of the front, over the box [4:1:20]
 side_add = 0;        // extra thickness on the side walls' outer faces, in front of the dovetails: the body prints standing, and its thin walls sway under the nozzle higher up [0:0.42:3.36]
 side_add_z = 0;      // where the extra thickness starts, 45° below it [0:1:200]
-frame_t = 1.68;      // the front returns and the bar across the top (4 lines) [1.26:0.42:4.2]
+frame_t = 1.68;      // the closed front above the cut (4 lines) [1.26:0.42:4.2]
 fin_w = 0;           // fins beside the side walls, printed with the body and lifted off after (0: none): without them its 1.68 mm walls swayed under the nozzle above ~165 mm [0:1:40] Off since the back wall (back_wall) closes the U: in PETG Matte they tore off the bed
 fin_t = 1.26;        // fin thickness (3 lines) [0.84:0.42:2.52]
 fin_flange = 0;      // flange across each fin's outer edge, for fins with no tabs [0:1:30]
@@ -74,6 +76,11 @@ tab_pitch = 20;      // tab spacing, up the fins [4:1:40]
 test_sway_h = 120;   // test_sway: height of its two strips: bare, the top bends 17 mm/N at ~78 mm, 24 at ~88 and 33 at ~98 (the body from 150 to 190 mm) and 60 at 120 [40:5:200]
 test_sway_len = 40;  // test_sway: their length [20:5:80]
 test_sway_fin = 12;  // test_sway: how far its fins stand out [6:1:20]
+split_play = 0.1;    // the body is printed in two parts, cut under the box's ledges: play between the lower part's collar and the upper part's walls, per side (test_split) [0:0.025:0.3]
+split_collar_h = 4;  // how far the lower part's collar rises into the upper part [2:0.2:8]
+split_reveal_c = 0.6; // the V reveal round the outside of the cut, each side [0:0.2:1.2]
+thumb_d = 55;        // the window in the closed front where the thumb squeezes the bottle (0: none); its top rises to a 45° point [0:1:80]
+thumb_z = 40;        // the window's centre, above the box floor [20:1:80]
 back_wall = 1.68;    // a slotted wall across the back, in front of the plate's housings and button heads (0: none): it closes the U into a tube, so the side walls do not sway as it prints (fea/README.md); the tray and the box move forward by it [0:0.42:2.52]
 
 /* [Tray] */
@@ -137,8 +144,15 @@ y_bc = box_y0 - wall_t - inner_d / 2;          // bottle axis
 hole_d = neck_d + 2 * neck_play;
 collar_d = hole_d + 12;
 ret = box_play + wall_t + return_w;            // the body's front returns, in line with the box's
-open_hw = ix - ret;                            // half width of the opening between them
-chf = open_hw - 5;                             // 45° top corners of the opening: a 10 mm bridge, printed standing
+open_hw = ix - ret;                            // half width of the box's front opening, between the returns
+
+// The cut between the body's two parts: under the box's ledges, so the collar
+// clears them, on a layer; the lower side wall slots stop under the collar's corbel
+z_ledge = z_seat - ledge_h - ledge_w;          // the box ledges' (and the front's) lowest point
+z_cut = floor((z_ledge - split_collar_h - 0.4) / 0.2) * 0.2;
+collar_b = side_t;
+lower_slot_top = min(z_ledge - slot_margin, z_cut - collar_b - 3);
+z_thumb = z_seat + thumb_z;
 
 top_above_counter = counter_gap + top;
 
@@ -151,11 +165,13 @@ assert(cup_pitch >= cup_d + 2, "cup_pitch is smaller than the cups");
 assert(lower_cup_span >= cup_d + 2, "lower_cup_span is smaller than the cups");
 assert(lo_cup_x + pad_w / 2 <= hx - side_t / 2 - house_hw, "lower_cup_span is wider than the plate between its housings");
 assert(lo_cup_z + pad_hi + 3 * slot_w <= z_seat, "the lower keyholes reach the box");
-assert(chf > 0, "no room for the front opening: lower return_w");
+assert(thumb_d == 0 || z_thumb + thumb_d / 2 * sqrt(2) <= top - 4, "the thumb window reaches the top: lower thumb_z or thumb_d");
+assert(thumb_d < 2 * ix - 8, "the thumb window is wider than the front");
 assert(counter_gap >= dt_cap, "the plate reaches the counter");
 
 echo(str("body: ", body_w + 2 * side_add, " x ", reach_f, " x ", top, " mm (w x d x h); plate ", 2 * plate_hx(), " x ", top + dt_cap,
          "; tray ", 2 * thx, " x ", tray_y0 - tray_y1, " x ", z_s, "; box ", bw, " x ", box_d, " x ", box_h, " (inside ", inner_w, " x ", inner_d, ")"));
+echo(str("body cut at ", z_cut, " mm: lower part ", z_cut + split_collar_h, " tall with its collar, upper part ", top - z_cut));
 echo(str("cups above the counter: lower pair ", counter_gap + lo_cup_z, " (", lower_cup_span,
          " apart), upper pair ", [for (z = up_cup_z) counter_gap + z], " mm (centred)"));
 echo(str("tray edge ", reach + wall_gap, " mm from the wall; button ", button_h, " mm long (flange ", flange_t, ")"));
@@ -188,9 +204,11 @@ module side_profile() {
     }
 }
 
-// The body; as printed (fins = true), with its stabilizer fins.
+// The body, whole (its two parts together); with fins = true, with its
+// stabilizer fins.
 module body(fins = false) {
-    body_core();
+    body_lower();
+    body_upper();
     if (fins && fin_w > 0) stabilizer_fins();
 }
 
@@ -207,10 +225,36 @@ module stabilizer_fins() for (s = [-1, 1], y = [-(body_in + 0.52), -(ud - 1 - fi
         translate([s * (hx + side_add), y, 0]) mirror([s < 0 ? 1 : 0, 0, 0])
             stabilizer_fin(top, fin_w, fin_t, fin_gap, fin_flange, tab_w, tab_h, tab_pitch, foot_w = fin_foot);
 
+// The body's two parts, printed standing, cut at z_cut (CLAUDE.md §4.7,
+// "Split collar"): the lower part carries a collar inside its side and back
+// walls that rises into the upper one, and the V reveal turns the cut into a
+// shadow line. Both slide into the plate's housings, the lower first; the
+// tails and the collar hold the upper part, its weight seats it.
+module body_lower(play = split_play) difference() {
+    union() {
+        intersection() { body_core(); box([-500, -500, -1], [500, 500, z_cut]); }
+        // the collar along the walls, stopping behind the upper part's front
+        translate([0, 0, z_cut]) intersection() {
+            split_collar(collar_b, split_collar_h, play, 0.6) cut_hollow();
+            box([-500, -up_d + play, -50], [500, 0, 50]);
+        }
+    }
+    translate([0, 0, z_cut]) split_reveal(split_reveal_c) cut_outline();
+}
+module body_upper() difference() {
+    intersection() { body_core(); box([-500, -500, z_cut], [500, 500, top + 1]); }
+    translate([0, 0, z_cut]) split_reveal(split_reveal_c) cut_outline();
+}
+// At the cut, in plan: the hollow inside the side and back walls (open at
+// the front, so it runs on past it) and the body's outline.
+module cut_hollow() translate([-ix, -ud - 20]) square([2 * ix, ud + 20 - body_in - back_wall]);
+module cut_outline() translate([-hx - side_add, -ud]) square([2 * (hx + side_add), ud]);
+
 module body_core() difference() {
     union() {
         for (s = [-1, 1]) yz_prism(s > 0 ? ix : -hx, s > 0 ? hx : -ix) side_profile();
-        body_tails(top);
+        body_tails(z_cut);
+        translate([0, 0, z_cut]) body_tails(top - z_cut);   // the upper part's tails, a lead-in at their foot
         tray_ledges(-reach_f);
         body_floor();
         // box ledges under its floor, 45° underneath: the body prints standing
@@ -218,25 +262,24 @@ module body_core() difference() {
             box([s * (ix + eps), -body_in, z_seat - ledge_h], [s * (ix - ledge_w), -up_d, z_seat]);
             box([s * (ix + eps), -body_in, z_seat - ledge_h - ledge_w], [s * (ix - eps), -up_d, z_seat]);
         }
-        // in front of the box: the returns and the bar across the top, the
-        // opening's top corners at 45°
+        // the front, closed from the cut up: it starts on the bed with the upper
+        // part, and closes the upper part into a tube, so its walls do not sway
+        // as it prints. A window for the thumb to squeeze the bottle.
         translate([0, -up_d, 0]) rotate([90, 0, 0]) linear_extrude(frame_t + eps) difference() {
-            translate([-ix - eps, z_seat - ledge_h - ledge_w]) square([2 * (ix + eps), top - z_seat + ledge_h + ledge_w]);
-            polygon([[-open_hw, z_seat - ledge_h - ledge_w - 1], [open_hw, z_seat - ledge_h - ledge_w - 1], [open_hw, top - bar_h - chf],
-                     [open_hw - chf, top - bar_h], [-open_hw + chf, top - bar_h], [-open_hw, top - bar_h - chf]]);
-            // the returns' bottom edges rise at 45° from the side walls: level,
-            // they would stick out of the walls with nothing under them
-            for (s = [-1, 1]) let(zb = z_seat - ledge_h - ledge_w)
-                polygon([[s * ix, zb - 1], [s * ix, zb], [s * open_hw, zb + ix - open_hw], [s * open_hw, zb - 1]]);
+            translate([-ix - eps, z_cut]) square([2 * (ix + eps), top - z_cut]);
+            if (thumb_d > 0) translate([0, z_thumb]) hull() {
+                circle(d = thumb_d);
+                translate([0, thumb_d / 2 * sqrt(2) - 0.01]) square(0.02, center = true);
+            }
         }
         if (side_add > 0) for (s = [-1, 1]) side_slab(s);
         if (back_wall > 0) box([-ix - eps, -body_in, 0], [ix + eps, -(body_in + back_wall), top]);
     }
     // side walls: 45° slots along the box, and between the sponge and the box ledges
-    for (s = [-1, 1], z = [[z_seat + slot_margin, top - slot_margin], [lower_top, z_seat - ledge_h - ledge_w - slot_margin]])
+    for (s = [-1, 1], z = [[z_seat + slot_margin, top - slot_margin], [lower_top, lower_slot_top]])
         slots_tilted(s * (hx - side_t / 2 + side_add / 2), -(up_d - slot_rib - slot_w / 2), -(body_back + slot_rib), z[0], z[1], "x", side_t + side_add);
     // the back wall: the same 45° slots, between the ledges
-    if (back_wall > 0) for (z = [[z_seat + slot_margin, top - slot_margin], [lower_top, z_seat - ledge_h - ledge_w - slot_margin]])
+    if (back_wall > 0) for (z = [[z_seat + slot_margin, top - slot_margin], [lower_top, lower_slot_top]])
         wall_slots_tilted(-(body_in + back_wall / 2), -ix + ledge_w + slot_rib, ix - ledge_w - slot_rib, z[0], z[1], "y",
                           side_slot_tilt, slot_w, slot_rib, back_wall + 2, max_len = slot_max_len);
 }
@@ -303,6 +346,18 @@ module test_width() {
     translate([0, -ud - 15, 0]) intersection() { bottle_box(); translate([-500, -500, 0]) cube([1000, 1000, 12]); }
 }
 
+// Fit test for the cut: the lower part's top (6 mm of wall and the collar)
+// with split_play at 0.05, 0.1 and 0.15, marked by 1 to 3 notches in the right
+// side wall's foot, and the upper part's foot, 10 mm, standing as they print.
+// The upper ring must drop over each collar with no force and sit flush.
+split_test_plays = [0.05, 0.1, 0.15];
+test_split_k = 1;    // which of split_test_plays test_split_lower prints [0:1:2]
+module test_split_lower(k = 1) translate([0, 0, -(z_cut - 6)]) difference() {
+    intersection() { body_lower(split_test_plays[k]); box([-500, -500, z_cut - 6], [500, 500, z_cut + split_collar_h + 1]); }
+    for (i = [0 : k]) translate([hx + side_add, -ud + 4 + 3 * i, z_cut - 6]) cube([2, 1.2, 2.4], center = true);
+}
+module test_split_upper() translate([0, 0, -z_cut]) intersection() { body_upper(); box([-500, -500, z_cut], [500, 500, z_cut + 10]); }
+
 // Sway test: two strips of the body's side wall, slotted the same way, on a
 // thin foot. Bare, a strip bends on its own at the top about as much as the
 // body did where it printed rough (fea/README.md, "The body while it
@@ -353,6 +408,10 @@ module items() {
 
 if (part == "plate") plate();
 else if (part == "body") body(fins = true);
+else if (part == "body_lower") body_lower();
+else if (part == "body_upper") body_upper();
+else if (part == "test_split_lower") test_split_lower(test_split_k);
+else if (part == "test_split_upper") test_split_upper();
 else if (part == "tray") soap_tray();
 else if (part == "box") bottle_box();
 else if (part == "button") button();
@@ -366,7 +425,8 @@ else if (part == "test_width") test_width();
 else if (part == "test_sway") test_sway();
 else if (part == "assembly") {
     color(piece_colour) cut() plate();
-    color(piece_colour) cut() translate([0, 0, body_lift]) body();
+    color(piece_colour) cut() translate([0, 0, body_lift]) body_lower();
+    color(piece_colour) cut() translate([0, 0, body_lift + upper_lift]) body_upper();
     color(piece_colour) cut() translate([0, -pull, body_lift]) soap_tray();
     color(piece_colour) cut() translate([0, 0, z_seat + lift + body_lift]) bottle_box();
     if (show_items) items();

@@ -39,6 +39,8 @@ SAMPLES = {
 BOARD_SAMPLES = {
     "board_bracket": ("Board bracket", 90, 128),
     "board_bracket_hook": ("Board bracket with hook", 180, 128),
+    "split_lower": ("Split collar, lower part", 100, 215),
+    "split_upper": ("Split collar, upper part", 160, 215),
 }
 
 
@@ -59,7 +61,7 @@ def main():
         # one-line tabs: Classic walls drop them, Arachne prints them
         plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y,
                   settings={"wall_generator": "arachne"} if part == "stabilizer" else None)
-    # Board holders: bigger samples, on their own plate
+    # Board holders and the split collar: bigger samples, on their own plate
     plate = proj.plate("Board holders")
     for part, (name, x, y) in BOARD_SAMPLES.items():
         plate.add(name, load_scad(SCAD, part, args.defs, colour=False), x, y)
