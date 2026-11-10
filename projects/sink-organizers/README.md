@@ -256,8 +256,13 @@ the body prints standing.
 **Tray.** A floor that slopes 6° forward, with rims, and nothing in front of
 or under its edge. It spills 10 mm past the edge of the sink, 130 mm from
 the wall. It prints on its floor, so instead of the soap caddy's hanging
-drip lip its front edge is undercut at 45° (`flat` in `tray()`), and the
-drops fall from that corner.
+drip lip its front face leans out at 45° (`flat` in `tray()`) down to a
+sharp edge on the floor's underside, 1.3 mm in front of the floor: the
+lowest and foremost point, so the drops hang there and fall. To run back
+under the tray they would have to turn round a 45° edge and climb the
+underside. A first version cut the edge back at 45° underneath instead: that
+made two open 135° corners, which water wraps round, worse than a square
+edge.
 
 - **Why it prints on its floor:** on its back, as the soap caddy's tray
   prints, it stood 103 mm on a 206 × 6 mm strip (≈1300 mm²) and came off
@@ -487,7 +492,7 @@ without cracking.
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
 | cutlery drainer `plate` | 217 × 116 × 6 | Wall plate: four keyholes at its corners, two housings, one window; printed flat on its back |
 | cutlery drainer `body` | 218 × 114 × 114 | Side walls with the tails, floor, ledges for the tray and the rack, the handle's bosses; printed standing |
-| cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and an undercut front edge; printed on its floor, tilted 6° |
+| cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and a 45° drip edge; printed on its floor, tilted 6° |
 | cutlery drainer `rack` | 206 × 94 × 17 | Shelf, 2.4 mm, slotted front to back, with a fence at the front and back; printed on its floor |
 | cutlery drainer `bin` | 68.7 × 90.3 × 160 | Three; printed standing on their floors |
 | cutlery drainer `riser` | 64.6 × 86.3 × 80 and 28 | False bottoms (`riser_n` 0 and 1); printed on their floors, dropped into the bins upside down |

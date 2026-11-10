@@ -224,13 +224,16 @@ module body_floor() difference() {
 // under the straight part of the front edge, clear of the ledges: 45° behind
 // it, so it prints with the tray on its back. With flat = true the tray prints
 // on its floor (tilted by tray_slope), so nothing can hang under it: the front
-// edge is undercut at 45° instead, and the drops fall from its corner.
+// face leans out at 45° instead, down to a sharp edge on the floor's underside,
+// the lowest and foremost point, where the drops fall.
 module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0, slats = true, flat = false) {
     iw = hw - tray_wall;
     d = y0 - tray_y1;
     slat_xs = [for (k = [-30:30]) let(x = k * slat_pitch) if (abs(x) + slat_w / 2 <= iw - 1) x];
-    uc = tray_tv - 0.42;   // the undercut, leaving one line of front edge above it
-    difference() { union() {
+    union() {
+        if (drip_lip > 0 && flat) yz_prism(-hw + corner_r, hw - corner_r)
+            polygon([[tray_y1 + 0.1, tray_top(tray_y1)], [tray_y1 + 0.1, tray_bottom(tray_y1 + 0.1)],
+                     [tray_y1 - tray_tv, tray_bottom(tray_y1 - tray_tv)], [tray_y1, tray_top(tray_y1)]]);
         if (drip_lip > 0 && !flat) yz_prism(-hw + corner_r, hw - corner_r)
             polygon([[tray_y1, tray_bottom(tray_y1) + 0.1], [tray_y1, tray_bottom(tray_y1) - drip_lip],
                      [tray_y1 + drip_lip, tray_bottom(tray_y1 + drip_lip) + 0.1]]);
@@ -253,10 +256,6 @@ module tray(hw, y0, z_s, slat_pitch, tie_y, tie_up = 0, slats = true, flat = fal
             box([-iw - eps, tie_y, z_s - slat_h], [iw + eps, tie_y - slat_w, z_s + tie_up]);
             box([-iw - eps, (y0 + tie_y) / 2 - slat_w / 2, z_s - slat_h], [iw + eps, (y0 + tie_y) / 2 + slat_w / 2, z_s - slat_h + 2.5]);
         }
-    }
-    if (flat && drip_lip > 0) yz_prism(-hw + corner_r, hw - corner_r)
-        polygon([[tray_y1 - eps, tray_bottom(tray_y1) - eps], [tray_y1 - eps, tray_bottom(tray_y1) + uc],
-                 [tray_y1 + uc, tray_bottom(tray_y1 + uc) - eps]]);
     }
 }
 
