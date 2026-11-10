@@ -20,7 +20,7 @@ PROJECT        := sink-organizers-p1s.3mf
 
 all: stl ## Build everything (same as stl)
 
-stl: ## Export each part of both pieces as an STL, soap-caddy-<part>.stl and cutlery-drainer-<part>.stl (as modelled: lay the plates and trays on their backs to print)
+stl: ## Export each part of both pieces as an STL, soap-caddy-<part>.stl and cutlery-drainer-<part>.stl (as modelled: lay the plates and the soap caddy tray on their backs, the drainer tray on its floor, to print)
 	@set -e; for p in $(SOAP_PARTS); do \
 		echo "$(SCAD) -D 'part=\"$$p\"' -o soap-caddy-$$p.stl soap-caddy.scad"; \
 		$(SCAD) -D "part=\"$$p\"" -o soap-caddy-$$p.stl soap-caddy.scad; \

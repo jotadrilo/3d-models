@@ -233,7 +233,7 @@ module body() difference() {
 }
 
 // The rims run full height to the front of the rack, then down to the edge.
-module drainer_tray() tray(thx, tray_y0, z_s, 0, -ud + slat_w, slats = false);
+module drainer_tray() tray(thx, tray_y0, z_s, 0, -ud + slat_w, slats = false, flat = true);
 
 // Rack, in place: a floor chamfered on the bed, slotted between the ledges,
 // and the two fences.

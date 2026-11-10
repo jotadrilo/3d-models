@@ -355,6 +355,11 @@ side, top). The renders go in "Model images".
   the part prints on its back, a front bar is a long bridge: tie them with a plate that is
   horizontal in use (it prints as an upright wall) slotted at 45°, and stop sliding parts
   with 45° gussets in plan.
+- **Lay big thin plates on their largest face.** A plate printed on its edge holds on by a
+  strip: the cutlery drainer's tray (206 × 103 mm, 1.26 mm floor) stood on a 206 × 6 mm strip
+  and came off the PEI whole in PETG, twice. A sloping floor tilts onto the bed by its slope;
+  only print on the edge what cannot lie flat (slats or bars floating over the face), and then
+  with a brim.
 - **Horizontal holes as teardrops** (45° tip) or flat-topped teardrops. BOSL2 has `teardrop()`.
 - **Bottom edges get a 45° chamfer of 0.4–0.6 mm, not a fillet.** A fillet at the bed is an
   overhang, and the chamfer hides elephant foot. Fillets go on top and vertical edges.

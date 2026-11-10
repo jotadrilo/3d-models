@@ -255,7 +255,16 @@ the body prints standing.
 
 **Tray.** A floor that slopes 6° forward, with rims, and nothing in front of
 or under its edge. It spills 10 mm past the edge of the sink, 130 mm from
-the wall, over the same drip lip as the soap caddy's.
+the wall. It prints on its floor, so instead of the soap caddy's hanging
+drip lip its front edge is undercut at 45° (`flat` in `tray()`), and the
+drops fall from that corner.
+
+- **Why it prints on its floor:** on its back, as the soap caddy's tray
+  prints, it stood 103 mm on a 206 × 6 mm strip (≈1300 mm²) and came off
+  the bed twice in PETG (2026-10, 2026-11), the second time alone on its
+  plate and whole. Laid on its floor, tilted 6° so the underside is flat, it
+  holds on by ≈21 100 mm² and stands 16 mm. The soap caddy's tray cannot:
+  its slats float over the floor and would print as 100 mm bridges.
 
 - **Why it changed:** the first version's tray stopped 1.3 mm behind a
   front wall that reached down to the floor, 124 mm from the wall, with the
@@ -478,7 +487,7 @@ without cracking.
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
 | cutlery drainer `plate` | 217 × 116 × 6 | Wall plate: four keyholes at its corners, two housings, one window; printed flat on its back |
 | cutlery drainer `body` | 218 × 114 × 114 | Side walls with the tails, floor, ledges for the tray and the rack, the handle's bosses; printed standing |
-| cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and a drip lip; printed on its back |
+| cutlery drainer `tray` | 206 × 103 × 21 | Sloping floor with rims and an undercut front edge; printed on its floor, tilted 6° |
 | cutlery drainer `rack` | 206 × 94 × 17 | Shelf, 2.4 mm, slotted front to back, with a fence at the front and back; printed on its floor |
 | cutlery drainer `bin` | 68.7 × 90.3 × 160 | Three; printed standing on their floors |
 | cutlery drainer `riser` | 64.6 × 86.3 × 80 and 28 | False bottoms (`riser_n` 0 and 1); printed on their floors, dropped into the bins upside down |
@@ -555,7 +564,7 @@ Textured PEI plate:
   limescale more than glossy PETG does, so it takes a brush to clean. PETG takes warm soapy water
   and the top rack of the dishwasher, where PLA softens and creeps.
 - **Supports:** none. The plates lie on their backs, the bodies stand, the
-  trays lie on their backs, the box, rack and bins stand on their floors,
+  soap caddy's tray lies on its back, the drainer's on its floor, the box, rack and bins stand on their floors,
   and the handle lies flat.
 - **Soap caddy body:** two parts, both standing: the lower on its floor
   (plate 1), the upper on its cut (plate 14). Print the cut's fit test
@@ -573,7 +582,7 @@ With the default parameters:
 | 1 · Soap caddy: lower body and wall plate | the body's lower part (standing), plate (flat) | 4 h 23 min, 102 g | 4 h 03 min, 104 g | 4 h 23 min, 111 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 72 g | 3 h 06 min, 74 g | 3 h 22 min, 79 g |
 | 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 29 min, 94 g | 4 h 08 min, 96 g | 4 h 29 min, 103 g |
-| 4 · Cutlery drainer: tray | the tray (standing, alone: see below) | 1 h 58 min, 36 g | 1 h 41 min, 36 g | 1 h 58 min, 39 g |
+| 4 · Cutlery drainer: tray | the tray (on its floor, tilted 6°) | 0 h 57 min, 36 g | 0 h 50 min, 37 g | 0 h 57 min, 40 g |
 | 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 13 min, 58 g | 2 h 08 min, 60 g | 2 h 13 min, 64 g |
 | 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 30 min, 174 g | 12 h 13 min, 178 g | 12 h 30 min, 190 g |
 | 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 11 min, 47 g | 3 h 00 min, 48 g | 3 h 11 min, 52 g |
@@ -595,7 +604,7 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 | 1 · Soap caddy: lower body and wall plate | 4 h 29 min, 102 g | 4 h 11 min, 104 g | 4 h 37 min, 111 g |
 | 2 · Soap caddy: tray, box and buttons | 3 h 33 min, 72 g | 3 h 20 min, 74 g | 3 h 37 min, 79 g |
 | 3 · Cutlery drainer: body and wall plate | 4 h 37 min, 94 g | 4 h 18 min, 96 g | 4 h 44 min, 103 g |
-| 4 · Cutlery drainer: tray | 1 h 58 min, 35 g | 1 h 41 min, 36 g | 1 h 59 min, 39 g |
+| 4 · Cutlery drainer: tray | 0 h 56 min, 36 g | 0 h 50 min, 37 g | 1 h 00 min, 40 g |
 | 5 · Cutlery drainer: rack, handle and buttons | 2 h 24 min, 58 g | 2 h 20 min, 60 g | 2 h 29 min, 64 g |
 | 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 50 min, 190 g |
 | 7 · Cutlery drainer: risers | 3 h 20 min, 47 g | 3 h 11 min, 48 g | 3 h 26 min, 52 g |
@@ -618,8 +627,9 @@ the most).
 the handle and four buttons spread round it. For 87 layers the nozzle
 crossed the bed between seven parts (1277 travels over 40 mm, 188 m in
 all, every one retracted), and the first print in PETG HF came off in a
-fist of strings. Now the tall tray prints alone and the short parts sit
-close together. Strings that thick with retraction on also mean wet PETG:
+fist of strings. Then the tall tray printed alone and the short parts sat
+close together, and the tray came off the bed whole (2026-11): it now lies
+on its floor. Strings that thick with retraction on also mean wet PETG:
 dry it (65 °C, 8 h) before the long plates. The bins print a few mm apart
 for the same reason. PETG bonds hard to the textured plate: use a glue stick as a release layer,
 and let the plate cool before removing the parts.

@@ -47,7 +47,9 @@ from bambu3mf import PRINTERS, Filament, Project, load_scad  # noqa: E402
 
 SOAP = os.path.join(HERE, "soap-caddy.scad")
 DRAINER = os.path.join(HERE, "cutlery-drainer.scad")
-FLAT = (-90, 0, 0)   # the plates and trays on their backs
+FLAT = (-90, 0, 0)   # the plates and the soap caddy tray on their backs
+# The drainer tray on its floor: tilted back by tray_slope (common.scad), its underside on the bed
+TRAY_FLOOR = (-6, 0, 0)
 SLOW_Z = 100         # the soap caddy body's walls print slower above this
 SLOW = {"outer_wall_speed": "60", "inner_wall_speed": "80"}
 # The sway test's stabilizer fins: their tabs are one line wide: Classic walls drop them (no room
@@ -117,7 +119,7 @@ def main():
     p.add("Cutlery drainer wall plate", drainer("plate", rotate=FLAT), x, 190)
 
     p = proj.plate("Cutlery drainer - tray")
-    p.add("Cutlery drainer tray", drainer("tray", rotate=FLAT), 128, 128)
+    p.add("Cutlery drainer tray", drainer("tray", rotate=TRAY_FLOOR), 128, 128)
 
     p = proj.plate("Cutlery drainer - rack, handle and buttons")
     if x2d:
