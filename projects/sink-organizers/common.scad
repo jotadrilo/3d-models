@@ -98,7 +98,8 @@ corner_r = 14;       // radius of the front corners in plan (the back stays stra
 slot_w = 4;          // width of the rounded slots in the walls [2:0.5:12]
 slot_rib = 2.6;      // material between slots [2:0.2:12]
 slot_margin = 6;     // solid band round the slots [3:1:20]
-side_slot_tilt = 45; // side wall and floor slots, degrees from vertical (the house style) [5:5:60]
+side_slot_tilt = 0;  // slots in the walls that print standing, degrees from vertical: 0, vertical like the bins' (at 45° their upper ends came out rough) [0:5:60]
+floor_slot_tilt = 45; // slots in the body's floor, which prints on the bed [5:5:60]
 slot_max_len = 30;   // longest slot; longer ones are split. In a wall that prints standing the thin ribs between long slots sway under the nozzle [15:1:80]
 
 /* [Hidden] */
@@ -139,12 +140,22 @@ module plan(w, d) house_plan(w, d, corner_r);
 module shell(w, d, t) house_shell(w, d, t, corner_r);
 function slot_xs(lo, hi) = slot_positions(lo, hi, slot_w, slot_rib);
 module slot(x, y, za, zb, axis, max_len = slot_max_len) wall_slot(x, y, za, zb, axis, slot_w, 20, slot_rib, max_len);
-// 45° slots, split at slot_max_len, in the rectangle [u0, u1] x [v0, v1] of a
-// wall t thick whose normal is x (u = y, v = z) or z (u = x, v = -y).
-module slots_tilted(at, u0, u1, v0, v1, axis, t)
-    if (axis == "z") rotate([90, 0, 0])
-        wall_slots_tilted(at, u0, u1, v0, v1, "y", side_slot_tilt, slot_w, slot_rib, t + 2, max_len = slot_max_len);
-    else wall_slots_tilted(at, u0, u1, v0, v1, axis, side_slot_tilt, slot_w, slot_rib, t + 2, max_len = slot_max_len);
+// Slots split at slot_max_len, `tilt` degrees from vertical (0: vertical,
+// in columns), in the rectangle [u0, u1] x [v0, v1] of a wall t thick whose
+// normal is x (u = y, v = z) or z (u = x, v = -y). Vertical slots end under
+// cap(u) where given, rounded, keeping the bands between them lined up.
+module slots_tilted(at, u0, u1, v0, v1, axis, t, tilt = side_slot_tilt, cap = undef)
+    if (axis == "z") rotate([90, 0, 0]) slots_tilted(at, u0, u1, v0, v1, "y", t, tilt, cap);
+    else if (tilt == 0) {
+        r = slot_w / 2;
+        for (u = slot_xs(u0, u1), g = slot_segments(v0, v1, slot_rib, slot_max_len))
+            let(z1 = is_undef(cap) ? g[1] : min(g[1], cap(u)))
+                if (z1 - g[0] >= 3 * slot_w)
+                    hull() for (z = [g[0] + r, z1 - r])
+                        translate(axis == "x" ? [at, u, z] : [u, at, z]) rotate(axis == "y" ? [90, 0, 0] : [0, 90, 0])
+                            cylinder(r = r, h = t + 2, center = true);
+    }
+    else wall_slots_tilted(at, u0, u1, v0, v1, axis, tilt, slot_w, slot_rib, t + 2, max_len = slot_max_len);
 
 module pad_at(z, x) translate([x, 0, z]) keyhole_pad(pad_t, pad_w, drop, shank_d, head_d, keyhole_play);
 module keyhole_at(z, x) translate([x, 0, z]) keyhole_cut(pad_t, drop, shank_d, head_d, keyhole_play);
@@ -210,7 +221,7 @@ module tray_ledges(y_front)
                       [tray_y1 - 0.5, ledge_h + ledge_stop], [y_front, ledge_h + ledge_stop], [y_front, 0]]);
 module body_floor() difference() {
     box([-ix - eps, -body_in, 0], [ix + eps, floor_y1(), tie_t]);
-    slots_tilted(tie_t / 2, -ix + ledge_w + slot_rib, ix - ledge_w - slot_rib, body_in + slot_rib, -floor_y1() - slot_rib, "z", tie_t);
+    slots_tilted(tie_t / 2, -ix + ledge_w + slot_rib, ix - ledge_w - slot_rib, body_in + slot_rib, -floor_y1() - slot_rib, "z", tie_t, floor_slot_tilt);
 }
 
 // ---------------------------------------------------------------- tray

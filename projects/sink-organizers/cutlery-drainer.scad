@@ -72,6 +72,9 @@ rack_slots_across = true; // the rack floor's slots run front to back, so its st
 /* [Bins] */
 bin_wall = 1.68;     // bin walls (4 lines): stiffer under the nozzle (fea/README.md) and against knives [1.26:0.42:2.52]
 bin_floor = 1.6;     // bin floor (8 layers) [1.2:0.2:3]
+bin_drain_w = 3;     // drain slots in the bins' floors: width, narrow enough that tines and knife tips do not drop in [2:0.5:6]
+bin_drain_len = 7;   // their length; staggered rows, like bricks [4:0.5:30]
+bin_drain_rib = 2;   // material between them [1.5:0.5:6]
 bin_r = 5;           // rounded vertical corners of the bins [1:0.5:12]
 bin_play = 0.25;     // room for each bin, per side, between the rack's fences and the side walls (the rack and body are laid out with it) [0.1:0.05:1]
 bin_fit = 0.1;       // clearance round each bin, per side, in that room: snug, so leaning cutlery does not rock the tall bins (test_bin) [0:0.025:0.5]
@@ -216,17 +219,22 @@ module body() difference() {
         bosses();
     }
     for (m = [0, 1]) mirror([m, 0, 0]) translate([hx + boss_t, pin_y, arm_z]) sprung_handle_socket(pin_s, boss_t + side_t + 1, pin_play);
-    // side walls: 45° slots along the bins, clear of the bosses. The union
+    // side walls: slots along the bins, clear of the bosses. The union
     // matters: with lazy-union a bare for() here would be split, and the
     // right wall's slots subtracted from the left's. The slots stop under
-    // the bosses along a 45° line across them: a level cut would leave each
-    // slot a flat roof, a bridge with a loose end where it meets the next.
-    difference() {
+    // the bosses along a 45° line across them, each one rounded under it
+    // (a level cut would leave each slot a flat roof, a bridge).
+    yb = pin_y + boss_w / 2 + slot_rib;                   // behind the bosses
+    yf = pin_y - boss_w / 2 - slot_rib;                   // in front of them
+    zb = arm_z - boss_w / 2 - boss_t - slot_rib;          // under them
+    r = slot_w / 2;
+    under = function(y) y - r < yb ? zb + yf - min(y, yb) - r * (sqrt(2) - 1) : 1e9;
+    if (side_slot_tilt == 0)
+        union() for (s = [-1, 1])
+            slots_tilted(s * (hx - side_t / 2), -ud + slot_margin, -(body_back + slot_rib), z_r + slot_margin, top - slot_margin, "x", side_t, cap = under);
+    else difference() {
         union() for (s = [-1, 1])
             slots_tilted(s * (hx - side_t / 2), -ud + slot_margin, -(body_back + slot_rib), z_r + slot_margin, top - slot_margin, "x", side_t);
-        yb = pin_y + boss_w / 2 + slot_rib;               // behind the bosses
-        yf = pin_y - boss_w / 2 - slot_rib;               // in front of them
-        zb = arm_z - boss_w / 2 - boss_t - slot_rib;      // under them
         for (m = [0, 1]) mirror([m, 0, 0]) translate([ix - 1, 0, 0]) yz_prism(0, side_t + boss_t + 2)
             polygon([[yb, zb + yf - yb], [yb, top + 10], [yf - 50, top + 10], [yf - 50, zb + 50]]);
     }
@@ -272,11 +280,14 @@ module bin_shell(h, o = 0) {
             }
             linear_extrude(h) difference() { outline(); outline(-bin_wall); }
         }
-        // drain slots across the floor, split at slot_max_len like the walls'
-        for (y = slot_xs(-d / 2 + bin_wall + 2, d / 2 - bin_wall - 2),
-             g = slot_segments(-(w / 2 - bin_wall - 2), w / 2 - bin_wall - 2, slot_rib, slot_max_len))
-            translate([0, y, -1]) linear_extrude(bin_floor + 2)
-                hull() for (x = [g[0] + slot_w / 2, g[1] - slot_w / 2]) translate([x, 0]) circle(d = slot_w);
+        // drain slots in the floor: short and narrow, in staggered rows
+        // (every other row shifted half a slot), so cutlery cannot drop in
+        let(ys = spaced(-d / 2 + bin_wall + 2, d / 2 - bin_wall - 2, bin_drain_w, bin_drain_rib),
+            xl = w / 2 - bin_wall - 2, p = bin_drain_len + bin_drain_rib)
+            for (i = [0 : len(ys) - 1])
+                let(xs = i % 2 == 0 ? spaced(-xl, xl, bin_drain_len, bin_drain_rib) : spaced(-xl + p / 2, xl - p / 2, bin_drain_len, bin_drain_rib))
+                    for (x = xs) translate([x, ys[i], -1]) linear_extrude(bin_floor + 2)
+                        hull() for (e = [-1, 1]) translate([e * (bin_drain_len - bin_drain_w) / 2, 0]) circle(d = bin_drain_w);
         // slots in all four walls, to air the cutlery, in rows no taller than
         // slot_max_len: the bin prints standing, and the ribs between long
         // slots sway under the nozzle (the soap caddy's box came out rough)

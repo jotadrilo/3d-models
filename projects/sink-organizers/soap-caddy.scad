@@ -79,8 +79,15 @@ test_sway_fin = 12;  // test_sway: how far its fins stand out [6:1:20]
 split_play = 0.1;    // the body is printed in two parts, cut under the box's ledges: play between the lower part's collar and the upper part's walls, per side (test_split) [0:0.025:0.3]
 split_collar_h = 4;  // how far the lower part's collar rises into the upper part [2:0.2:8]
 split_reveal_c = 0.6; // the V reveal round the outside of the cut, each side [0:0.2:1.2]
-thumb_d = 55;        // the window in the closed front where the thumb squeezes the bottle (0: none); its top rises to a 45° point [0:1:80]
+thumb_shape = "hex";   // the window in the closed front where the thumb squeezes the bottle; every shape closes at 45° or steeper, as the front prints standing [none, teardrop, arch, hex, diamond]
+thumb_d = 55;        // teardrop: its diameter (its top rises to a 45° point) [20:1:80]
+thumb_w = 46;        // arch, hex: the window's width [20:1:80]
+thumb_h = 64;        // arch, hex, diamond: the window's height [20:1:90]
+thumb_r = 3;         // rounding of the window's corners [0:0.5:10]
+thumb_shoulder = 12; // arch: radius of the shoulders between its sides and its 45° roof [0:1:30]
 thumb_z = 40;        // the window's centre, above the box floor [20:1:80]
+front_slotted = true; // slots in the closed front, like the side walls'
+thumb_band = 4;      // solid band between the window and the front's slots [2:0.5:12]
 back_wall = 1.68;    // a slotted wall across the back, in front of the plate's housings and button heads (0: none): it closes the U into a tube, so the side walls do not sway as it prints (fea/README.md); the tray and the box move forward by it [0:0.42:2.52]
 
 /* [Tray] */
@@ -153,6 +160,15 @@ z_cut = floor((z_ledge - split_collar_h - 0.4) / 0.2) * 0.2;
 collar_b = side_t;
 lower_slot_top = min(z_ledge - slot_margin, z_cut - collar_b - 3);
 z_thumb = z_seat + thumb_z;
+// The thumb window's outline, centred on (0, 0), before its corners are rounded
+thumb_pts = let(a = thumb_w / 2, hh = thumb_h / 2, q = thumb_shoulder, c = sqrt(2) / 2)
+    thumb_shape == "teardrop" ? concat([for (t = [135 : 5 : 405]) thumb_d / 2 * [cos(t), sin(t)]], [[0, thumb_d / 2 * sqrt(2)]])
+  : thumb_shape == "hex" ? [[0, hh], [-a, hh - a], [-a, -hh + a], [0, -hh], [a, -hh + a], [a, hh - a]]
+  : thumb_shape == "diamond" ? [[0, hh], [-hh, 0], [0, -hh], [hh, 0]]
+  : thumb_shape == "arch" ? let(zs = hh - a - q * (sqrt(2) - 1))
+        concat([[0, hh]], [for (t = [135 : 5 : 180]) [-a + q + q * cos(t), zs + q * sin(t)]], [[-a, -hh], [a, -hh]],
+               [for (t = [0 : 5 : 45]) [a - q + q * cos(t), zs + q * sin(t)]])
+  : [];
 
 top_above_counter = counter_gap + top;
 
@@ -165,8 +181,8 @@ assert(cup_pitch >= cup_d + 2, "cup_pitch is smaller than the cups");
 assert(lower_cup_span >= cup_d + 2, "lower_cup_span is smaller than the cups");
 assert(lo_cup_x + pad_w / 2 <= hx - side_t / 2 - house_hw, "lower_cup_span is wider than the plate between its housings");
 assert(lo_cup_z + pad_hi + 3 * slot_w <= z_seat, "the lower keyholes reach the box");
-assert(thumb_d == 0 || z_thumb + thumb_d / 2 * sqrt(2) <= top - 4, "the thumb window reaches the top: lower thumb_z or thumb_d");
-assert(thumb_d < 2 * ix - 8, "the thumb window is wider than the front");
+assert(len(thumb_pts) == 0 || z_thumb + max([for (p = thumb_pts) p.y]) <= top - 4, "the thumb window reaches the top: lower thumb_z or make it smaller");
+assert(len(thumb_pts) == 0 || max([for (p = thumb_pts) p.x]) < ix - 4, "the thumb window is wider than the front");
 assert(counter_gap >= dt_cap, "the plate reaches the counter");
 
 echo(str("body: ", body_w + 2 * side_add, " x ", reach_f, " x ", top, " mm (w x d x h); plate ", 2 * plate_hx(), " x ", top + dt_cap,
@@ -267,22 +283,40 @@ module body_core() difference() {
         // as it prints. A window for the thumb to squeeze the bottle.
         translate([0, -up_d, 0]) rotate([90, 0, 0]) linear_extrude(frame_t + eps) difference() {
             translate([-ix - eps, z_cut]) square([2 * (ix + eps), top - z_cut]);
-            if (thumb_d > 0) translate([0, z_thumb]) hull() {
-                circle(d = thumb_d);
-                translate([0, thumb_d / 2 * sqrt(2) - 0.01]) square(0.02, center = true);
-            }
+            if (len(thumb_pts) > 0) translate([0, z_thumb]) offset(r = thumb_r) offset(delta = -thumb_r) polygon(thumb_pts);
         }
         if (side_add > 0) for (s = [-1, 1]) side_slab(s);
         if (back_wall > 0) box([-ix - eps, -body_in, 0], [ix + eps, -(body_in + back_wall), top]);
     }
-    // side walls: 45° slots along the box, and between the sponge and the box ledges
+    // side walls: slots along the box, and between the sponge and the box ledges
     for (s = [-1, 1], z = [[z_seat + slot_margin, top - slot_margin], [lower_top, lower_slot_top]])
         slots_tilted(s * (hx - side_t / 2 + side_add / 2), -(up_d - slot_rib - slot_w / 2), -(body_back + slot_rib), z[0], z[1], "x", side_t + side_add);
-    // the back wall: the same 45° slots, between the ledges
+    // the front: the same slots, a band clear of the thumb window
+    if (front_slotted) front_slots();
+    // the back wall: the same slots, between the ledges
     if (back_wall > 0) for (z = [[z_seat + slot_margin, top - slot_margin], [lower_top, lower_slot_top]])
-        wall_slots_tilted(-(body_in + back_wall / 2), -ix + ledge_w + slot_rib, ix - ledge_w - slot_rib, z[0], z[1], "y",
-                          side_slot_tilt, slot_w, slot_rib, back_wall + 2, max_len = slot_max_len);
+        slots_tilted(-(body_in + back_wall / 2), -ix + ledge_w + slot_rib, ix - ledge_w - slot_rib, z[0], z[1], "y", back_wall);
 }
+
+// The front's slots, in columns like the side walls', their bands lined up
+// with theirs. Each slot stops thumb_band short of the window, rounded.
+module front_slots() {
+    r = slot_w / 2;
+    pts = densify([for (p = thumb_pts) p + [0, z_thumb]], 0.5);
+    for (x = slot_xs(-ix + slot_rib, ix - slot_rib), g = slot_segments(z_seat + slot_margin, top - slot_margin, slot_rib, slot_max_len))
+        let(b = len(pts) == 0 ? undef : blocked(x, pts, thumb_band + r),
+            pieces = is_undef(b) || b[1] - r <= g[0] || b[0] + r >= g[1] ? [g] : [[g[0], b[0] + r], [b[1] - r, g[1]]])
+            for (k = pieces) if (k[1] - k[0] >= 3 * slot_w)
+                hull() for (z = [k[0] + r, k[1] - r]) translate([x, -up_d - frame_t / 2, z]) rotate([90, 0, 0])
+                    cylinder(r = r, h = frame_t + 2, center = true);
+}
+// A closed outline's points, at most step apart along it.
+function densify(p, step) = [for (i = [0 : len(p) - 1]) let(a = p[i], b = p[(i + 1) % len(p)], n = max(1, ceil(norm(b - a) / step)))
+                                 for (k = [0 : n - 1]) a + (b - a) * k / n];
+// Where a vertical line at x comes within d of a convex outline (its points
+// dense): [z0, z1], or undef.
+function blocked(x, pts, d) = let(z = [for (p = pts) if (abs(p.x - x) < d) let(h = sqrt(d * d - (p.x - x) ^ 2)) each [p.y - h, p.y + h]])
+    len(z) == 0 ? undef : [min(z), max(z)];
 
 // The extra thickness on a side wall's outer face (s = -1 left, 1 right),
 // from side_add_z up and clear of the plate's housings, its bottom edge at
@@ -368,7 +402,7 @@ module test_sway() for (k = [0 : 1]) translate([k * (2 * (fin_gap + test_sway_fi
     l = test_sway_len; h = test_sway_h;
     difference() {
         box([-side_t / 2, 0, 0], [side_t / 2, l, h]);
-        slots_tilted(0, slot_rib, l - slot_rib, slot_margin, h - slot_margin, "x", side_t);
+        slots_tilted(0, slot_rib, l - slot_rib, slot_margin, h - slot_margin, "x", side_t, 45);   // as printed (2026-10)
     }
     box([-6, 6, 0], [6, l, 0.6]);                                   // the foot: 3 layers, clear of the fins
     if (k > 0) for (s = [-1, 1]) translate([s * side_t / 2, 2, 0]) mirror([s < 0 ? 1 : 0, 0, 0])

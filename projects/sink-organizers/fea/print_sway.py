@@ -10,6 +10,7 @@ nozzle force scales it.
 
 usage: python print_sway.py <out dir> [variant ...]
        PIECE=drainer python print_sway.py <out dir>      # the cutlery drainer's body
+       PIECE=upper CUTS=40,70,102 python print_sway.py <out dir>   # the body's upper part (split collar)
        PIECE=bin CUTS=60,100,140,170,200 python print_sway.py <out dir>   # its bins and risers
 """
 import sys, os, subprocess, json, time
@@ -37,9 +38,13 @@ VARIANTS = {k: ['back_wall=0', 'fin_w=20', 'fin_foot=0'] + v for k, v in VARIANT
 CUTS = [int(c) for c in os.environ.get('CUTS', '60,100,130,150,170,190,209').split(',')]
 H = 2.0
 PIECE = os.environ.get('PIECE', 'soap')
-SCAD = os.path.join(cm.HERE, {'soap': 'body_cut.scad', 'drainer': 'drainer_body_cut.scad', 'strip': 'sway_test_cut.scad', 'bin': 'bin_cut.scad'}[PIECE])
+SCAD = os.path.join(cm.HERE, {'soap': 'body_cut.scad', 'drainer': 'drainer_body_cut.scad', 'strip': 'sway_test_cut.scad', 'upper': 'upper_cut.scad', 'bin': 'bin_cut.scad'}[PIECE])
 if PIECE == 'drainer':
-    VARIANTS = {'R as it is': []}
+    VARIANTS = {'R as it is': [], 'T side slots at 45 deg (as printed until 2026-11)': ['side_slot_tilt=45']}
+if PIECE == 'upper':             # the upper part, printed on its own on the cut
+    VARIANTS = {'R as it is': [],
+                'C closed front, teardrop window, side slots at 45 deg (as printed until 2026-11)':
+                    ['front_slotted=false', 'thumb_shape="teardrop"', 'side_slot_tilt=45']}
 if PIECE == 'bin':               # the 200 mm bins, one wall thickness per variant, and the tall riser
     VARIANTS = {'W126 bin walls 1.26 (3 lines)': ['bin_wall=1.26'], 'W168 bin walls 1.68 (4 lines)': ['bin_wall=1.68'],
                 'W210 bin walls 2.10 (5 lines)': ['bin_wall=2.1'], 'R120 riser 120, walls 1.26': ['bin_wall=1.26', 'fea_riser=120']}
@@ -86,7 +91,7 @@ def points(d, z):
     xw = d['HX'] - 0.84
     yb, yf = -d['BODY_BACK'] - 3, -d['UD'] + 1
     pts = {'wall back': (xw, yb), 'wall middle': (xw, (yb + yf) / 2), 'wall front': (xw, yf)}
-    if z > 125:                   # the front returns and the bar stand above the box ledges
+    if z > 125 or d.get('UPPER'):                   # the front returns and the bar stand above the box ledges
         pts['return tip'] = (d['OPEN_HW'] + 2, -d['UD'] + 0.8)
         pts['front middle'] = (0, -d['UD'] + 0.8)
     if os.environ.get('LEFT'):    # the left wall too: pushed +x, it leans onto right-hand fins
