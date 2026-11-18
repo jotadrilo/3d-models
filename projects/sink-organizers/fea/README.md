@@ -312,6 +312,21 @@ upper one a closed tube (README, "The body in two parts"), under what always pri
 tied by the rack's ledges and the handle's bosses, it stays inside what printed clean on the
 soap caddy (≈17), though over the ≤10 aim at the top: no fins.
 
+**Vertical slots and a slotted front (2026-11).** The 45° slots came out rough at their upper
+ends, so the walls that print standing took vertical slots, and the soap caddy's front was
+slotted round a hexagonal thumb window. Worst top-layer compliance, mm/N, the variant as it is
+(R) against the one before (as printed):
+
+| Piece | Cut (mm) | R: vertical slots (+ slotted front) | Before: 45° slots (+ closed front, teardrop) |
+|---|---|---|---|
+| soap caddy upper part, on its own (`PIECE=upper`) | 40 / 70 / 90 / 102 | 3.1 / 0.95 / 3.5 / 1.2 | 0.78 / 1.3 / 1.6 / 0.80 |
+| cutlery drainer body (`PIECE=drainer`) | 40 / 70 / 95 / 114 | 0.38 / 2.9 / 6.7 / 9.3 | 0.38 / 3.6 / 9.3 / 12.1 |
+
+The upper part's worst is now a rib in the side wall's middle (pushed across it) and the front's
+middle above the window, both well under the ≤10 aim. The drainer's vertical slots leave longer
+unbroken columns at the walls' ends and come out stiffer than the 45° ones, under the aim at
+every height.
+
 **Decision (2026-10-26):** F, chosen by the user over E (the piece unchanged) and B, then F2:
 the smallest tabs that print, so the fins snap off with as little as possible to clean. The
 project also slows the body's walls above 100 mm (60/80 mm/s) and avoids crossing walls.
@@ -512,6 +527,7 @@ micromamba run -n fea python tray_fea.py ../soap-caddy-tray.stl <out> 1.2
 micromamba run -n fea python drainer_fea.py <out> F V0       # the drainer as it is now and as it was, all four cases
 CUTS=100,150,190,209 micromamba run -n fea python print_sway.py <out> R F   # the body while it prints
 PIECE=drainer CUTS=40,70,95,114 micromamba run -n fea python print_sway.py <out>   # the drainer's body
+PIECE=upper CUTS=40,70,90,102 micromamba run -n fea python print_sway.py <out>     # the soap caddy's upper part
 PIECE=bin CUTS=80,140,200 micromamba run -n fea python print_sway.py <out> W126 W168 W210   # its bins
 PIECE=bin CUTS=60,120 micromamba run -n fea python print_sway.py <out> R120                   # the tall riser
 ```
@@ -527,5 +543,5 @@ PIECE=bin CUTS=60,120 micromamba run -n fea python print_sway.py <out> R120     
 | `drainer_dims.scad` | Echoes the drainer's dimensions, and exports its handle in place |
 | `drainer_model.py` | The drainer as an FEA model: STL meshes, surfaces, the hinged cups, loads |
 | `drainer_fea.py` | The drainer's variants and load cases, one block of results each |
-| `body_cut.scad`, `drainer_body_cut.scad`, `bin_cut.scad`, `print_sway.py` | Each body (and the drainer's bins and risers) as it stands on the bed at a given height, and the print stiffness study on it |
+| `body_cut.scad`, `upper_cut.scad`, `drainer_body_cut.scad`, `bin_cut.scad`, `print_sway.py` | Each body (and the drainer's bins and risers) as it stands on the bed at a given height, and the print stiffness study on it |
 | `img/` | The images on this page |

@@ -334,8 +334,11 @@ side, top). The renders go in "Model images".
 - **Slots and windows in a wall that prints standing run along the print Z, or at ≥45° to the
   bed.** A slot lying horizontal roofs over its whole length as one bridge: the soap caddy's
   side walls (frame on its back, slots across Z) came out with sagging, blobby ribs while the
-  slots in the plate on the bed were clean. `wall_slots_tilted()` (`tools/scad/style.scad`)
-  fills such a wall with 45° slots.
+  slots in the plate on the bed were clean. **Prefer vertical slots**: 45° slots
+  (`wall_slots_tilted()`, `tools/scad/style.scad`) came out rough at their upper ends in PETG,
+  a 45° roof the whole length of each slot, while 4 mm vertical slots with round ends in the
+  same 1.68 mm walls printed clean (sink-organizers, 2026-11). A window's top closes at 45°
+  (a hexagon, an arch, a point); a corner rounded r ≤ 3 there prints like a slot's end.
 - **No slot longer than ~30 mm in a wall that prints standing** (`max_len` in `wall_slot()` and
   `wall_slots_tilted()`). The rib between two slots grows as a free column a couple of mm
   across, and its stiffness drops with the cube of its height: the soap caddy box's 76 mm slots

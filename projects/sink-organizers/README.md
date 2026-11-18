@@ -88,7 +88,7 @@ The dovetails are `dovetail_tail` and `dovetail_housing` from
 [`common.scad`](common.scad) holds everything the two pieces share: the
 plate, the dovetails, the floor, the ledges, the tray, the keyholes and the
 house style (straight back, rounded front corners, close rounded slots,
-split at `slot_max_len` and at 45° in the side walls). Both piece files
+split at `slot_max_len`, vertical in the walls that print standing). Both piece files
 include it, so a change there changes both. The Customizer shows only the
 piece's own parameters; the shared ones are overridden with `DEFS` like any
 other.
@@ -127,9 +127,15 @@ of the upper keyholes with 20 mm solid bands above and below.
 underneath because the body prints standing.
 
 - **In front of it:** the body's front is closed from below the box to the
-  top, so the box cannot slide out, with a window for the thumb (`thumb_d`
-  55, as wide as the neck, `thumb_z` 40 above the box floor). Its top rises
-  to a 45° point, so it prints standing: a drop, on a soap caddy.
+  top, so the box cannot slide out, slotted like the side walls, with a
+  window for the thumb: a hexagon (`thumb_shape`), 46 × 64 mm, its centre
+  `thumb_z` 40 above the box floor, its top and bottom closing at 45° so it
+  prints standing. The slots stop `thumb_band` (4 mm) short of it.
+- **Why vertical slots** (2026-11): the walls had slots at 45°, which came
+  out rough at their upper ends in PETG, a 45° roof the whole length of each
+  slot; the bins' vertical slots, the same width in the same walls, printed
+  clean. The floor under the tray prints on the bed and keeps its 45° slots
+  (`floor_slot_tilt`). The window was a teardrop before.
 - **The bottle** drops in cap first; you squeeze it through the window.
   Its cap goes through a hole in the floor and hangs `tip_gap` (15 mm) over
   the sponge.
@@ -205,7 +211,9 @@ and the tray slides out under the rack with the bins in place.
 
 **Bins.** Three bins, 68 × 90 mm and 160 mm tall (`bin_h`): the chef's
 knife's 20 cm blade mostly in. Every wall and floor is slotted, so the
-cutlery airs and drips. They rise 78 mm above the body, whose side walls
+cutlery airs and drips. The floors' drain slots are short, 3 × 7 mm in
+staggered rows (`bin_drain_w`, `bin_drain_len`): the first ones, 4 mm wide
+and up to 30 long, let tines and knife tips drop in. They rise 78 mm above the body, whose side walls
 still stop 80 mm up the bins (`body_bin_h`).
 
 - **Why so tall:** the first bins were 80 mm. Teaspoons (15 cm) stood in
@@ -299,9 +307,9 @@ front; the rack only rests between them.
   Seated, the arms carry no preload, so the PETG does not creep. Putting it
   on strains the bar 0.5 %, under the 1 % allowed; the console prints it.
 - **Printing:** the bosses taper at 45° underneath, because the body prints
-  standing. The side wall slots stop under them along a 45° line: cut
-  level, each slot got a flat roof with a loose end, which the slicer
-  flagged as a floating cantilever.
+  standing. The side wall slots stop under them along a 45° line, each one
+  rounded under it: cut level, each slot got a flat roof with a loose end,
+  which the slicer flagged as a floating cantilever.
 
 ## Installation jigs (plates 11 and 12)
 
@@ -487,7 +495,7 @@ without cracking.
 |---|---|---|
 | soap caddy `plate` | 108 × 211 × 6 | Wall plate: four keyholes, two housings, three windows; printed flat on its back |
 | soap caddy `body_lower` | 105 × 112 × 111 | The body up to the cut: side walls with the tails, the slotted back wall, floor, the tray's ledges, the collar; printed standing |
-| soap caddy `body_upper` | 105 × 76 × 102 | The body above the cut: side and back walls, the box's ledges, the closed front with the thumb window; printed standing on the cut |
+| soap caddy `body_upper` | 105 × 76 × 102 | The body above the cut: side and back walls, the box's ledges, the slotted front with the thumb window; printed standing on the cut |
 | soap caddy `tray` | 97 × 103 × 24 | Sloping floor, slats, rims; printed on its back |
 | soap caddy `box` | 97 × 56 × 90 | Bottle box; printed standing on its floor |
 | cutlery drainer `plate` | 217 × 116 × 6 | Wall plate: four keyholes at its corners, two housings, one window; printed flat on its back |
@@ -511,7 +519,7 @@ Decided per CLAUDE.md §2.3:
 | Trigger | Analysis | Result |
 |---|---|---|
 | Loads with margins near 5× and a tangled load path (plate, tray, cups) | FEA, single parts and the assembly on the wall | Done: [Strength and orientation](#strength-and-orientation), [fea/README.md](fea/README.md) |
-| Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With a slotted back wall closing its U, ≤7.2 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)), 5–6.6 at the front's top corners; fins (≤1.3) did the same in PETG HF but tore off the bed in PETG Matte. **The back wall printed rough anyway** (X2D, PETG, 2026-11-09): under ≈7 mm/N in the model and still swaying, so the model reads the body too stiff, and it no longer decides this part. The body now prints in two parts, 111 and 102 mm, the upper one a closed tube: under what has always printed clean (the open body to ≈150 mm), no FEA run. Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): ≤9 mm/N on its walls, 12 at the very top, inside what printed clean (≈17) but over the ≤10 aim: no fins, watch its top band on the first print |
+| Tall thin walls printed standing; the first soap caddy body came out rough above ≈165 mm | Print stiffness FEA | Done: the body's top layer moved 33 mm/N sideways (clean up to ≈17). With a slotted back wall closing its U, ≤7.2 at every height ([fea/README.md](fea/README.md#5-the-body-while-it-prints)), 5–6.6 at the front's top corners; fins (≤1.3) did the same in PETG HF but tore off the bed in PETG Matte. **The back wall printed rough anyway** (X2D, PETG, 2026-11-09): under ≈7 mm/N in the model and still swaying, so the model reads the body too stiff, and it no longer decides this part. The body now prints in two parts, 111 and 102 mm, the upper one a closed tube. With the front slotted and the walls' slots vertical (2026-11), the upper part printed on its own (`PIECE=upper`): ≤3.5 mm/N at every height (a rib in the side wall's middle, and the front's middle above the window), against ≤1.6 with the closed front and 45° slots: inside the ≤10 aim. Checked in print with the sway test: the bare strip rough from where the model said, the one with fins clean. The cutlery drainer's body (114 mm): with vertical slots ≤6.3 mm/N on its walls and 9.3 at the front's middle at the very top, against 8.7 and 12.1 with the 45° slots it printed with: inside the ≤10 aim |
 | The tall bins and risers, printed standing on 1.26–2.10 mm slotted walls | Print stiffness FEA (`PIECE=bin`) | Done at 200 mm and a 120 mm riser, before the bins came down to 160 (shorter is stiffer): worst at the middle of the bin's long wall, pushed across it. At 1.26 mm walls, 4.2 mm/N; at 1.68 (the default), 1.9; at 2.10, 1.0. All are well under the ≤10 aim: a closed box is stiff where the open soap caddy body was not. No fins ([fea/README.md](fea/README.md#cutlery-drainer-bins-while-they-print)) |
 | The body's two parts, joined by the split collar | By hand | Not needed: the upper part, the box and the bottle (≈0.9 kg, ≈9 N) rest on the lower part's wall edges, ≈300 mm of 1.68 mm wall, in compression along Z: ≈0.02 MPa. The bottle's moment goes to the plate through the upper part's own tails, as it did through the whole body's. The collar only lines the walls up |
 | Free-standing piece | Stability | Not needed: both pieces hang on suction cups. The bins stand loose on the rack, but its fences and the side walls cage their feet, so a leaning knife only tilts a bin by its play (`bin_fit`, [Bins](#cutlery-drainer)) |
@@ -584,21 +592,21 @@ With the default parameters:
 
 | Plate | Contents | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|---|
-| 1 · Soap caddy: lower body and wall plate | the body's lower part (standing), plate (flat) | 4 h 23 min, 102 g | 4 h 03 min, 104 g | 4 h 23 min, 111 g |
+| 1 · Soap caddy: lower body and wall plate | the body's lower part (standing), plate (flat) | 4 h 35 min, 100 g | 4 h 15 min, 102 g | 4 h 35 min, 110 g |
 | 2 · Soap caddy: tray, box and buttons | tray, box, 4 buttons | 3 h 22 min, 72 g | 3 h 06 min, 74 g | 3 h 22 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 29 min, 94 g | 4 h 08 min, 96 g | 4 h 29 min, 103 g |
-| 4 · Cutlery drainer: tray | the tray (on its floor, tilted 6°) | 0 h 57 min, 36 g | 0 h 50 min, 37 g | 0 h 57 min, 40 g |
+| 3 · Cutlery drainer: body and wall plate | body (standing), plate (flat) | 4 h 38 min, 93 g | 4 h 17 min, 95 g | 4 h 38 min, 102 g |
+| 4 · Cutlery drainer: tray | the tray (on its floor, tilted 6°) | 57 min, 36 g | 50 min, 37 g | 57 min, 40 g |
 | 5 · Cutlery drainer: rack, handle and buttons | rack, handle, 4 buttons, close together | 2 h 13 min, 58 g | 2 h 08 min, 60 g | 2 h 13 min, 64 g |
-| 6 · Cutlery drainer: bins | 3 bins, 160 mm | 12 h 30 min, 174 g | 12 h 13 min, 178 g | 12 h 30 min, 190 g |
-| 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 11 min, 47 g | 3 h 00 min, 48 g | 3 h 11 min, 52 g |
-| 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 19 min, 18 g | 1 h 18 min, 19 g | 1 h 19 min, 20 g |
-| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 32 min, 37 g | 1 h 27 min, 38 g | 1 h 32 min, 41 g |
+| 6 · Cutlery drainer: bins | 3 bins, 160 mm | 13 h 29 min, 177 g | 13 h 10 min, 182 g | 13 h 29 min, 194 g |
+| 7 · Cutlery drainer: risers | the 80 and 28 mm risers | 3 h 46 min, 50 g | 3 h 33 min, 51 g | 3 h 46 min, 55 g |
+| 8 · Cutlery drainer: bin fit test | 3 rings, `bin_fit` 0.05, 0.1, 0.15 | 1 h 18 min, 18 g | 1 h 16 min, 19 g | 1 h 18 min, 20 g |
+| 9 · Fit tests | keyhole pad, 3 buttons, dovetail ladder and tail, box width, handle pins | 1 h 36 min, 36 g | 1 h 31 min, 37 g | 1 h 36 min, 40 g |
 | 10 · Sway test | two strips of side wall, bare and with fins | 2 h 26 min, 17 g | 2 h 05 min, 17 g | 2 h 26 min, 18 g |
 | 11 · Soap caddy: installation jig | the jig | 37 min, 13 g | 35 min, 14 g | 37 min, 15 g |
 | 12 · Cutlery drainer: installation jig | the jig (239 mm: the whole bed) | 40 min, 15 g | 39 min, 16 g | 40 min, 17 g |
 | 13 · Adhesive adapters | 3 for a square, 5 for a round (both pieces) | 1 h 35 min, 43 g | 1 h 31 min, 44 g | 1 h 35 min, 47 g |
-| 14 · Soap caddy: upper body | the body's upper part (standing on its cut) | 2 h 43 min, 51 g | 2 h 28 min, 52 g | 2 h 43 min, 56 g |
-| 15 · Soap caddy: split fit test | the upper part's foot, the lower part's top at 3 plays, 3 tail strips | 1 h 04 min, 26 g | 59 min, 27 g | 1 h 04 min, 29 g |
+| 14 · Soap caddy: upper body | the body's upper part (standing on its cut) | 3 h 12 min, 45 g | 3 h 00 min, 46 g | 3 h 12 min, 49 g |
+| 15 · Soap caddy: split fit test | the upper part's foot, the lower part's top at 3 plays, 3 tail strips | 1 h 07 min, 26 g | 1 h 02 min, 27 g | 1 h 07 min, 28 g |
 
 On the X2D (`sink-organizers-x2d*.3mf`) the plates are the same, except that it cannot use the
 left 20.5 mm of the bed: the widest plates sit further right, and the towel handle, the rack and
@@ -606,21 +614,21 @@ the drainer's jig are turned a quarter (still flat, the loads still in XY). Its 
 
 | Plate | PETG Basic | PETG HF | PETG Matte |
 |---|---|---|---|
-| 1 · Soap caddy: lower body and wall plate | 4 h 29 min, 102 g | 4 h 11 min, 104 g | 4 h 37 min, 111 g |
+| 1 · Soap caddy: lower body and wall plate | 4 h 43 min, 100 g | 4 h 25 min, 102 g | 4 h 51 min, 109 g |
 | 2 · Soap caddy: tray, box and buttons | 3 h 33 min, 72 g | 3 h 20 min, 74 g | 3 h 37 min, 79 g |
-| 3 · Cutlery drainer: body and wall plate | 4 h 37 min, 94 g | 4 h 18 min, 96 g | 4 h 44 min, 103 g |
-| 4 · Cutlery drainer: tray | 0 h 56 min, 36 g | 0 h 50 min, 37 g | 1 h 00 min, 40 g |
+| 3 · Cutlery drainer: body and wall plate | 4 h 48 min, 93 g | 4 h 29 min, 95 g | 4 h 55 min, 102 g |
+| 4 · Cutlery drainer: tray | 56 min, 36 g | 50 min, 37 g | 1 h 00 min, 40 g |
 | 5 · Cutlery drainer: rack, handle and buttons | 2 h 24 min, 58 g | 2 h 20 min, 60 g | 2 h 29 min, 64 g |
-| 6 · Cutlery drainer: bins | 13 h 15 min, 174 g | 13 h 09 min, 178 g | 13 h 50 min, 190 g |
-| 7 · Cutlery drainer: risers | 3 h 20 min, 47 g | 3 h 11 min, 48 g | 3 h 26 min, 52 g |
-| 8 · Cutlery drainer: bin fit test | 1 h 23 min, 18 g | 1 h 22 min, 19 g | 1 h 26 min, 20 g |
-| 9 · Fit tests | 1 h 37 min, 37 g | 1 h 32 min, 38 g | 1 h 41 min, 41 g |
+| 6 · Cutlery drainer: bins | 14 h 16 min, 177 g | 14 h 10 min, 181 g | 14 h 54 min, 194 g |
+| 7 · Cutlery drainer: risers | 3 h 56 min, 50 g | 3 h 47 min, 51 g | 4 h 03 min, 55 g |
+| 8 · Cutlery drainer: bin fit test | 1 h 21 min, 18 g | 1 h 20 min, 19 g | 1 h 24 min, 20 g |
+| 9 · Fit tests | 1 h 42 min, 36 g | 1 h 37 min, 37 g | 1 h 46 min, 40 g |
 | 10 · Sway test | 2 h 32 min, 17 g | 2 h 13 min, 17 g | 2 h 31 min, 18 g |
 | 11 · Soap caddy: installation jig | 39 min, 13 g | 38 min, 14 g | 40 min, 15 g |
 | 12 · Cutlery drainer: installation jig | 43 min, 15 g | 42 min, 16 g | 45 min, 17 g |
 | 13 · Adhesive adapters | 1 h 43 min, 43 g | 1 h 41 min, 44 g | 1 h 47 min, 47 g |
-| 14 · Soap caddy: upper body | 2 h 50 min, 50 g | 2 h 37 min, 52 g | 2 h 52 min, 55 g |
-| 15 · Soap caddy: split fit test | 1 h 04 min, 26 g | 1 h 00 min, 27 g | 1 h 07 min, 29 g |
+| 14 · Soap caddy: upper body | 3 h 22 min, 45 g | 3 h 12 min, 46 g | 3 h 25 min, 49 g |
+| 15 · Soap caddy: split fit test | 1 h 08 min, 26 g | 1 h 04 min, 27 g | 1 h 11 min, 28 g |
 
 The fit tests were tuned on the P1S; the X2D may print the fits a little differently, so print
 plate 9 (and 8) on it before the big plates.
@@ -662,7 +670,7 @@ pieces do not fit.
 | `sink_dist`, `drip_over` | 120, 10 | Wall to the sink bowl; how far the trays reach past it |
 | `tray_play`, `tray_t`, `tray_wall`, `tray_slope`, `drip_lip` | 0.25, 1.26, 1.68, 6, 1.5 | Tray: clearance in the body, floor, rims, slope, the drip lip under its front edge |
 | `slat_w`, `slat_h`, `slat_clear` | 2.1, 5, 3 | Slats |
-| `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 45, 30 | Style: front corners, slots, 45° in the side walls, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |
+| `corner_r`, `slot_w`, `slot_rib`, `slot_margin`, `side_slot_tilt`, `floor_slot_tilt`, `slot_max_len` | 14, 4, 2.6, 6, 0, 45, 30 | Style: front corners, slots, their tilt from vertical in the walls that print standing and in the body's floor, longest slot (longer ones split: in a wall that prints standing the ribs between long slots sway under the nozzle) |
 | `plate_window`, `plate_window_r`, `plate_window_inset` | [], 5, 0 | Wall plate: the slot zones (0 = the lowest) that get one window per field of slots instead, the windows' corner radius, and the solid bands above and below them (one value, or one per zone). The soap caddy sets [0, 1] and [0, 20], the cutlery drainer [0] and 4 |
 | `plate_slot_clear`, `plate_bridge`, `plate_slot_max_len` | 0, 0, 0 | Wall plate slots: extra clearance from the pads, wider bridges between segments, a shorter longest slot (0: `slot_max_len`). Variants of the FEA study, off by default |
 | **Soap caddy** | | |
@@ -673,7 +681,8 @@ pieces do not fit.
 | `cup_pitch`, `lower_cup_span` | 55, 56 | Upper cups one above the other; lower cups side by side |
 | `sponge_rim`, `step_r` | 12, 10 | The deep part of the side walls; the step |
 | `split_play`, `split_collar_h`, `split_reveal_c` | 0.1, 4, 0.6 | The body's two parts: the collar's play per side and height, the V reveal round the cut |
-| `thumb_d`, `thumb_z` | 55, 40 | The window in the closed front (0: none) and its centre above the box floor |
+| `thumb_shape`, `thumb_w`, `thumb_h`, `thumb_r`, `thumb_z`, `thumb_band` | hex, 46, 64, 3, 40 | The window in the closed front (none, teardrop, arch, hex, diamond: all close at 45°), its size, corner rounding, centre above the box floor, and the solid band between it and the front's slots (4); `thumb_d` 55 and `thumb_shoulder` 12 size the teardrop and the arch |
+| `front_slotted` | true | Slots in the closed front |
 | `slat_pitch` | 9 | Slat spacing |
 | `box_play`, `box_h`, `wall_t`, `floor_t`, `collar_t`, `return_w` | 0.25, 90, 1.68, 2, 4, 10 | The box |
 | `fin_w`, `fin_t`, `fin_gap`, `fin_flange`, `fin_sides` | 0, 1.26, 0.3, 0, [-1, 1] | The body's printing fins (0: none, the default since the back wall), a flange on their outer edge (for fins with no tabs), which side walls get them |
@@ -690,6 +699,7 @@ pieces do not fit.
 | `tray_rim` | 5 | The tray's rims above its floor, at the back |
 | `rack_t`, `fence_t`, `fence_h`, `rack_stop` | 2.4, 1.68, 15, 2 | Rack: floor, fences, their height, the bumps in front of it |
 | `rack_slots_across` | true | The rack floor's slots run front to back, so its strips span fence to fence |
+| `bin_drain_w`, `bin_drain_len`, `bin_drain_rib` | 3, 7, 2 | The bins' floor drain slots, in staggered rows |
 | `bin_wall`, `bin_floor`, `bin_r`, `bin_play`, `bin_fit` | 1.68, 1.6, 5, 0.25, 0.1 | Bins: walls, floor, corners; their room on the rack, per side (the rack and body are laid out with it); the bin's clearance in it, per side (fit test) |
 | `risers`, `riser_play`, `riser_n` | [80, 28, 0], 0.3, 0 | Risers (false bottoms): height in each bin, left to right, 0 for none; clearance in the bin; which one `part="riser"` exports |
 | `handle_s`, `handle_drop`, `pin_s`, `pin_len`, `pin_play`, `boss_t`, `boss_w`, `handle_play` | 10, 12, 6, 5, 0.15, 4.2, 16, 0.4 | Towel handle, its pins and bosses |
