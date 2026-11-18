@@ -9,7 +9,7 @@ SOAP_PARTS     ?= plate body_lower body_upper tray box button adapter jig test_k
 DRAINER_PARTS  ?= plate body tray rack bin riser handle jig test_pin test_bin
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model -D 'piece_colour="\#000000"'
-BLENDER        ?= blender
+BLENDER        ?= ../../tools/blender.sh
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 PRINTERS       ?= p1s x2d

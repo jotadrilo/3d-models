@@ -7,7 +7,7 @@ OPENSCAD_FLAGS ?=
 DEFS           ?=
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
 COLOUR         = $(SCAD) --enable=lazy-union -O export-3mf/color-mode=model
-BLENDER        ?= blender
+BLENDER        ?= ../../tools/blender.sh
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../../tools/render_studio.py --
 PRINTERS       ?= p1s x2d

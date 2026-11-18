@@ -58,7 +58,7 @@ to the 3MF (`key`).
    - `clean` removes exported files only, never the committed Bambu projects (`*.3mf` from
      `make project`) or `renders/`.
    - `render` depends on `project` and calls Blender through
-     `BLENDER ?= blender`, `RENDER_FLAGS ?=` and
+     `BLENDER ?= ../../tools/blender.sh` (Blender, run again if it crashes), `RENDER_FLAGS ?=` and
      `RENDER = $(BLENDER) -b -P ../../tools/render_studio.py --` (§3.3).
    - Select each part with `-D 'part="name"'`. Multi-colour exports use
      `--enable=lazy-union -O export-3mf/color-mode=model`.
@@ -70,7 +70,7 @@ to the 3MF (`key`).
 |---|---|
 | OpenSCAD | 2026.09.23 (snapshot). **Manifold is the default backend**; `--backend=Manifold` forces it |
 | Bambu Studio | 02.09.01.70, `/Applications/BambuStudio.app/Contents/MacOS/BambuStudio` |
-| Blender | 5.2.2 LTS, `/Applications/Blender.app` (`blender` on the PATH); Cycles on Metal |
+| Blender | 5.2.2 LTS, `/Applications/Blender.app` (`blender` on the PATH); Cycles on Metal. It aborts now and then while loading its kernels (NSException in `ShaderCache::load_kernel`, "Abort trap: 6"); `tools/blender.sh` runs it again (up to `BLENDER_TRIES` 4), so call Blender through it, by hand too |
 | System presets | `/Applications/BambuStudio.app/Contents/Resources/profiles/BBL/{machine,process,filament}` |
 | Printer | `Bambu Lab P1S 0.4 nozzle`: bed 256×256, height 250, excluded area front-left `0..18 × 0..28`; the start G-code draws its nozzle load line along the front edge (`y 1..11`), so parts keep clear of `y < 12` |
 | Other printer | `Bambu Lab X2D 0.4 nozzle` (`printer=X2D` in `bambu3mf.py`): bed 256×256, height 261, two nozzles; layouts keep clear the 20.5 mm left strip the right nozzle cannot reach ("Left nozzle only area"); its own `@BBL X2D` presets |

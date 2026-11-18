@@ -7,6 +7,7 @@ in Bambu Studio (plates, filaments, orientation, settings) and photographed by h
 | Script | Used by | Does |
 |---|---|---|
 | [`bambu3mf.py`](bambu3mf.py) | `make project`, `make report` | Builds the ready-to-print Bambu Studio project `<project>-p1s.3mf` from the OpenSCAD model, and slices it to report time and grams |
+| [`blender.sh`](blender.sh) | `make render` | Runs Blender, again if it crashes while loading its Metal kernels |
 | [`render_studio.py`](render_studio.py) | `make render` | Photoreal "as printed" studio renders of that project in Blender Cycles |
 | [`scad/`](scad/) | the `.scad` models | OpenSCAD library of the mounts, joints, FDM shapes and house style the projects share |
 | [`fea/`](fea/) | a project's `fea/` scripts (optional) | Load analysis with gmsh + CalculiX: method, modelling choices, case studies, and viewers for the results (ParaView, Blender) |
@@ -94,8 +95,13 @@ height picked by hand:
 - views hero, front, side, top and back, 2400×1800 WebP, written to `renders/<name>-<view>.webp`.
 
 ```sh
-blender -b -P tools/render_studio.py -- <project>-p1s.3mf renders/<name> [options]
+tools/blender.sh -b -P tools/render_studio.py -- <project>-p1s.3mf renders/<name> [options]
 ```
+
+[`blender.sh`](blender.sh) runs Blender again when it crashes: on Metal it aborts now and then
+while loading its Cycles kernels, before rendering anything (an NSException in
+`ShaderCache::load_kernel`, "Abort trap: 6"), and a second run goes through. The Makefiles call
+it as `$(BLENDER)`; `BLENDER_BIN` picks the binary, `BLENDER_TRIES` (4) the number of runs.
 
 | Option | |
 |---|---|

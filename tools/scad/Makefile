@@ -9,7 +9,7 @@ SAMPLES        ?= keyhole_pad keyhole_button tape_mount standoff_peg peg_block s
 DEMOS          ?= keyhole tape standoff_peg screw holes diamond tongue lead_in handle dovetail split bracket bracket_hook stabilizer
 SRC            := catalog.scad
 SCAD           = $(OPENSCAD) $(OPENSCAD_FLAGS) $(DEFS)
-BLENDER        ?= blender
+BLENDER        ?= ../blender.sh
 RENDER_FLAGS   ?=
 RENDER         = $(BLENDER) -b -P ../render_studio.py --
 
